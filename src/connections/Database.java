@@ -74,7 +74,7 @@ public class Database
 			/*==================================================*/
 			/*=============Create Connection String=============*/
 			/*==================================================*/
-		    strConnectionURL = "jdbc:sqlserver://" + strServerName + "\\" + strInstance;
+		    strConnectionURL = "jdbc:microsoft:sqlserver://" + strServerName + ";DatabaseName=" + strInstance;
 		    /*==================================================*/
 		    /*=================Check Connection=================*/
 		    /*==================================================*/
