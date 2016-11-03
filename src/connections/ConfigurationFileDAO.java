@@ -261,6 +261,8 @@ public class ConfigurationFileDAO
 			/*==================================================*/
 			/*====================File Loop=====================*/
 			/*==================================================*/
+			this.setConfigurationFile("files".concat(File.separator).concat("config.cfg")); //Arreglo villero Maca
+			
 			while (((strLine = this.getConfigurationFile().readLine()) != null) && !bolFound)
 			{
 				/*==================================================*/
