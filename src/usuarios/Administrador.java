@@ -54,8 +54,13 @@ public class Administrador extends Rol
 		
 	}
 	@Override
-	public void administrarReclamo(Integer intNroReclamo)
-	{
-
+	public void administrarReclamo(String strNumero, String strDescipcion) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void cerrarReclamo(String strNumero) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -152,18 +152,20 @@ public class Login
 		/*==================Create Title====================*/
 		/*==================================================*/
 		this.objLabelTitle1 = this.createLabel("Aplicaciones Interactivas", objTitleDimension, objTitleFont, 115, 10);
+		this.objLabelTitle1.setHorizontalAlignment(JLabel.CENTER);
 		/*==================================================*/
 		/*=================Create SubTitle==================*/
 		/*==================================================*/
-		this.objLabelTitle2 = this.createLabel("2C2016 Equipo N° 4", objTitleDimension, objTitleFont, 125, 40);
+		this.objLabelTitle2 = this.createLabel("2C2016 Equipo N° 4", objTitleDimension, objTitleFont, 115, 40);
+		this.objLabelTitle2.setHorizontalAlignment(JLabel.CENTER);
 		/*==================================================*/
 		/*================Create User Label=================*/
 		/*==================================================*/
-		this.objLabelUserName = this.createLabel("User:", objLabelDimension, objLabelFont, 5, 127);
+		this.objLabelUserName = this.createLabel("User:", objLabelDimension, objLabelFont, 130, 105);
 		/*==================================================*/
 		/*==============Create Password Label===============*/
 		/*==================================================*/
-		this.objLabelPassword = this.createLabel("Password:", objLabelDimension, objLabelFont, 5, 153);
+		this.objLabelPassword = this.createLabel("Password:", objLabelDimension, objLabelFont, 110, 132);
 		/*==================================================*/
 		/*=============Create UsetName TextBox==============*/
 		/*==================================================*/
@@ -275,7 +277,7 @@ public class Login
 		/*==================================================*/
 		/*==========Set UserName TextBox Location===========*/
 		/*==================================================*/
-		this.objTextBoxUserName.setLocation(80, 125);
+		this.objTextBoxUserName.setLocation(200, 105);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -303,7 +305,7 @@ public class Login
 		/*==================================================*/
 		/*==========Set Password TextBox Location===========*/
 		/*==================================================*/
-		this.objTextBoxPassword.setLocation(80, 150);
+		this.objTextBoxPassword.setLocation(200, 130);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -320,7 +322,7 @@ public class Login
 		/*==================================================*/
 		/*===============Create Login Button================*/
 		/*==================================================*/
-		this.objButtonLogin = new LoginButton(100, 180);
+		this.objButtonLogin = new LoginButton(160, 170);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
