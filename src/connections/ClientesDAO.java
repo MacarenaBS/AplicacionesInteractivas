@@ -280,12 +280,12 @@ public class ClientesDAO
 			/*==================================================*/
 			this.objConnection.executeQuery("INSERT INTO Clientes (intCodigo, strNombre, intDNI, strDomicilio, strTelefono, strMail, bolActivo)".concat(
 											"VALUES ( ").concat(
-												String.valueOf(objCliente.getCodigoPersona())).concat(", ").concat(
-												objCliente.getNombre()).concat(", ").concat(
-												String.valueOf(objCliente.getDNI())).concat(", ").concat(
-												objCliente.getDomicilio()).concat(", ").concat(
-												objCliente.getTelefono()).concat(", ").concat(
-												objCliente.getMail()).concat(", ").concat(
+												String.valueOf(objCliente.getCodigoPersona())).concat(", '").concat(
+												objCliente.getNombre()).concat("', ").concat(
+												String.valueOf(objCliente.getDNI())).concat(", '").concat(
+												objCliente.getDomicilio()).concat("', '").concat(
+												objCliente.getTelefono()).concat("', '").concat(
+												objCliente.getMail()).concat("', ").concat(
 												String.valueOf(1)).concat(")"));
 		}
 		catch (SQLException objException)
@@ -311,7 +311,11 @@ public class ClientesDAO
 		/*==================================================*/
 		/*==========Agrega El Cliente a la Cache============*/
 		/*==================================================*/
-		this.colClientes.add(objCliente);
+		if (!this.colClientes.contains(objCliente))
+		{
+			this.colClientes.add(objCliente);
+		}
+		
 		/*==================================================*/
 		/*==========Inserta el Cliente en la Tabla==========*/
 		/*==================================================*/
@@ -329,41 +333,49 @@ public class ClientesDAO
 	 */
 	private void eliminarEnCache(Cliente objCliente)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Cliente objActual;
-		Iterator<Cliente> objIterator;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		bolEncontro = false;
-		objIterator = this.colClientes.iterator();
-		/*==================================================*/
-		/*=================Loop de Clientes=================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
-		{
-			/*==================================================*/
-			/*=================Obtener Cliente==================*/
-			/*==================================================*/
-			objActual = objIterator.next();
-			/*==================================================*/
-			/*==============Verificar Si Coincide===============*/
-			/*==================================================*/
-			if (objActual.equals(objCliente))
-			{
-				/*==================================================*/
-				/*=============Cambiar Flag de Búsqueda=============*/
-				/*==================================================*/
-				bolEncontro = true;
-				/*==================================================*/
-				/*=========Elimina El Cliente a la Cache============*/
-				/*==================================================*/
-				this.colClientes.remove(objCliente);
-			}
+		
+		if (this.colClientes.contains(objCliente)){
+			this.colClientes.remove(objCliente);
 		}
+//		/**
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Cliente objActual;
+//		Iterator<Cliente> objIterator;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		bolEncontro = false;
+//		objIterator = this.colClientes.iterator();
+//		
+//		
+//		/*==================================================*/
+//		/*=================Loop de Clientes=================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*=================Obtener Cliente==================*/
+//			/*==================================================*/
+//			objActual = objIterator.next();
+//			/*==================================================*/
+//			/*==============Verificar Si Coincide===============*/
+//			/*==================================================*/
+//			if (objActual.equals(objCliente))
+//			{
+//				/*==================================================*/
+//				/*=============Cambiar Flag de Búsqueda=============*/
+//				/*==================================================*/
+//				bolEncontro = true;
+//				/*==================================================*/
+//				/*=========Elimina El Cliente a la Cache============*/
+//				/*==================================================*/
+//				this.colClientes.remove(objCliente);
+//			}
+//		}
+		
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/

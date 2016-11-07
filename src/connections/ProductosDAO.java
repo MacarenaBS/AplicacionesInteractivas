@@ -169,36 +169,43 @@ public class ProductosDAO
 	 */
 	private Producto getFromCache(Integer intNumero)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Iterator<Producto> objIterator;
-		Producto objProducto;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		objProducto = null;
-		bolEncontro = false;
-		objIterator = this.colProductos.iterator();
-		/*==================================================*/
-		/*=================Loop de Productos================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
-		{
-			/*==================================================*/
-			/*=================Obtener Producto=================*/
-			/*==================================================*/
-			objProducto = objIterator.next();
-			/*==================================================*/
-			/*==============Verificar Si Coincide===============*/
-			/*==================================================*/
-			bolEncontro = (objProducto.getCodigo() == intNumero);
+		
+		for (Producto p: this.colProductos){
+			if (p.esProducto(intNumero))
+				return p;
 		}
-		/*==================================================*/
-		/*==================Return Results==================*/
-		/*==================================================*/
-		return objProducto;
+		return null; 
+		
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Iterator<Producto> objIterator;
+//		Producto objProducto;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		objProducto = null;
+//		bolEncontro = false;
+//		objIterator = this.colProductos.iterator();
+//		/*==================================================*/
+//		/*=================Loop de Productos================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*=================Obtener Producto=================*/
+//			/*==================================================*/
+//			objProducto = objIterator.next();
+//			/*==================================================*/
+//			/*==============Verificar Si Coincide===============*/
+//			/*==================================================*/
+//			bolEncontro = (objProducto.getCodigo() == intNumero);
+//		}
+//		/*==================================================*/
+//		/*==================Return Results==================*/
+//		/*==================================================*/
+//		return objProducto;
 	}
 	/*==================================================*/
 	/*===================End Function===================*/
@@ -292,9 +299,9 @@ public class ProductosDAO
 			/*==================================================*/
 			this.objConnection.executeQuery("INSERT INTO Productos (intCodigo, strTitulo, strDescripcion, fltPrecio, bolActivo, intFactura)".concat(
 											"VALUES ( ").concat(
-												String.valueOf(objProducto.getCodigo())).concat(", ").concat(
-												objProducto.getTitulo()).concat(", ").concat(
-												objProducto.getDescripcion()).concat(", ").concat(
+												String.valueOf(objProducto.getCodigo())).concat(", '").concat(
+												objProducto.getTitulo()).concat("', '").concat(
+												objProducto.getDescripcion()).concat("', ").concat(
 												String.valueOf(objProducto.getPrecio())).concat(", ").concat(
 												String.valueOf(1)).concat(", ").concat(
 												String.valueOf(FacturasDAO.getInstance().getFactura(objFactura.getNumero()))).concat(")"));
@@ -327,7 +334,11 @@ public class ProductosDAO
 		/*==================================================*/
 		/*=========Agrega El Producto a la Cache============*/
 		/*==================================================*/
-		this.colProductos.add(objProducto);
+		if (this.colProductos.contains(objProducto))
+		{
+			this.colProductos.add(objProducto);
+		}
+		
 		/*==================================================*/
 		/*=========Inserta el Producto en la Tabla==========*/
 		/*==================================================*/
@@ -345,41 +356,45 @@ public class ProductosDAO
 	 */
 	private void eliminarEnCache(Producto objProducto)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Producto objActual;
-		Iterator<Producto> objIterator;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		bolEncontro = false;
-		objIterator = this.colProductos.iterator();
-		/*==================================================*/
-		/*================Loop de Productos=================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
+		if (this.colProductos.contains(objProducto))
 		{
-			/*==================================================*/
-			/*=================Obtener Cliente==================*/
-			/*==================================================*/
-			objActual = objIterator.next();
-			/*==================================================*/
-			/*==============Verificar Si Coincide===============*/
-			/*==================================================*/
-			if (objActual.equals(objProducto))
-			{
-				/*==================================================*/
-				/*=============Cambiar Flag de Búsqueda=============*/
-				/*==================================================*/
-				bolEncontro = true;
-				/*==================================================*/
-				/*========Elimina El Producto a la Cache============*/
-				/*==================================================*/
-				this.colProductos.remove(objProducto);
-			}
+			this.colProductos.remove(objProducto);
 		}
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Producto objActual;
+//		Iterator<Producto> objIterator;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		bolEncontro = false;
+//		objIterator = this.colProductos.iterator();
+//		/*==================================================*/
+//		/*================Loop de Productos=================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*=================Obtener Cliente==================*/
+//			/*==================================================*/
+//			objActual = objIterator.next();
+//			/*==================================================*/
+//			/*==============Verificar Si Coincide===============*/
+//			/*==================================================*/
+//			if (objActual.equals(objProducto))
+//			{
+//				/*==================================================*/
+//				/*=============Cambiar Flag de Búsqueda=============*/
+//				/*==================================================*/
+//				bolEncontro = true;
+//				/*==================================================*/
+//				/*========Elimina El Producto a la Cache============*/
+//				/*==================================================*/
+//				this.colProductos.remove(objProducto);
+//			}
+//		}
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/

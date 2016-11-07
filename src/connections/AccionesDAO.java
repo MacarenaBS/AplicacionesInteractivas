@@ -144,9 +144,9 @@ public class AccionesDAO
 			/*==================================================*/
 			this.objConnection.executeQuery(strStatement.concat(
 											"VALUES ( ").concat(
-												String.valueOf(objAccion.getFecha())).concat(", ").concat(
-												objAccion.getDescripcion()).concat(", ").concat(
-												objReclamo.getNumero()).concat(")"));
+												String.valueOf(objAccion.getFecha())).concat(", '").concat(
+												objAccion.getDescripcion()).concat("', '").concat(
+												objReclamo.getNumero()).concat("')"));
 		}
 		catch (SQLException objException)
 		{

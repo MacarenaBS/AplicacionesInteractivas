@@ -171,36 +171,43 @@ public class ReclamosFacturacionDAO
 	 */
 	private ReclamoFacturacion getFromCache(String strNumero)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Iterator<ReclamoFacturacion> objIterator;
-		ReclamoFacturacion objReclamo;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		objReclamo = null;
-		bolEncontro = false;
-		objIterator = this.colReclamos.iterator();
-		/*==================================================*/
-		/*=================Loop de Reclamos=================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
-		{
-			/*==================================================*/
-			/*=================Obtener Reclamo==================*/
-			/*==================================================*/
-			objReclamo = objIterator.next();
-			/*==================================================*/
-			/*==============Verificar Si Coincide===============*/
-			/*==================================================*/
-			bolEncontro = (objReclamo.getNumero().equalsIgnoreCase(strNumero));
+		for (ReclamoFacturacion rf: this.colReclamos){
+			if (rf.getNumero().equalsIgnoreCase(strNumero)){
+				return rf;
+			}
 		}
-		/*==================================================*/
-		/*==================Return Results==================*/
-		/*==================================================*/
-		return objReclamo;
+		return null; 
+		
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Iterator<ReclamoFacturacion> objIterator;
+//		ReclamoFacturacion objReclamo;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		objReclamo = null;
+//		bolEncontro = false;
+//		objIterator = this.colReclamos.iterator();
+//		/*==================================================*/
+//		/*=================Loop de Reclamos=================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*=================Obtener Reclamo==================*/
+//			/*==================================================*/
+//			objReclamo = objIterator.next();
+//			/*==================================================*/
+//			/*==============Verificar Si Coincide===============*/
+//			/*==================================================*/
+//			bolEncontro = (objReclamo.getNumero().equalsIgnoreCase(strNumero));
+//		}
+//		/*==================================================*/
+//		/*==================Return Results==================*/
+//		/*==================================================*/
+//		return objReclamo;
 	}
 	/*==================================================*/
 	/*===================End Function===================*/
@@ -284,41 +291,48 @@ public class ReclamosFacturacionDAO
 	 */
 	private void removerDeCache(ReclamoFacturacion objReclamo)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Iterator<ReclamoFacturacion> objIterator;
-		ReclamoFacturacion objActual;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		bolEncontro = false;
-		objIterator = this.colReclamos.iterator();
-		/*==================================================*/
-		/*==================Loop Reclamos===================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
+		
+		if (this.colReclamos.contains(objReclamo))
 		{
-			/*==================================================*/
-			/*================Obtiene Un Reclamo================*/
-			/*==================================================*/
-			objActual = objIterator.next();
-			/*==================================================*/
-			/*===============Verifica Si Coincide===============*/
-			/*==================================================*/
-			if (objActual.equals(objReclamo))
-			{
-				/*==================================================*/
-				/*================Remueve El Reclamo================*/
-				/*==================================================*/
-				this.colReclamos.remove(objActual);
-				/*==================================================*/
-				/*============Cambia El Falg De Búsqueda============*/
-				/*==================================================*/
-				bolEncontro = true;
-			}
+			this.colReclamos.remove(objReclamo);
 		}
+		
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		
+//		Boolean bolEncontro;
+//		Iterator<ReclamoFacturacion> objIterator;
+//		ReclamoFacturacion objActual;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		bolEncontro = false;
+//		objIterator = this.colReclamos.iterator();
+//		/*==================================================*/
+//		/*==================Loop Reclamos===================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*================Obtiene Un Reclamo================*/
+//			/*==================================================*/
+//			objActual = objIterator.next();
+//			/*==================================================*/
+//			/*===============Verifica Si Coincide===============*/
+//			/*==================================================*/
+//			if (objActual.equals(objReclamo))
+//			{
+//				/*==================================================*/
+//				/*================Remueve El Reclamo================*/
+//				/*==================================================*/
+//				this.colReclamos.remove(objActual);
+//				/*==================================================*/
+//				/*============Cambia El Falg De Búsqueda============*/
+//				/*==================================================*/
+//				bolEncontro = true;
+//			}
+//		}
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -338,9 +352,9 @@ public class ReclamosFacturacionDAO
 			/*================Ejecuta el Update=================*/
 			/*==================================================*/
 			this.objConnection.executeQuery("UPDATE ReclamosFacturacion ".concat(
-												"SET strDescripcion = ").concat(objReclamo.getDescripción()).concat(", ").concat(
-												"strEstado = ").concat(objReclamo.getEstado().toString()).concat(
-											" WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
+												"SET strDescripcion = '").concat(objReclamo.getDescripción()).concat("', ").concat(
+												"strEstado = '").concat(objReclamo.getEstado().toString()).concat(
+											"' WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
 		}
 		catch (SQLException objException)
 		{
@@ -365,7 +379,7 @@ public class ReclamosFacturacionDAO
 		/*==================================================*/
 		/*==========Remueve El Reclamo De La Cache==========*/
 		/*==================================================*/
-		this.removerDeCache(objReclamo);
+		this.removerDeCache(objReclamo); //VER!!
 		/*==================================================*/
 		/*==========Agrega El Reclamo Actualizado===========*/
 		/*==================================================*/
@@ -394,9 +408,9 @@ public class ReclamosFacturacionDAO
 			/*==================================================*/
 			this.objConnection.executeQuery("INSERT INTO ReclamosFacturacion (strNumero, strDescripcion, strEstado, strFactura, intCliente)".concat(
 											"VALUES ( ").concat(
-												String.valueOf(objReclamo.getNumero())).concat(", ").concat(
-												objReclamo.getDescripción()).concat(", ").concat(
-												objReclamo.getEstado().toString()).concat(", ").concat(
+												String.valueOf(objReclamo.getNumero())).concat(", '").concat(
+												objReclamo.getDescripción()).concat("', '").concat(
+												objReclamo.getEstado().toString()).concat("', ").concat(
 												String.valueOf(objReclamo.getFactura().getNumero())).concat(", ").concat(
 												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
 		}
@@ -423,7 +437,10 @@ public class ReclamosFacturacionDAO
 		/*==================================================*/
 		/*==========Agrega El Reclamo a la Cache============*/
 		/*==================================================*/
-		this.colReclamos.add(objReclamo);
+		if (!this.colReclamos.contains(objReclamo)){
+			this.colReclamos.add(objReclamo);
+		}
+		
 		/*==================================================*/
 		/*==========Inserta el Reclamo en la Tabla==========*/
 		/*==================================================*/
