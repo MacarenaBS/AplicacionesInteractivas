@@ -199,12 +199,17 @@ public class Factura
 	/*==================================================*/
 	/*======================Equals======================*/
 	/*==================================================*/
-	public boolean equals(Factura objFactura)
-	{
-		/*==================================================*/
-		/*==================Return Results==================*/
-		/*==================================================*/
-		return (this.getNumero() == objFactura.getNumero());
+	
+//	public boolean equals(Factura objFactura)
+//	{
+//		/*==================================================*/
+//		/*==================Return Results==================*/
+//		/*==================================================*/
+//		return (this.getNumero() == objFactura.getNumero());
+//	}
+	
+	public boolean isFactura(int intNumeroFactura){
+		return this.intNumero == intNumeroFactura;
 	}
 	/*==================================================*/
 	/*===================End Function===================*/
