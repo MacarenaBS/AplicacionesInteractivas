@@ -198,7 +198,7 @@ public abstract class Persona
 	 * Informa si el usuario esta o no activo
 	 * @return Boolean bolActivo
 	 */
-	protected Boolean getActivo()
+	public Boolean getActivo()
 	{
 		/*==================================================*/
 		/*============Devuelve el Flag de estado============*/

@@ -236,7 +236,7 @@ public class ClientesDAO
 				/*==================================================*/
 				/*==================Crear Cliente===================*/
 				/*==================================================*/
-				objCliente = new Cliente(objClientes.getInt("intCodigo"), objClientes.getString("strNombre"), objClientes.getInt("intDNI"), objClientes.getString("strDomicilio"), objClientes.getString("strTelefono"), objClientes.getString("strMail"));
+				objCliente = new Cliente(objClientes.getInt("intCodigo"), objClientes.getString("strNombre"), objClientes.getInt("intDNI"), objClientes.getString("strDomicilio"), objClientes.getString("strTelefono"), objClientes.getString("strMail"), objClientes.getInt("bolActivo") == 1 ? true : false);
 			}
 			else
 			{
@@ -428,6 +428,31 @@ public class ClientesDAO
 	/*==================================================*/
 	/*==================End Procedure===================*/
 	/*==================================================*/
+	public void modificarCliente(Cliente objCliente)
+	{
+		this.eliminarEnCache(objCliente);
+		this.colClientes.add(objCliente);
+		try
+		{
+			/*==================================================*/
+			/*================Ejecuta el Insert=================*/
+			/*==================================================*/
+			this.objConnection.executeQuery("UPDATE Clientes SET strNombre = '".concat(objCliente.getNombre()).concat(
+											"', intDNI = ").concat(String.valueOf(objCliente.getDNI())).concat(
+											", strDomicilio = '").concat(objCliente.getDomicilio()).concat(
+											"', strTelefono = '").concat(objCliente.getTelefono()).concat(
+											"', strMail = '").concat(objCliente.getMail()).concat(
+											"', bolActivo = ").concat(String.valueOf(objCliente.getActivo() == true ? 1 : 0)).concat(
+											"WHERE intCodigo = ".concat(String.valueOf(objCliente.getCodigoPersona()))));
+		}
+		catch (SQLException objException)
+		{
+			/*==================================================*/
+			/*===============Error Al Actualizar================*/
+			/*==================================================*/
+			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo Cliente");
+		}
+	}
 	/*==================================================*/
 	/*======================Close=======================*/
 	/*==================================================*/

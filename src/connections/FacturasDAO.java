@@ -243,7 +243,7 @@ public class FacturasDAO
 			/*==================================================*/
 			/*===================Get Facturas===================*/
 			/*==================================================*/
-			objFacturas = this.objConnection.getResultSet("SELECT * FROM Facturas WHERE intNumero = ".concat(String.valueOf(intNumero)));
+			objFacturas = this.objConnection.getResultSet("SELECT Facturas.intNumero, Facturas.strDescripcion, Facturas.objFecha, ProductosFacturas.intProducto, ProductosFacturas.intCantidad FROM Facturas INNER JOIN ProductosFacturas ON (Facturas.intNumero = ProductosFacturas.intFactura) WHERE Facturas.intNumero = ".concat(String.valueOf(intNumero)));
 			/*==================================================*/
 			/*==============Verificar Si Encontró===============*/
 			/*==================================================*/

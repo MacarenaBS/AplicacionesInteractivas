@@ -250,7 +250,7 @@ public class ProductosDAO
 				/*==================================================*/
 				/*==================Crear Producto==================*/
 				/*==================================================*/
-				objProducto = new Producto(objProductos.getInt("intCodigo"), objProductos.getString("strTitulo"), objProductos.getString("strDescripcion"), objProductos.getFloat("fltPrecio"), objProductos.getBoolean("bolActivo"));
+				objProducto = new Producto(objProductos.getInt("intCodigo"), objProductos.getString("strTitulo"), objProductos.getString("strDescripcion"), objProductos.getFloat("fltPrecio"), objProductos.getInt("bolActivo") == 1 ? true : false);
 			}
 			else
 			{
@@ -290,21 +290,20 @@ public class ProductosDAO
 	 * @throws ClienteException 
 	 * @throws ConnectionException 
 	 */
-	private void insertarEnBase(Producto objProducto, Factura objFactura) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
+	private void insertarEnBase(Producto objProducto) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
 	{
 		try
 		{
 			/*==================================================*/
 			/*================Ejecuta el Insert=================*/
 			/*==================================================*/
-			this.objConnection.executeQuery("INSERT INTO Productos (intCodigo, strTitulo, strDescripcion, fltPrecio, bolActivo, intFactura)".concat(
+			this.objConnection.executeQuery("INSERT INTO Productos (intCodigo, strTitulo, strDescripcion, fltPrecio, bolActivo)".concat(
 											"VALUES ( ").concat(
 												String.valueOf(objProducto.getCodigo())).concat(", '").concat(
 												objProducto.getTitulo()).concat("', '").concat(
 												objProducto.getDescripcion()).concat("', ").concat(
 												String.valueOf(objProducto.getPrecio())).concat(", ").concat(
-												String.valueOf(1)).concat(", ").concat(
-												String.valueOf(FacturasDAO.getInstance().getFactura(objFactura.getNumero()))).concat(")"));
+												String.valueOf(1)).concat(")"));
 		}
 		catch (SQLException objException)
 		{
@@ -329,7 +328,7 @@ public class ProductosDAO
 	 * @throws ClienteException 
 	 * @throws ConnectionException 
 	 */
-	public void insertar(Producto objProducto, Factura objFactura) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
+	public void insertar(Producto objProducto) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
 	{
 		/*==================================================*/
 		/*=========Agrega El Producto a la Cache============*/
@@ -342,11 +341,34 @@ public class ProductosDAO
 		/*==================================================*/
 		/*=========Inserta el Producto en la Tabla==========*/
 		/*==================================================*/
-		this.insertarEnBase(objProducto, objFactura);
+		this.insertarEnBase(objProducto);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
 	/*==================================================*/
+	public void modificarProducto(Producto objProducto)
+	{
+		this.eliminarEnCache(objProducto);
+		this.colProductos.add(objProducto);
+		try
+		{
+			/*==================================================*/
+			/*================Ejecuta el Insert=================*/
+			/*==================================================*/
+			this.objConnection.executeQuery("UPDATE Productos SET strTitulo = '".concat(
+											objProducto.getTitulo()).concat("', strDescripcion = '").concat(
+											objProducto.getDescripcion()).concat("', fltPrecio = ").concat(
+											String.valueOf(objProducto.getPrecio())).concat(", bolActivo = ").concat(
+											String.valueOf(1)).concat(" WHERE intCodigo = ").concat(String.valueOf(objProducto.getCodigo())));
+		}
+		catch (SQLException objException)
+		{
+			/*==================================================*/
+			/*===============Error Al Actualizar================*/
+			/*==================================================*/
+			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo producto");
+		}
+	}
 	/*==================================================*/
 	/*===============Eliminar de la Cache===============*/
 	/*==================================================*/
