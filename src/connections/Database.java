@@ -84,7 +84,7 @@ public class Database
 		    	/*==================================================*/
 		    	/*==================Get Connection==================*/
 		    	/*==================================================*/
-		    	this.objConnection = DriverManager.getConnection(strConnectionURL, strUsername, strPassword);
+		    	this.objConnection = DriverManager.getConnection(strConnectionURL);
 		    }
 		    /*==================================================*/
 		    /*=============Catch Connection Errors==============*/

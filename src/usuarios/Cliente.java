@@ -51,7 +51,7 @@ public class Cliente extends Persona
 	/*==================================================*/
 	/*===================Constructor====================*/
 	/*==================================================*/
-	public Cliente(Integer intCodigo, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail)
+	public Cliente(Integer intCodigo, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, Boolean bolActivo)
 	{
 		/*==================================================*/
 		/*=========Establece el codigo del cliente==========*/
@@ -80,7 +80,7 @@ public class Cliente extends Persona
 		/*==================================================*/
 		/*===========Crea al usuario como activo============*/
 		/*==================================================*/
-		this.setActivo(true);
+		this.setActivo(bolActivo);
 	}
 	/*==================================================*/
 	/*=================End Constructor==================*/
