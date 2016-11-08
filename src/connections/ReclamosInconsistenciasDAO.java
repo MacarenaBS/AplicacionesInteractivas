@@ -351,8 +351,8 @@ public class ReclamosInconsistenciasDAO
 			/*================Ejecuta el Update=================*/
 			/*==================================================*/
 			this.objConnection.executeQuery("UPDATE ReclamosInconsistencias ".concat(
-												"SET strDescripcion = ").concat(objReclamo.getDescripción()).concat(", ").concat(
-												"strEstado = ").concat(objReclamo.getEstado().toString()).concat(", ").concat(
+												"SET strDescripcion = '").concat(objReclamo.getDescripción()).concat("', ").concat(
+												"strEstado = '").concat(objReclamo.getEstado().toString()).concat("', ").concat(
 											" WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
 		}
 		catch (SQLException objException)
@@ -407,9 +407,9 @@ public class ReclamosInconsistenciasDAO
 			/*==================================================*/
 			this.objConnection.executeQuery("INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCliente)".concat(
 											"VALUES ( ").concat(
-												String.valueOf(objReclamo.getNumero())).concat(", ").concat(
-												objReclamo.getDescripción()).concat(", ").concat(
-												objReclamo.getEstado().toString()).concat(", ").concat(
+												String.valueOf(objReclamo.getNumero())).concat(", '").concat(
+												objReclamo.getDescripción()).concat("', '").concat(
+												objReclamo.getEstado().toString()).concat("', ").concat(
 												String.valueOf(objReclamo.getItemFactura().getProducto().getCodigo())).concat(", ").concat(
 												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
 			//Insertar un item factura. a desarrollar
