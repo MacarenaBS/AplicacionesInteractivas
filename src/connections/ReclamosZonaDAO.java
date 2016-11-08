@@ -332,10 +332,10 @@ public class ReclamosZonaDAO
 			/*================Ejecuta el Update=================*/
 			/*==================================================*/
 			this.objConnection.executeQuery("UPDATE ReclamosZona ".concat(
-												"SET strDescripcion = ").concat(objReclamo.getDescripción()).concat(", ").concat(
-												"strEstado = ").concat(objReclamo.getEstado().toString()).concat(", ").concat(
-												"strZona = ").concat(objReclamo.getZona()).concat(
-											" WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
+												"SET strDescripcion = '").concat(objReclamo.getDescripción()).concat("', ").concat(
+												"strEstado = '").concat(objReclamo.getEstado().toString()).concat("', ").concat(
+												"strZona = '").concat(objReclamo.getZona()).concat(
+											"' WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
 		}
 		catch (SQLException objException)
 		{
@@ -389,10 +389,10 @@ public class ReclamosZonaDAO
 			/*==================================================*/
 			this.objConnection.executeQuery("INSERT INTO ReclamosZona (strNumero, strDescripcion, strEstado, strZona, intCliente)".concat(
 											"VALUES ( ").concat(
-												String.valueOf(objReclamo.getNumero())).concat(", ").concat(
-												objReclamo.getDescripción()).concat(", ").concat(
-												objReclamo.getEstado().toString()).concat(", ").concat(
-												objReclamo.getZona()).concat(", ").concat(
+												String.valueOf(objReclamo.getNumero())).concat(", '").concat(
+												objReclamo.getDescripción()).concat("', '").concat(
+												objReclamo.getEstado().toString()).concat("', '").concat(
+												objReclamo.getZona()).concat("', ").concat(
 												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
 		}
 		catch (SQLException objException)
