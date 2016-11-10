@@ -254,6 +254,10 @@ public class ReclamosFacturacionDAO
 				/*==================================================*/
 				/*==================Crear Reclamo===================*/
 				/*==================================================*/
+				System.out.println("RECLAMO FACTURACION");
+				System.out.println(objReclamos.getString("strNumero")+" "+objReclamos.getString("strDescripcion")+" "+objReclamos.getString("strEstado"));
+				System.out.println(ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
+				System.out.println(FacturasDAO.getInstance().getFactura(objReclamos.getInt("intFactura")));
 				objReclamo = new ReclamoFacturacion(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")), FacturasDAO.getInstance().getFactura(objReclamos.getInt("intFactura")));
 			}
 			else
@@ -398,21 +402,25 @@ public class ReclamosFacturacionDAO
 	/**
 	 * Inserta el Reclamo en la tabla Reclamos Zona de la base de datos
 	 * @param objReclamo Reclamo a insertar
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	private void insertarEnBase(ReclamoFacturacion objReclamo)
+	private void insertarEnBase(ReclamoFacturacion objReclamo) throws ConnectionException, ParameterException
 	{
 		try
 		{
 			/*==================================================*/
 			/*================Ejecuta el Insert=================*/
 			/*==================================================*/
-			this.objConnection.executeQuery("INSERT INTO ReclamosFacturacion (strNumero, strDescripcion, strEstado, strFactura, intCliente)".concat(
+			this.objConnection.executeQuery("INSERT INTO ReclamosFacturacion (strNumero, strDescripcion, strEstado, intFactura, intCliente)".concat(
 											"VALUES ( ").concat(
 												String.valueOf(objReclamo.getNumero())).concat(", '").concat(
 												objReclamo.getDescripción()).concat("', '").concat(
 												objReclamo.getEstado().toString()).concat("', ").concat(
 												String.valueOf(objReclamo.getFactura().getNumero())).concat(", ").concat(
 												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
+			
+			objReclamo = new ReclamoFacturacion(objReclamo.getNumero(), objReclamo.getDescripción(), objReclamo.getCliente(), objReclamo.getFactura());
 		}
 		catch (SQLException objException)
 		{
@@ -431,8 +439,10 @@ public class ReclamosFacturacionDAO
 	/**
 	 * Inserta un reclamo de zona en el cache y la tabla correspondiente de la base de datos.
 	 * @param objReclamo Reclamo a insertar
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	public void insertar(ReclamoFacturacion objReclamo)
+	public void insertar(ReclamoFacturacion objReclamo) throws ConnectionException, ParameterException
 	{
 		/*==================================================*/
 		/*==========Agrega El Reclamo a la Cache============*/

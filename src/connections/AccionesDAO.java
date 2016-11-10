@@ -7,7 +7,10 @@ package connections;
 /*==================================================*/
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+
 import javax.swing.JOptionPane;
+
 import connections.Database;
 import exceptions.ConnectionException;
 import exceptions.ParameterException;
@@ -133,20 +136,27 @@ public class AccionesDAO
 		/*==================================================*/
 		switch (objReclamo.getClass().getName())
 		{
-			case "ReclamoInconsistencia" : strStatement = strStatement.concat("strReclamoInconsistencia)"); break;
-			case "ReclamoZona" : strStatement = strStatement.concat("strReclamoZona)"); break;
-			case "ReclamoFacturación" : strStatement = strStatement.concat("strReclamoFacturacion)"); break;
+			case "reclamos.ReclamoFacturacion" : strStatement = strStatement.concat("strReclamoFacturacion)"); break;
+			case "reclamos.ReclamoZona" : strStatement = strStatement.concat("strReclamoZona)"); break;
+			case "reclamos.ReclamoFacturación" : strStatement = strStatement.concat("strReclamoInconsistencia)"); break;
 		}
 		try
 		{
-			/*==================================================*/
-			/*================Ejecuta el Insert=================*/
-			/*==================================================*/
+			
+			//Formateo la fecha para insertarla en sql
+			System.out.println(String.valueOf(objAccion.getFecha())); 
+			
+			SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
+			String date=sdf.format(objAccion.getFecha());
+			System.out.println(date);
+			
+			
+			
 			this.objConnection.executeQuery(strStatement.concat(
-											"VALUES ( ").concat(
-												String.valueOf(objAccion.getFecha())).concat(", '").concat(
-												objAccion.getDescripcion()).concat("', '").concat(
-												objReclamo.getNumero()).concat("')"));
+					"VALUES ( '").concat(
+						date).concat("', '").concat(
+						objAccion.getDescripcion()).concat("', '").concat(
+						objReclamo.getNumero()).concat("')"));
 		}
 		catch (SQLException objException)
 		{

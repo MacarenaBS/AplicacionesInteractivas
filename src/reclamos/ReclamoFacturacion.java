@@ -38,15 +38,24 @@ public class ReclamoFacturacion extends Reclamo
 	 * @param strDescripcion Descripción
 	 * @param objCliente Cliente
 	 * @param objFactura Factura
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	public ReclamoFacturacion(String strNumero, String strDescripcion, Cliente objCliente, Factura objFactura)
+	public ReclamoFacturacion(String strNumero, String strDescripcion, Cliente objCliente, Factura objFactura) throws ConnectionException, ParameterException
 	{
 		this.setNumero(strNumero);
 		this.setDescripcion(strDescripcion);
-		this.setEstado("INGRESADO");
+		this.setEstado("ingresado");
 		this.setFecha(new Date());
 		this.setCliente(objCliente);
-		this.colAcciones = new ArrayList<Accion>();
+		/*==================================================*/
+		/*=============Crear Acción de Apertura=============*/
+		/*==================================================*/
+		Accion objAccion = new Accion(new Date(), "Apertura de Reclamo");
+		/*==================================================*/
+		/*==================Asociar Acción==================*/
+		/*==================================================*/
+		this.asociarAccion(objAccion);
 		this.setFactura(objFactura);
 	}
 	/*==================================================*/
@@ -65,27 +74,22 @@ public class ReclamoFacturacion extends Reclamo
 	 * @throws ParameterException 
 	 * @throws ConnectionException 
 	 */
-	public ReclamoFacturacion(String strNumero, String strDescripcion, String strEstado, Cliente objCliente, Factura objFactura) throws ConnectionException, ParameterException
+	public ReclamoFacturacion(String strNumero, String strDescripcion, String strEstado, Cliente objCliente, Factura objFactura) throws ConnectionException
 	{
 		/*==================================================*/
 		/*====================Variables=====================*/
 		/*==================================================*/
-		Accion objAccion;
 		this.setNumero(strNumero);
 		this.setDescripcion(strDescripcion);
+		
+		
 		this.setEstado(strEstado);
 		this.setFecha(new Date());
 		this.setCliente(objCliente);
 		this.colAcciones = new ArrayList<Accion>();
 		this.setFactura(objFactura);
-		/*==================================================*/
-		/*=============Crear Acción de Apertura=============*/
-		/*==================================================*/
-		objAccion = new Accion(new Date(), "Apertura de Reclamo");
-		/*==================================================*/
-		/*==================Asociar Acción==================*/
-		/*==================================================*/
-		this.asociarAccion(objAccion);
+		this.colAcciones = new ArrayList<Accion>();
+		
 	}
 	/*==================================================*/
 	/*=================End Constructor==================*/

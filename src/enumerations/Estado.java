@@ -11,10 +11,10 @@ public enum Estado
 	/*==================================================*/
 	/*===================Enumeration====================*/
 	/*==================================================*/
-	INGRESADO("Ingresado"),
-	ENTRATAMIENTO("En Tratamiento"),
-	CERRADO("Cerrado"),
-	SOLUCIONADO("Solucionado");
+	ingresado("ingresado"),
+	enTratamiento("enTratamiento"),
+	cerrado("cerrado"),
+	solucionado("solucionado");
 	/*==================================================*/
 	/*====================Constants=====================*/
 	/*==================================================*/
