@@ -241,7 +241,7 @@ public class ReclamosZonaDAO
 				/*==================================================*/
 				/*==================Crear Reclamo===================*/
 				/*==================================================*/
-				objReclamo = new ReclamoZona(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")), objReclamos.getString("strZona"));
+				objReclamo = new ReclamoZona(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), objReclamos.getString("strZona"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
 			}
 			else
 			{

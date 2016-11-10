@@ -83,7 +83,7 @@ public class CallCenter extends Rol
 			/*==================================================*/
 			/*==================Crear Reclamo===================*/
 			/*==================================================*/
-			objReclamo = new ReclamoZona(ReclamosZonaDAO.getInstance().newId(), strDescripcion, strZona, objCliente);
+			objReclamo = new ReclamoZona(ReclamosZonaDAO.getInstance().newId(), strDescripcion, objCliente, strZona);
 			/*==================================================*/
 			/*===========Agregar Reclamo a las Listas===========*/
 			/*==================================================*/

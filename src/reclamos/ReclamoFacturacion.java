@@ -88,7 +88,7 @@ public class ReclamoFacturacion extends Reclamo
 		this.setCliente(objCliente);
 		this.colAcciones = new ArrayList<Accion>();
 		this.setFactura(objFactura);
-		this.colAcciones = new ArrayList<Accion>();
+//		this.colAcciones = new ArrayList<Accion>();
 		
 	}
 	/*==================================================*/
