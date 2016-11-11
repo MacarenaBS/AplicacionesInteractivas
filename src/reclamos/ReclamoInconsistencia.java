@@ -2,6 +2,11 @@
 /*=====================Package======================*/
 /*==================================================*/
 package reclamos;
+import java.util.Date;
+
+import exceptions.ConnectionException;
+import exceptions.ParameterException;
+import model.Accion;
 /*==================================================*/
 /*=====================Imports======================*/
 /*==================================================*/
@@ -40,6 +45,7 @@ public class ReclamoInconsistencia extends Reclamo
 		this.setEstado(strEstado);
 		this.setCliente(objCliente);
 		this.setItemFactura(intCantidad, objProducto);
+		
 	}
 	/*==================================================*/
 	/*=================End Constructor==================*/
@@ -54,14 +60,26 @@ public class ReclamoInconsistencia extends Reclamo
 	 * @param objProducto Producto
 	 * @param intCantidad Cantidad de producto asociado
 	 * @param objCliente Cliente
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	public ReclamoInconsistencia(String strNumero, String strDescripcion, Producto objProducto, Integer intCantidad, Cliente objCliente)
+	public ReclamoInconsistencia(String strNumero, String strDescripcion, Producto objProducto, Integer intCantidad, Cliente objCliente) throws ConnectionException, ParameterException
 	{
 		this.setNumero(strNumero);
 		this.setDescripcion(strDescripcion);
-		this.setEstado("INGRESADO");
+		this.setEstado("ingresado");
 		this.setCliente(objCliente);
 		this.setItemFactura(intCantidad, objProducto);
+		
+		/*==================================================*/
+		/*=============Crear Acción de Apertura=============*/
+		/*==================================================*/
+		Accion objAccion = new Accion(new Date(), "Apertura de Reclamo");
+		/*==================================================*/
+		/*==================Asociar Acción==================*/
+		/*==================================================*/
+		this.asociarAccion(objAccion);
+
 	}
 	/*==================================================*/
 	/*=================End Constructor==================*/
@@ -76,8 +94,9 @@ public class ReclamoInconsistencia extends Reclamo
 	 */
 	private void setItemFactura(Integer intCantidad, Producto objProducto)
 	{
-		this.objItemFactura.setCantidad(intCantidad);
-		this.objItemFactura.setProducto(objProducto);
+		this.objItemFactura= new ItemFactura(objProducto,intCantidad);
+//		this.objItemFactura.setCantidad(intCantidad);
+//		this.objItemFactura.setProducto(objProducto);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/

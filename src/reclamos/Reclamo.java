@@ -244,7 +244,10 @@ public abstract class Reclamo
 		/*==================================================*/
 		/*=================Agrega la acción=================*/
 		/*==================================================*/
-		this.colAcciones.add(objAccion);
+		if (!this.colAcciones.contains(objAccion)){
+			this.colAcciones.add(objAccion);
+		}
+		
 		/*==================================================*/
 		/*=======Insertar Acción en la base de datos========*/
 		/*==================================================*/
@@ -328,6 +331,10 @@ public abstract class Reclamo
 	/*==================================================*/
 	/*===================End Function===================*/
 	/*==================================================*/
+	
+	public void agregarAcciones(ArrayList<Accion> acciones){
+		this.colAcciones.addAll(acciones);
+	}
 }
 /*==================================================*/
 /*====================End Class=====================*/

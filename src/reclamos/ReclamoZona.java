@@ -37,27 +37,20 @@ public class ReclamoZona extends Reclamo
 	 * @throws ParameterException 
 	 * @throws ConnectionException 
 	 */
-	public ReclamoZona(String strNumero, String strDescripcion, String strZona, Cliente objCliente) throws ConnectionException, ParameterException
+	public ReclamoZona(String strNumero, String strDescripcion, String strEstado, String strZona, Cliente objCliente) throws ConnectionException, ParameterException
 	{
 		/*==================================================*/
 		/*====================Variables=====================*/
 		/*==================================================*/
-		Accion objAccion;
+		
 		this.setNumero(strNumero);
 		this.setDescripcion(strDescripcion);
-		this.setEstado("INGRESADO");
+		this.setEstado(strEstado);
+		
 		this.setFecha(new Date());
 		this.setCliente(objCliente);
-		this.colAcciones = new ArrayList<Accion>();
 		this.setZona(strZona);
-		/*==================================================*/
-		/*=============Crear Acción de Apertura=============*/
-		/*==================================================*/
-		objAccion = new Accion(new Date(), "Apertura de Reclamo");
-		/*==================================================*/
-		/*==================Asociar Acción==================*/
-		/*==================================================*/
-		this.asociarAccion(objAccion);
+		this.colAcciones = new ArrayList<Accion>();
 	}
 	/*==================================================*/
 	/*=================End Constructor==================*/
@@ -65,14 +58,23 @@ public class ReclamoZona extends Reclamo
 	/*==================================================*/
 	/*===================Constructor====================*/
 	/*==================================================*/
-	public ReclamoZona(String strNumero, String strDescripcion, String strEstado, Cliente objCliente, String strZona)
+	public ReclamoZona(String strNumero, String strDescripcion, Cliente objCliente, String strZona) throws ConnectionException, ParameterException
 	{
 		this.setNumero(strNumero);
 		this.setDescripcion(strDescripcion);
-		this.setEstado(strEstado);
+		this.setEstado("ingresado");
 		this.setFecha(new Date());
 		this.setCliente(objCliente);
-		this.colAcciones = new ArrayList<Accion>();
+		
+		/*==================================================*/
+		/*=============Crear Acción de Apertura=============*/
+		/*==================================================*/
+		Accion objAccion = new Accion(new Date(), "Apertura de Reclamo");
+		/*==================================================*/
+		/*==================Asociar Acción==================*/
+		/*==================================================*/
+		this.asociarAccion(objAccion);
+		
 		this.setZona(strZona);
 	}
 	/*==================================================*/

@@ -30,6 +30,17 @@ public class Producto
 		this.setPrecio(fltPrecio);
 		this.setActivo(bolEstado);
 	}
+	
+	public Producto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado)
+	{
+		this.setCodigo();
+		this.setTitulo(strTitulo);
+		this.setDescripcion(strDescripcion);
+		this.setPrecio(fltPrecio);
+		this.setActivo(bolEstado);
+	}
+
+
 	/*==================================================*/
 	/*=================End Constructor==================*/
 	/*==================================================*/
@@ -61,7 +72,7 @@ public class Producto
 		/*==================================================*/
 		/*===============Establece el código================*/
 		/*==================================================*/
-		intCodigo++;
+		this.intCodigo= intCodigo++;
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/

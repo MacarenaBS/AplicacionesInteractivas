@@ -5,6 +5,8 @@ package test;
 import java.util.List;
 
 import reclamos.ReclamoFacturacion;
+import reclamos.ReclamoInconsistencia;
+import reclamos.ReclamoZona;
 import model.Accion;
 import model.Factura;
 import model.ItemFactura;
@@ -13,6 +15,8 @@ import connections.ClientesDAO;
 import connections.FacturasDAO;
 import connections.ProductosDAO;
 import connections.ReclamosFacturacionDAO;
+import connections.ReclamosInconsistenciasDAO;
+import connections.ReclamosZonaDAO;
 import exceptions.ClienteException;
 import exceptions.ConnectionException;
 import exceptions.FacturasException;
@@ -62,9 +66,48 @@ public class Prueba {
 //		ReclamoFacturacion reclamoF= new ReclamoFacturacion("1", "Prueba Facturacion Modificada", "ingresado",ClientesDAO.getInstance().getCliente(1),FacturasDAO.getInstance().getFactura(1));
 //		ReclamosFacturacionDAO.getInstance().actualizar(reclamoF); FUNCIONA
 
-		ReclamoFacturacion reclamoF= new ReclamoFacturacion("6", "Prueba Facturacion Ingresada 3", "ingresado",ClientesDAO.getInstance().getCliente(1),FacturasDAO.getInstance().getFactura(1));
-		ReclamosFacturacionDAO.getInstance().insertar(reclamoF); //FUNCIONA 
-	 
+//		ReclamoFacturacion reclamoF= new ReclamoFacturacion("6", "Prueba Facturacion Ingresada 3", "ingresado",ClientesDAO.getInstance().getCliente(1),FacturasDAO.getInstance().getFactura(1));
+//		ReclamosFacturacionDAO.getInstance().insertar(reclamoF); //FUNCIONA 
+
+/** PRUEBAS RECLAMO INCONSISTENCIAS **/
+
+
+//		ReclamoInconsistencia ri= new ReclamoInconsistencia
+//				("2", "Prueba reclamo inconsistencia Ingresado 2"
+//				, ProductosDAO.getInstance().getProducto(2)
+//				, 5, ClientesDAO.getInstance().getCliente(2)); //los saco de la bd porque no tengo ganas de crear objetos nuevos.
+//		
+//		ReclamosInconsistenciasDAO.getInstance().insertar(ri);
+		
+		//FUNCIONA, inserta el reclamo y la accion de apertura, pero me tira este mensaje en algun lado: 
+		//Instrucción INSERT en conflicto con la restricción FOREIGN KEY "fk_AccionesReclamosInconsistencias". El conflicto ha aparecido en la base de datos "AI", tabla "dbo.ReclamosInconsistencias", column 'strNumero'.
+		//en AccionesDAO, cuando la inserta. Igual lo hace pero ??¿¿
+		
+//		ReclamoInconsistencia ri= ReclamosInconsistenciasDAO.getInstance().getReclamo("2"); //FUNCIONA
+//		System.out.println(ri.getDescripción()+" "+ri.getItemFactura().getProducto().getTitulo()+" "+ri.getItemFactura().getCantidad());
+		
+//		ReclamoInconsistencia ri= new ReclamoInconsistencia
+//				("2", "Prueba reclamo inconsistencia Modificado 2"
+//				, ProductosDAO.getInstance().getProducto(2)
+//				, 5, ClientesDAO.getInstance().getCliente(2));
+//		ReclamosInconsistenciasDAO.getInstance().actualizar(ri); //FUNCIONA
+		
+/** PRUEBAS RECLAMOS ZONA **/ 
+//		ReclamoZona rz= new ReclamoZona("1","Reclamo Zona Ingreso 1",ClientesDAO.getInstance().getCliente(3),"Palermo");
+//		ReclamosZonaDAO.getInstance().insertar(rz); //FUNCIONA
+		
+//		ReclamoZona rz= ReclamosZonaDAO.getInstance().getReclamo("1");
+////		System.out.println(rz.getDescripción()); //FUNCIONA
+//		
+//		for (Accion a: rz.getAcciones()){
+//			System.out.println(a.getDescripcion()); //Me avive recien que hay que traer las acciones de la base de datos y no probé los demás.
+//		}//Este funciona
+		
+//		ReclamoZona rz= new ReclamoZona("1","Reclamo Zona Modificado 1",ClientesDAO.getInstance().getCliente(3),"Palermo");
+//		ReclamosZonaDAO.getInstance().actualizar(rz); //FUNCIONA
+	
+		
+		
 		
 		
 	}

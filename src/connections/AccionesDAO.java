@@ -6,8 +6,10 @@ package connections;
 /*=====================Imports======================*/
 /*==================================================*/
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -117,10 +119,54 @@ public class AccionesDAO
 	/*=================Insertar en Base=================*/
 	/*==================================================*/
 	/**
-	 * Inserta el Acción en la tabla Acciones de la base de datos
+	 * Trae las acciones cargadas en la bd del objeto reclamo
 	 * @param objReclamo Reclamo asociado a la acción
 	 * @param objAccion Acción a insertar
 	 */
+	public ArrayList<Accion> getAccion(Reclamo objReclamo)
+	{
+		/*==================================================*/
+		/*====================Variables=====================*/
+		/*==================================================*/
+		String strStatement;
+		ArrayList<Accion> acciones= new ArrayList<Accion>();
+		/*==================================================*/
+		/*================Iniciar Statement=================*/
+		/*==================================================*/
+		strStatement = "SELECT * FROM Acciones WHERE ";
+		/*==================================================*/
+		/*=============Evaluar Tipo de Reclamo==============*/
+		/*==================================================*/
+		switch (objReclamo.getClass().getName())
+		{
+			case "reclamos.ReclamoFacturacion" : strStatement = strStatement.concat("strReclamoFacturacion=").concat(objReclamo.getNumero()); break;
+			case "reclamos.ReclamoZona" : strStatement = strStatement.concat("strReclamoZona=").concat(objReclamo.getNumero()); break;
+			case "reclamos.ReclamoInconsistencia" : strStatement = strStatement.concat("strReclamoInconsistencia=").concat(objReclamo.getNumero()); break;
+		}
+		try
+		{
+			ResultSet objReclamos = this.objConnection.getResultSet(strStatement);
+			
+			while (objReclamos.next()){
+				Accion a= new Accion(objReclamos.getDate("objFecha"), objReclamos.getString("strDescripcion"));
+				acciones.add(a);
+			}
+			
+		}
+		catch (SQLException objException)
+		{
+			/*==================================================*/
+			/*===============Error Al Actualizar================*/
+			/*==================================================*/
+			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con una nueva acción");
+		}
+		return acciones;
+	}
+	/*==================================================*/
+	/*==================End Procedure===================*/
+	/*==================================================*/
+	/*==================================================*/
+	
 	public void insertar(Reclamo objReclamo, Accion objAccion)
 	{
 		/*==================================================*/
@@ -138,7 +184,7 @@ public class AccionesDAO
 		{
 			case "reclamos.ReclamoFacturacion" : strStatement = strStatement.concat("strReclamoFacturacion)"); break;
 			case "reclamos.ReclamoZona" : strStatement = strStatement.concat("strReclamoZona)"); break;
-			case "reclamos.ReclamoFacturación" : strStatement = strStatement.concat("strReclamoInconsistencia)"); break;
+			case "reclamos.ReclamoInconsistencia" : strStatement = strStatement.concat("strReclamoInconsistencia)"); break;
 		}
 		try
 		{

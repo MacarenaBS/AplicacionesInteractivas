@@ -18,7 +18,10 @@ import exceptions.ConnectionException;
 import exceptions.ParameterException;
 import exceptions.ProductosException;
 import exceptions.ReclamoException;
+import model.Producto;
+import reclamos.ReclamoFacturacion;
 import reclamos.ReclamoInconsistencia;
+import usuarios.Cliente;
 /*==================================================*/
 /*===================End Imports====================*/
 /*==================================================*/
@@ -169,36 +172,44 @@ public class ReclamosInconsistenciasDAO
 	 */
 	private ReclamoInconsistencia getFromCache(String strNumero)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Iterator<ReclamoInconsistencia> objIterator;
-		ReclamoInconsistencia objReclamo;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		objReclamo = null;
-		bolEncontro = false;
-		objIterator = this.colReclamos.iterator();
-		/*==================================================*/
-		/*=================Loop de Reclamos=================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
-		{
-			/*==================================================*/
-			/*=================Obtener Reclamo==================*/
-			/*==================================================*/
-			objReclamo = objIterator.next();
-			/*==================================================*/
-			/*==============Verificar Si Coincide===============*/
-			/*==================================================*/
-			bolEncontro = (objReclamo.getNumero().equalsIgnoreCase(strNumero));
+		for (ReclamoInconsistencia ri: this.colReclamos){
+			if (ri.getNumero().equalsIgnoreCase(strNumero)){
+				return ri;
+			}
 		}
-		/*==================================================*/
-		/*==================Return Results==================*/
-		/*==================================================*/
-		return objReclamo;
+		return null; 
+		
+		
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Iterator<ReclamoInconsistencia> objIterator;
+//		ReclamoInconsistencia objReclamo;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		objReclamo = null;
+//		bolEncontro = false;
+//		objIterator = this.colReclamos.iterator();
+//		/*==================================================*/
+//		/*=================Loop de Reclamos=================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*=================Obtener Reclamo==================*/
+//			/*==================================================*/
+//			objReclamo = objIterator.next();
+//			/*==================================================*/
+//			/*==============Verificar Si Coincide===============*/
+//			/*==================================================*/
+//			bolEncontro = (objReclamo.getNumero().equalsIgnoreCase(strNumero));
+//		}
+//		/*==================================================*/
+//		/*==================Return Results==================*/
+//		/*==================================================*/
+//		return objReclamo;
 	}
 	/*==================================================*/
 	/*===================End Function===================*/
@@ -243,24 +254,29 @@ public class ReclamosInconsistenciasDAO
 			/*==================================================*/
 			if (objReclamos.next())
 			{
+				
+				//Un reclamo de inconsistencia es por 1 producto, la cantidad no debería estar ahi también? No habla de hacer nada con la factura en este reclamo. 
+				objReclamo= new ReclamoInconsistencia(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ProductosDAO.getInstance().getProducto(objReclamos.getInt("intProducto")), objReclamos.getInt("intCantidad"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
+				objReclamo.agregarAcciones(AccionesDAO.getInstance().getAccion(objReclamo));
+//				
 				/*==================================================*/
-				/*=========Obtener la Cantidad de Producto==========*/
-				/*==================================================*/
-				objCantidad = this.objConnection.getResultSet("SELECT COUNT(*) AS Cantidad FROM Productos WHERE intCodigo = ".concat(String.valueOf(objReclamos.getInt("intCodigo"))));
-				/*==================================================*/
-				/*==============Verificar Si Encontró===============*/
-				/*==================================================*/
-				if (objCantidad.next())
-				{
-					/*==================================================*/
-					/*==================Obtener Valor===================*/
-					/*==================================================*/
-					intCantidad = objCantidad.getInt("Cantidad");
-					/*==================================================*/
-					/*==================Crear Reclamo===================*/
-					/*==================================================*/																																						
-					objReclamo = new ReclamoInconsistencia(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ProductosDAO.getInstance().getProducto(objReclamos.getInt("intCodigo")), intCantidad, ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
-				}
+//				/*=========Obtener la Cantidad de Producto==========*/
+//				/*==================================================*/
+//				objCantidad = this.objConnection.getResultSet("SELECT COUNT(*) AS Cantidad FROM Productos WHERE intCodigo = ".concat(String.valueOf(objReclamos.getInt("intCodigo"))));
+//				/*==================================================*/
+//				/*==============Verificar Si Encontró===============*/
+//				/*==================================================*/
+//				if (objCantidad.next())
+//				{
+//					/*==================================================*/
+//					/*==================Obtener Valor===================*/
+//					/*==================================================*/
+//					intCantidad = objCantidad.getInt("Cantidad");
+//					/*==================================================*/
+//					/*==================Crear Reclamo===================*/
+//					/*==================================================*/																																						
+//					objReclamo = new ReclamoInconsistencia(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ProductosDAO.getInstance().getProducto(objReclamos.getInt("intCodigo")), intCantidad, ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
+//				}
 			}
 			else
 			{
@@ -297,41 +313,48 @@ public class ReclamosInconsistenciasDAO
 	 */
 	private void removerDeCache(ReclamoInconsistencia objReclamo)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Iterator<ReclamoInconsistencia> objIterator;
-		ReclamoInconsistencia objActual;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		bolEncontro = false;
-		objIterator = this.colReclamos.iterator();
-		/*==================================================*/
-		/*==================Loop Reclamos===================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
+		
+		if (this.colReclamos.contains(objReclamo))
 		{
-			/*==================================================*/
-			/*================Obtiene Un Reclamo================*/
-			/*==================================================*/
-			objActual = objIterator.next();
-			/*==================================================*/
-			/*===============Verifica Si Coincide===============*/
-			/*==================================================*/
-			if (objActual.equals(objReclamo))
-			{
-				/*==================================================*/
-				/*================Remueve El Reclamo================*/
-				/*==================================================*/
-				this.colReclamos.remove(objActual);
-				/*==================================================*/
-				/*============Cambia El Falg De Búsqueda============*/
-				/*==================================================*/
-				bolEncontro = true;
-			}
+			this.colReclamos.remove(objReclamo);
 		}
+		
+		
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Iterator<ReclamoInconsistencia> objIterator;
+//		ReclamoInconsistencia objActual;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		bolEncontro = false;
+//		objIterator = this.colReclamos.iterator();
+//		/*==================================================*/
+//		/*==================Loop Reclamos===================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*================Obtiene Un Reclamo================*/
+//			/*==================================================*/
+//			objActual = objIterator.next();
+//			/*==================================================*/
+//			/*===============Verifica Si Coincide===============*/
+//			/*==================================================*/
+//			if (objActual.equals(objReclamo))
+//			{
+//				/*==================================================*/
+//				/*================Remueve El Reclamo================*/
+//				/*==================================================*/
+//				this.colReclamos.remove(objActual);
+//				/*==================================================*/
+//				/*============Cambia El Falg De Búsqueda============*/
+//				/*==================================================*/
+//				bolEncontro = true;
+//			}
+//		}
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -350,10 +373,12 @@ public class ReclamosInconsistenciasDAO
 			/*==================================================*/
 			/*================Ejecuta el Update=================*/
 			/*==================================================*/
-			this.objConnection.executeQuery("UPDATE ReclamosInconsistencias ".concat(
-												"SET strDescripcion = '").concat(objReclamo.getDescripción()).concat("', ").concat(
-												"strEstado = '").concat(objReclamo.getEstado().toString()).concat("', ").concat(
-											" WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
+			
+			String strQuery = "UPDATE ReclamosInconsistencias SET strDescripcion='"+objReclamo.getDescripción()+"', strEstado='"
+			+objReclamo.getEstado().toString()+"' WHERE strNumero='"+objReclamo.getNumero()+"'";
+			
+			this.objConnection.executeQuery(strQuery);
+			
 		}
 		catch (SQLException objException)
 		{
@@ -397,22 +422,31 @@ public class ReclamosInconsistenciasDAO
 	/**
 	 * Inserta el Reclamo en la tabla Reclamos Inconsistencias de la base de datos
 	 * @param objReclamo Reclamo a insertar
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	private void insertarEnBase(ReclamoInconsistencia objReclamo)
+	private void insertarEnBase(ReclamoInconsistencia objReclamo) throws ConnectionException, ParameterException
 	{
 		try
 		{
 			/*==================================================*/
 			/*================Ejecuta el Insert=================*/
 			/*==================================================*/
-			this.objConnection.executeQuery("INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCliente)".concat(
-											"VALUES ( ").concat(
-												String.valueOf(objReclamo.getNumero())).concat(", '").concat(
-												objReclamo.getDescripción()).concat("', '").concat(
-												objReclamo.getEstado().toString()).concat("', ").concat(
-												String.valueOf(objReclamo.getItemFactura().getProducto().getCodigo())).concat(", ").concat(
-												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
-			//Insertar un item factura. a desarrollar
+			String strQuery = "INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCantidad, intCliente) VALUES ("
+					+objReclamo.getNumero()+",'"+objReclamo.getDescripción()+"','"+objReclamo.getEstado().toString()+"',"+objReclamo.getItemFactura().getProducto().getCodigo()+","
+					+objReclamo.getItemFactura().getCantidad()+","+objReclamo.getCliente().getCodigoPersona()+")";
+			
+			this.objConnection.executeQuery(strQuery);
+//			this.objConnection.executeQuery("INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCantidad, intCliente)".concat(
+//											"VALUES ( '").concat(
+//												String.valueOf(objReclamo.getNumero())).concat("', '").concat(
+//												objReclamo.getDescripción()).concat("', '").concat(
+//												objReclamo.getEstado().toString()).concat("', ").concat(
+//												String.valueOf(objReclamo.getItemFactura().getProducto().getCodigo())).concat(", ").concat(String.valueOf(objReclamo.getItemFactura().getCantidad())).concat(
+//												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
+			
+			objReclamo= new ReclamoInconsistencia(objReclamo.getNumero(), objReclamo.getDescripción(), objReclamo.getItemFactura().getProducto(), objReclamo.getItemFactura().getCantidad(), objReclamo.getCliente());
+			//Insertar un item factura. a desarrollar --
 		}
 		catch (SQLException objException)
 		{
@@ -431,13 +465,18 @@ public class ReclamosInconsistenciasDAO
 	/**
 	 * Inserta un reclamo de inconsistencia en el cache y la tabla correspondiente de la base de datos.
 	 * @param objReclamo Reclamo a insertar
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	public void insertar(ReclamoInconsistencia objReclamo)
+	public void insertar(ReclamoInconsistencia objReclamo) throws ConnectionException, ParameterException
 	{
 		/*==================================================*/
 		/*==========Agrega El Reclamo a la Cache============*/
 		/*==================================================*/
-		this.colReclamos.add(objReclamo);
+		if (!this.colReclamos.contains(objReclamo)){
+			this.colReclamos.add(objReclamo);
+		}
+		
 		/*==================================================*/
 		/*==========Inserta el Reclamo en la Tabla==========*/
 		/*==================================================*/
