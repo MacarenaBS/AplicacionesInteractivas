@@ -94,8 +94,9 @@ public class ReclamoInconsistencia extends Reclamo
 	 */
 	private void setItemFactura(Integer intCantidad, Producto objProducto)
 	{
-		this.objItemFactura.setCantidad(intCantidad);
-		this.objItemFactura.setProducto(objProducto);
+		this.objItemFactura= new ItemFactura(objProducto,intCantidad);
+//		this.objItemFactura.setCantidad(intCantidad);
+//		this.objItemFactura.setProducto(objProducto);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/

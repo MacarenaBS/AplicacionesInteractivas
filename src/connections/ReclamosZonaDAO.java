@@ -17,6 +17,7 @@ import exceptions.ClienteException;
 import exceptions.ConnectionException;
 import exceptions.ParameterException;
 import exceptions.ReclamoException;
+import model.Accion;
 import reclamos.ReclamoZona;
 /*==================================================*/
 /*===================End Imports====================*/
@@ -242,6 +243,8 @@ public class ReclamosZonaDAO
 				/*==================Crear Reclamo===================*/
 				/*==================================================*/
 				objReclamo = new ReclamoZona(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), objReclamos.getString("strZona"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
+				objReclamo.agregarAcciones(AccionesDAO.getInstance().getAccion(objReclamo));
+			
 			}
 			else
 			{
@@ -278,41 +281,45 @@ public class ReclamosZonaDAO
 	 */
 	private void removerDeCache(ReclamoZona objReclamo)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		Boolean bolEncontro;
-		Iterator<ReclamoZona> objIterator;
-		ReclamoZona objActual;
-		/*==================================================*/
-		/*===============Initialize Variables===============*/
-		/*==================================================*/
-		bolEncontro = false;
-		objIterator = this.colReclamos.iterator();
-		/*==================================================*/
-		/*==================Loop Reclamos===================*/
-		/*==================================================*/
-		while ((objIterator.hasNext()) && (!bolEncontro))
-		{
-			/*==================================================*/
-			/*================Obtiene Un Reclamo================*/
-			/*==================================================*/
-			objActual = objIterator.next();
-			/*==================================================*/
-			/*===============Verifica Si Coincide===============*/
-			/*==================================================*/
-			if (objActual.equals(objReclamo))
-			{
-				/*==================================================*/
-				/*================Remueve El Reclamo================*/
-				/*==================================================*/
-				this.colReclamos.remove(objActual);
-				/*==================================================*/
-				/*============Cambia El Falg De Búsqueda============*/
-				/*==================================================*/
-				bolEncontro = true;
-			}
+		
+		if (this.colReclamos.contains(objReclamo)){
+			this.colReclamos.remove(objReclamo);
 		}
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		Boolean bolEncontro;
+//		Iterator<ReclamoZona> objIterator;
+//		ReclamoZona objActual;
+//		/*==================================================*/
+//		/*===============Initialize Variables===============*/
+//		/*==================================================*/
+//		bolEncontro = false;
+//		objIterator = this.colReclamos.iterator();
+//		/*==================================================*/
+//		/*==================Loop Reclamos===================*/
+//		/*==================================================*/
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			/*==================================================*/
+//			/*================Obtiene Un Reclamo================*/
+//			/*==================================================*/
+//			objActual = objIterator.next();
+//			/*==================================================*/
+//			/*===============Verifica Si Coincide===============*/
+//			/*==================================================*/
+//			if (objActual.equals(objReclamo))
+//			{
+//				/*==================================================*/
+//				/*================Remueve El Reclamo================*/
+//				/*==================================================*/
+//				this.colReclamos.remove(objActual);
+//				/*==================================================*/
+//				/*============Cambia El Falg De Búsqueda============*/
+//				/*==================================================*/
+//				bolEncontro = true;
+//			}
+//		}
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -379,8 +386,10 @@ public class ReclamosZonaDAO
 	/**
 	 * Inserta el Reclamo en la tabla Reclamos Zona de la base de datos
 	 * @param objReclamo Reclamo a insertar
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	private void insertarEnBase(ReclamoZona objReclamo)
+	private void insertarEnBase(ReclamoZona objReclamo) throws ConnectionException, ParameterException
 	{
 		try
 		{
@@ -394,6 +403,8 @@ public class ReclamosZonaDAO
 												objReclamo.getEstado().toString()).concat("', '").concat(
 												objReclamo.getZona()).concat("', ").concat(
 												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
+			
+			objReclamo= new ReclamoZona(objReclamo.getNumero(),objReclamo.getDescripción(),objReclamo.getCliente(),objReclamo.getZona());
 		}
 		catch (SQLException objException)
 		{
@@ -412,13 +423,19 @@ public class ReclamosZonaDAO
 	/**
 	 * Inserta un reclamo de zona en el cache y la tabla correspondiente de la base de datos.
 	 * @param objReclamo Reclamo a insertar
+	 * @throws ParameterException 
+	 * @throws ConnectionException 
 	 */
-	public void insertar(ReclamoZona objReclamo)
+	public void insertar(ReclamoZona objReclamo) throws ConnectionException, ParameterException
 	{
 		/*==================================================*/
 		/*==========Agrega El Reclamo a la Cache============*/
 		/*==================================================*/
-		this.colReclamos.add(objReclamo);
+		if (!this.colReclamos.contains(objReclamo))
+		{
+			this.colReclamos.add(objReclamo);
+		}
+		
 		/*==================================================*/
 		/*==========Inserta el Reclamo en la Tabla==========*/
 		/*==================================================*/

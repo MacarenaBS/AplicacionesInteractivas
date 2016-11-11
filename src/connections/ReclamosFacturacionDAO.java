@@ -254,11 +254,8 @@ public class ReclamosFacturacionDAO
 				/*==================================================*/
 				/*==================Crear Reclamo===================*/
 				/*==================================================*/
-				System.out.println("RECLAMO FACTURACION");
-				System.out.println(objReclamos.getString("strNumero")+" "+objReclamos.getString("strDescripcion")+" "+objReclamos.getString("strEstado"));
-				System.out.println(ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
-				System.out.println(FacturasDAO.getInstance().getFactura(objReclamos.getInt("intFactura")));
 				objReclamo = new ReclamoFacturacion(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")), FacturasDAO.getInstance().getFactura(objReclamos.getInt("intFactura")));
+				objReclamo.agregarAcciones(AccionesDAO.getInstance().getAccion(objReclamo));
 			}
 			else
 			{

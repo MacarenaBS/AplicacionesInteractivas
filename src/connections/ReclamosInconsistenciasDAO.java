@@ -257,6 +257,7 @@ public class ReclamosInconsistenciasDAO
 				
 				//Un reclamo de inconsistencia es por 1 producto, la cantidad no debería estar ahi también? No habla de hacer nada con la factura en este reclamo. 
 				objReclamo= new ReclamoInconsistencia(objReclamos.getString("strNumero"), objReclamos.getString("strDescripcion"), objReclamos.getString("strEstado"), ProductosDAO.getInstance().getProducto(objReclamos.getInt("intProducto")), objReclamos.getInt("intCantidad"), ClientesDAO.getInstance().getCliente(objReclamos.getInt("intCliente")));
+				objReclamo.agregarAcciones(AccionesDAO.getInstance().getAccion(objReclamo));
 //				
 				/*==================================================*/
 //				/*=========Obtener la Cantidad de Producto==========*/
@@ -372,10 +373,12 @@ public class ReclamosInconsistenciasDAO
 			/*==================================================*/
 			/*================Ejecuta el Update=================*/
 			/*==================================================*/
-			this.objConnection.executeQuery("UPDATE ReclamosInconsistencias ".concat(
-												"SET strDescripcion = '").concat(objReclamo.getDescripción()).concat("', ").concat(
-												"strEstado = '").concat(objReclamo.getEstado().toString()).concat("', ").concat(
-											" WHERE strNumero = ").concat(String.valueOf(objReclamo.getNumero())));
+			
+			String strQuery = "UPDATE ReclamosInconsistencias SET strDescripcion='"+objReclamo.getDescripción()+"', strEstado='"
+			+objReclamo.getEstado().toString()+"' WHERE strNumero='"+objReclamo.getNumero()+"'";
+			
+			this.objConnection.executeQuery(strQuery);
+			
 		}
 		catch (SQLException objException)
 		{
@@ -429,13 +432,18 @@ public class ReclamosInconsistenciasDAO
 			/*==================================================*/
 			/*================Ejecuta el Insert=================*/
 			/*==================================================*/
-			this.objConnection.executeQuery("INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCantidad, intCliente)".concat(
-											"VALUES ( ").concat(
-												String.valueOf(objReclamo.getNumero())).concat(", '").concat(
-												objReclamo.getDescripción()).concat("', '").concat(
-												objReclamo.getEstado().toString()).concat("', ").concat(
-												String.valueOf(objReclamo.getItemFactura().getProducto().getCodigo())).concat(", ").concat(String.valueOf(objReclamo.getItemFactura().getCantidad())).concat(
-												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
+			String strQuery = "INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCantidad, intCliente) VALUES ("
+					+objReclamo.getNumero()+",'"+objReclamo.getDescripción()+"','"+objReclamo.getEstado().toString()+"',"+objReclamo.getItemFactura().getProducto().getCodigo()+","
+					+objReclamo.getItemFactura().getCantidad()+","+objReclamo.getCliente().getCodigoPersona()+")";
+			
+			this.objConnection.executeQuery(strQuery);
+//			this.objConnection.executeQuery("INSERT INTO ReclamosInconsistencias (strNumero, strDescripcion, strEstado, intProducto, intCantidad, intCliente)".concat(
+//											"VALUES ( '").concat(
+//												String.valueOf(objReclamo.getNumero())).concat("', '").concat(
+//												objReclamo.getDescripción()).concat("', '").concat(
+//												objReclamo.getEstado().toString()).concat("', ").concat(
+//												String.valueOf(objReclamo.getItemFactura().getProducto().getCodigo())).concat(", ").concat(String.valueOf(objReclamo.getItemFactura().getCantidad())).concat(
+//												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
 			
 			objReclamo= new ReclamoInconsistencia(objReclamo.getNumero(), objReclamo.getDescripción(), objReclamo.getItemFactura().getProducto(), objReclamo.getItemFactura().getCantidad(), objReclamo.getCliente());
 			//Insertar un item factura. a desarrollar --
