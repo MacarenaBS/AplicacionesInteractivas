@@ -2,6 +2,7 @@ package test;
 
 
 
+import java.util.Date;
 import java.util.List;
 
 import reclamos.ReclamoFacturacion;
@@ -11,12 +12,14 @@ import model.Accion;
 import model.Factura;
 import model.ItemFactura;
 import model.Producto;
+import connections.AccionesDAO;
 import connections.ClientesDAO;
 import connections.FacturasDAO;
 import connections.ProductosDAO;
 import connections.ReclamosFacturacionDAO;
 import connections.ReclamosInconsistenciasDAO;
 import connections.ReclamosZonaDAO;
+import connections.UsuariosDAO;
 import exceptions.ClienteException;
 import exceptions.ConnectionException;
 import exceptions.FacturasException;
@@ -24,6 +27,7 @@ import exceptions.ParameterException;
 import exceptions.ProductosException;
 import exceptions.ReclamoException;
 import usuarios.Cliente;
+import usuarios.Usuario;
 
 public class Prueba {
 
@@ -66,25 +70,38 @@ public class Prueba {
 //		ReclamoFacturacion reclamoF= new ReclamoFacturacion("1", "Prueba Facturacion Modificada", "ingresado",ClientesDAO.getInstance().getCliente(1),FacturasDAO.getInstance().getFactura(1));
 //		ReclamosFacturacionDAO.getInstance().actualizar(reclamoF); FUNCIONA
 
-//		ReclamoFacturacion reclamoF= new ReclamoFacturacion("6", "Prueba Facturacion Ingresada 3", "ingresado",ClientesDAO.getInstance().getCliente(1),FacturasDAO.getInstance().getFactura(1));
-//		ReclamosFacturacionDAO.getInstance().insertar(reclamoF); //FUNCIONA 
+//		ReclamoFacturacion reclamoF= new ReclamoFacturacion("1", "Prueba Facturacion Ingresada 1", "ingresado",ClientesDAO.getInstance().getCliente(1),FacturasDAO.getInstance().getFactura(1));
+//		ReclamosFacturacionDAO.getInstance().insertar(reclamoF); //FUNCIONA
+		
+//		ReclamoFacturacion rf= ReclamosFacturacionDAO.getInstance().getReclamo("1");
+//		for (Accion a: rf.getAcciones()){
+//			System.out.println(a.getDescripcion()); 
+//		}
+//		
 
 /** PRUEBAS RECLAMO INCONSISTENCIAS **/
 
 
 //		ReclamoInconsistencia ri= new ReclamoInconsistencia
-//				("2", "Prueba reclamo inconsistencia Ingresado 2"
+//				("4", "Prueba reclamo inconsistencia Ingresado 4"
 //				, ProductosDAO.getInstance().getProducto(2)
 //				, 5, ClientesDAO.getInstance().getCliente(2)); //los saco de la bd porque no tengo ganas de crear objetos nuevos.
 //		
 //		ReclamosInconsistenciasDAO.getInstance().insertar(ri);
+//		Accion acc=new Accion(new Date(),"Prueba");
+//		AccionesDAO.getInstance().insertar(ri, acc);
 		
 		//FUNCIONA, inserta el reclamo y la accion de apertura, pero me tira este mensaje en algun lado: 
 		//Instrucción INSERT en conflicto con la restricción FOREIGN KEY "fk_AccionesReclamosInconsistencias". El conflicto ha aparecido en la base de datos "AI", tabla "dbo.ReclamosInconsistencias", column 'strNumero'.
 		//en AccionesDAO, cuando la inserta. Igual lo hace pero ??¿¿
 		
-//		ReclamoInconsistencia ri= ReclamosInconsistenciasDAO.getInstance().getReclamo("2"); //FUNCIONA
+//		ReclamoInconsistencia ri= ReclamosInconsistenciasDAO.getInstance().getReclamo("4"); //FUNCIONA
 //		System.out.println(ri.getDescripción()+" "+ri.getItemFactura().getProducto().getTitulo()+" "+ri.getItemFactura().getCantidad());
+		
+//		for (Accion a: ri.getAcciones()){
+//			System.out.println(a.getDescripcion()); //Me avive recien que hay que traer las acciones de la base de datos y no probé los demás.
+//		}
+		
 		
 //		ReclamoInconsistencia ri= new ReclamoInconsistencia
 //				("2", "Prueba reclamo inconsistencia Modificado 2"
@@ -105,6 +122,16 @@ public class Prueba {
 		
 //		ReclamoZona rz= new ReclamoZona("1","Reclamo Zona Modificado 1",ClientesDAO.getInstance().getCliente(3),"Palermo");
 //		ReclamosZonaDAO.getInstance().actualizar(rz); //FUNCIONA
+		
+/** PRUEBA ABM USUARIO **/
+		
+//		Usuario us= new Usuario("MacarenaBS","contraseña","Administrador"); //agregar restricciones de que solo pueda ponerse roles
+//		UsuariosDAO.getInstance().insertar(us); //FUNCIONA
+		
+//		UsuariosDAO.getInstance().eliminar(us); //FUNCIONA
+		
+//		Usuario us= new Usuario("MacarenaBS","contraseñaModificada","CallCenter");
+//		UsuariosDAO.getInstance().modificarUsuario(us); //FUNCIONA
 	
 		
 		

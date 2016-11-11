@@ -7,11 +7,13 @@ import java.util.ArrayList;
 
 import connections.ClientesDAO;
 import connections.ProductosDAO;
+import connections.UsuariosDAO;
 import exceptions.ClienteException;
 import exceptions.ConnectionException;
 import exceptions.FacturasException;
 import exceptions.ParameterException;
 import exceptions.ProductosException;
+import exceptions.UsuarioException;
 import model.Producto;
 import reclamos.Reclamo;
 
@@ -26,18 +28,19 @@ public class Administrador extends Rol
 		this.colReclamos = new ArrayList<Reclamo>();
 		this.colUsuarios = new ArrayList<Usuario>();
 	}
-	public void crearUsuario(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strmail, String strUsername, String strPassword)
+	public void crearUsuario(String strUsername, String strPassword, String strRol) throws ConnectionException, ParameterException
 	{
-		
+		Usuario us= new Usuario(strUsername, strPassword, strRol);
+		UsuariosDAO.getInstance().insertar(us);
 		
 	}
-	public void bajaUsuario(Integer codPersona)
+	public void bajaUsuario(String strUsername) throws ConnectionException, ParameterException, UsuarioException
 	{
-		
+		UsuariosDAO.getInstance().eliminar(UsuariosDAO.getInstance().getUsuario(strUsername));
 	}
-	public void modificarUsuario(Integer intCodigo, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strmail)
+	public void modificarUsuario(String strUsuario, String strPassword, String strRol) throws ConnectionException, ParameterException, UsuarioException
 	{
-		
+		UsuariosDAO.getInstance().modificarUsuario(UsuariosDAO.getInstance().getUsuario(strUsuario));
 	}
 	public void altaCliente(Integer intDni, String strNombre, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
 	{

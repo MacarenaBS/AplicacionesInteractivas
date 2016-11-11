@@ -6,16 +6,72 @@ package usuarios;
  * @author ezequiel.de-luca
  * @version 1.0
  */
-public abstract class Usuario extends Persona
+public class Usuario
 {
 	/*==================================================*/
 	/*====================Variables=====================*/
 	/*==================================================*/
 	private String strUsername;
 	private String strPassword;
-	/*==================================================*/
-	/*=============Establece la contraseña==============*/
-	/*==================================================*/
+//	private Rol objRol;
+	private String strRol;
+	
+	
+
+	public Usuario(String strUsername, String strPassword, String strRol){
+		this.setPassword(strPassword);
+		this.setUsername(strUsername);
+		this.setRol(strRol);
+	}
+	
+	/**
+//	 * Devuelve el rol de un usuario.
+//	 * @return String strRol
+//	 */
+	public String getRol() {
+		return strRol;
+	}
+
+	/**
+//	 * Establece elrol de un usuario.
+//	 * @param strRol
+//	 */
+	public void setRol(String strRol) {
+		this.strRol = strRol;
+	}
+	
+//	/**
+//	 * Devuelve el rol de un usuario.
+//	 * @return Rol objRol
+//	 */
+//	public Rol getRol() {
+//		return this.objRol;
+//	}
+//
+//	/**
+//	 * Establece elrol de un usuario.
+//	 * @param objRol
+//	 */
+//	public void setRol(Rol objRol) {
+//		this.objRol = objRol;
+//	}
+
+	public String getStrUsername() {
+		return strUsername;
+	}
+
+	public void setStrUsername(String strUsername) {
+		this.strUsername = strUsername;
+	}
+
+	public String getStrPassword() {
+		return strPassword;
+	}
+
+	public void setStrPassword(String strPassword) {
+		this.strPassword = strPassword;
+	}
+
 	/**
 	 * Establece la contraseña de un usuario.
 	 * @param strValue
@@ -77,6 +133,15 @@ public abstract class Usuario extends Persona
 		/*==================================================*/
 		return this.strUsername;
 	}
+	
+	public boolean soyUsuario(String strUsuario){
+		return this.strUsername==strUsuario;
+	}
+	
+	public boolean passwordVerificacion(String strUsuario, String strPassword){
+		return this.strUsername== strUsuario && this.strPassword == strPassword;
+	}
+	
 	/*==================================================*/
 	/*===================End Function===================*/
 	/*==================================================*/
