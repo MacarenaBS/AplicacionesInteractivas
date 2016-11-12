@@ -333,6 +333,7 @@ public abstract class Reclamo
 	/*==================================================*/
 	
 	public void agregarAcciones(ArrayList<Accion> acciones){
+		this.colAcciones = new ArrayList<Accion>(); //* Ver si trae problemas
 		this.colAcciones.addAll(acciones);
 	}
 }

@@ -10,6 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+import usuarios.Usuario;
 /*==================================================*/
 /*===================End Imports====================*/
 /*==================================================*/
@@ -43,7 +46,7 @@ public class MainScreen
 	 * Constructor for main JFrame. It will require log in credentials.
 	 * @throws IOException file not found
 	 */
-	public MainScreen ()
+	public MainScreen (Usuario us)
 	{
 		/*==================================================*/
 		/*================Create Java Frame=================*/
@@ -52,7 +55,7 @@ public class MainScreen
 		/*==================================================*/
 		/*===================Create Menus===================*/
 		/*==================================================*/
-		this.createMenus();
+		this.createMenus(us);
 		/*==================================================*/
 		/*============Add Elements To Java Frame============*/
 		/*==================================================*/
@@ -247,7 +250,7 @@ public class MainScreen
 	/**
 	 * Menu Call Center
 	 */
-	private void createMenuCallCente()
+	private void createMenuCallCenter()
 	{
 		/*==================================================*/
 		/*====================Variables=====================*/
@@ -290,7 +293,7 @@ public class MainScreen
 	/**
 	 * Create Menu for actions.
 	 */
-	private void createMenus()
+	private void createMenus(Usuario us)
 	{
 		/*==================================================*/
 		/*=================Create Menu Bar==================*/
@@ -299,21 +302,52 @@ public class MainScreen
 		/*==================================================*/
 		/*============Create Administrator Menu=============*/
 		/*==================================================*/
-		this.createMenuAdministrator();
+		
+		switch (us.getRol()){
+		case "Administrador":
+			this.createMenuAdministrator();
+			this.objMenuBar.add(this.objAdministradorMenu);
+			break;
+		case "CallCenter":
+			this.createMenuCallCenter();
+			this.objMenuBar.add(this.objCallCenterMenu);
+			break;
+		case "Consulta":
+			this.objConsultaMenu = new JMenu("Consulta");
+			this.objMenuBar.add(this.objConsultaMenu);
+			break;
+		case "ResponsableDistribucion":
+			this.objResponsableDistribucionMenu = new JMenu("Resp Distribución");
+			this.objMenuBar.add(this.objResponsableDistribucionMenu);
+			break;
+		case "ResponsableFacturacion":
+			this.objResponsableFactuacionMenu = new JMenu("Resp Facturación");
+			this.objMenuBar.add(this.objResponsableFactuacionMenu);
+			break;
+		case "ResponsableZonaDeEntrega":
+			this.objResponsableZonaDeEntregaMenu = new JMenu("Resp Zona De Entrega");
+			this.objMenuBar.add(this.objResponsableZonaDeEntregaMenu);
+			break;
+		default:
+			JOptionPane.showMessageDialog(null, "El usuario se encuentra mal configurado y no posee un rol acorde al sistema.", "Error", JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+//		this.createMenuAdministrator();
 		/*==================================================*/
 		/*=============Create Call Center Menu==============*/
 		/*==================================================*/
-		this.createMenuCallCente();
-		this.objConsultaMenu = new JMenu("Consulta");
-		this.objResponsableDistribucionMenu = new JMenu("Resp Distribución");
-		this.objResponsableFactuacionMenu = new JMenu("Resp Facturación");
-		this.objResponsableZonaDeEntregaMenu = new JMenu("Resp Zona De Entrega");
-		this.objMenuBar.add(this.objAdministradorMenu);
-		this.objMenuBar.add(this.objCallCenterMenu);
-		this.objMenuBar.add(this.objConsultaMenu);
-		this.objMenuBar.add(this.objResponsableDistribucionMenu);
-		this.objMenuBar.add(this.objResponsableFactuacionMenu);
-		this.objMenuBar.add(this.objResponsableZonaDeEntregaMenu);
+//		this.createMenuCallCente();
+//		this.objConsultaMenu = new JMenu("Consulta");
+//		this.objResponsableDistribucionMenu = new JMenu("Resp Distribución");
+//		this.objResponsableFactuacionMenu = new JMenu("Resp Facturación");
+//		this.objResponsableZonaDeEntregaMenu = new JMenu("Resp Zona De Entrega");
+//		this.objMenuBar.add(this.objAdministradorMenu);
+//		this.objMenuBar.add(this.objCallCenterMenu);
+//		this.objMenuBar.add(this.objConsultaMenu);
+//		this.objMenuBar.add(this.objResponsableDistribucionMenu);
+//		this.objMenuBar.add(this.objResponsableFactuacionMenu);
+//		this.objMenuBar.add(this.objResponsableZonaDeEntregaMenu);
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -342,21 +376,21 @@ public class MainScreen
 	/*==================================================*/
 	/*==================End Procedure===================*/
 	/*==================================================*/
-	public static void main(String[] args) throws Throwable
-	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
-		MainScreen obj;
-		/*==================================================*/
-		/*===================Create Login===================*/
-		/*==================================================*/
-		obj = new MainScreen();
-		/*==================================================*/
-		/*===================End Objects====================*/
-		/*==================================================*/
-		obj.finalize();
-	}
+//	public static void main(String[] args) throws Throwable
+//	{
+//		/*==================================================*/
+//		/*====================Variables=====================*/
+//		/*==================================================*/
+//		MainScreen obj;
+//		/*==================================================*/
+//		/*===================Create Login===================*/
+//		/*==================================================*/
+//		obj = new MainScreen();
+//		/*==================================================*/
+//		/*===================End Objects====================*/
+//		/*==================================================*/
+//		obj.finalize();
+//	}
 	/*==================================================*/
 	/*=====================End Main=====================*/
 	/*==================================================*/
