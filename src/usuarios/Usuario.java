@@ -139,7 +139,7 @@ public class Usuario
 	}
 	
 	public boolean passwordVerificacion(String strUsuario, String strPassword){
-		return this.strUsername== strUsuario && this.strPassword == strPassword;
+		return (this.strUsername.equals(strUsuario) && this.strPassword.equals(strPassword));
 	}
 	
 	/*==================================================*/

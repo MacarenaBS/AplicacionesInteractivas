@@ -7,16 +7,24 @@ package gui;
 /*==================================================*/
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import buttons.LoginButton;
+import controlador.Controlador;
+import exceptions.ConnectionException;
+import exceptions.ParameterException;
+import exceptions.UsuarioException;
 /*==================================================*/
 /*===================End Imports====================*/
 /*==================================================*/
@@ -41,9 +49,10 @@ public class Login
 	private JLabel objLabelTitle2;
 	private JLabel objLabelUserName;
 	private JLabel objLabelPassword;
+	private JButton objButtonLogin;
 	private JTextField objTextBoxUserName;
 	private JPasswordField objTextBoxPassword;
-	private LoginButton objButtonLogin;
+
 	private File objFile;
 	private BufferedImage objImage;
 	/*==================================================*/
@@ -320,9 +329,48 @@ public class Login
 	private void createLoginButton() throws IOException
 	{
 		/*==================================================*/
-		/*===============Create Login Button================*/
+		/*=============Create Password TextBox==============*/
 		/*==================================================*/
-		this.objButtonLogin = new LoginButton(160, 170);
+		this.objButtonLogin = new JButton("Login");
+		/*==================================================*/
+		/*============Set Password TextBox Size=============*/
+		/*==================================================*/
+		this.objButtonLogin.setSize(100, 20);
+		/*==================================================*/
+		/*============Set Password TextBox Font=============*/
+		/*==================================================*/
+		this.objButtonLogin.setFont(new Font("Arial", Font.PLAIN, 15));
+		/*==================================================*/
+		/*==========Set Password TextBox Location===========*/
+		/*==================================================*/
+		this.objButtonLogin.setLocation(160, 170);
+		/*==================================================*/
+		/*===============Add Action Listener================*/
+		/*==================================================*/
+		this.objButtonLogin.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					if (Controlador.getInstance().Connect(objTextBoxUserName.getText(), objTextBoxPassword.getText()))
+					{
+						MainScreen ms= new MainScreen(Controlador.getInstance().currentUser());
+						objFrame.dispose();
+						objFrame.setVisible(false);
+
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecta.", "Error", JOptionPane.WARNING_MESSAGE);
+					}
+				} catch (ConnectionException | ParameterException | UsuarioException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/
@@ -345,7 +393,7 @@ public class Login
 		this.objFrame.getContentPane().add(this.objLabelPassword);
 		this.objFrame.getContentPane().add(this.objTextBoxUserName);
 		this.objFrame.getContentPane().add(this.objTextBoxPassword);
-		this.objFrame.getContentPane().add(this.objButtonLogin.getButton());
+		this.objFrame.getContentPane().add(this.objButtonLogin);
 		/*==================================================*/
 		/*================Pack All Elements=================*/
 		/*==================================================*/

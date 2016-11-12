@@ -242,7 +242,7 @@ public class UsuariosDAO
 			/*==================================================*/
 			/*===================Get Productos==================*/
 			/*==================================================*/
-			objUsuariosRs = this.objConnection.getResultSet("SELECT * FROM Usuarios WHERE strNombre = ".concat(strUsuario));
+			objUsuariosRs = this.objConnection.getResultSet("SELECT * FROM Usuarios WHERE strNombre = '".concat(strUsuario).concat("'"));
 			/*==================================================*/
 			/*==============Verificar Si Encontró===============*/
 			/*==================================================*/
