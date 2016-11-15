@@ -479,9 +479,9 @@ public class MainScreen
 		cbPermisos.addItem("Administrador");
 		cbPermisos.addItem("CallCenter");
 		cbPermisos.addItem("Consulta");
-		cbPermisos.addItem("R. Distribución");
-		cbPermisos.addItem("R. Facturación");
-		cbPermisos.addItem("R. Zona Entrega");
+		cbPermisos.addItem("ResponsableDistribucion");
+		cbPermisos.addItem("ResponsableFacturacion");
+		cbPermisos.addItem("ResponsableZonaDeEntrega");
 		
 		cbPermisos.setBounds(280, 160, 150, 25);
 		this.objFrame.getContentPane().add(cbPermisos);
