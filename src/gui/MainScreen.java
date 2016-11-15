@@ -2,16 +2,34 @@
 /*=====================Package======================*/
 /*==================================================*/
 package gui;
+import java.awt.Container;
 /*==================================================*/
 /*=====================Imports======================*/
 /*==================================================*/
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
+import connections.UsuariosDAO;
+import controlador.Controlador;
 import usuarios.Usuario;
 /*==================================================*/
 /*===================End Imports====================*/
@@ -39,6 +57,10 @@ public class MainScreen
 	private JMenu objResponsableDistribucionMenu;
 	private JMenu objResponsableFactuacionMenu;
 	private JMenu objResponsableZonaDeEntregaMenu;
+	private Font title, labels;
+	private Usuario usuario;
+	
+	
 	/*==================================================*/
 	/*===================Constructor====================*/
 	/*==================================================*/
@@ -48,6 +70,9 @@ public class MainScreen
 	 */
 	public MainScreen (Usuario us)
 	{
+		this.usuario= us;
+		this.title= new Font("Georgia", Font.BOLD, 30);
+		this.labels=new Font("Arial",Font.BOLD,12);
 		/*==================================================*/
 		/*================Create Java Frame=================*/
 		/*==================================================*/
@@ -198,6 +223,7 @@ public class MainScreen
 		JMenuItem objAlta;
 		JMenuItem objBaja;
 		JMenuItem objModificacion;
+		JFrame objFrame= this.objFrame;
 		/*==================================================*/
 		/*==================Crear Sub Menu==================*/
 		/*==================================================*/
@@ -209,6 +235,19 @@ public class MainScreen
 		objBaja = new JMenuItem("Baja");
 		objModificacion = new JMenuItem("Modificación");
 		/*==================================================*/
+		/*=================Agregar Comportamiento=================*/
+		/*==================================================*/
+		objAlta.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("ALTA USUARIO");
+				createUserWindow();
+				objFrame.repaint();
+			}
+			
+		});
+		/*==================================================*/
 		/*==================Agregar Items===================*/
 		/*==================================================*/
 		objMenu.add(objAlta);
@@ -217,6 +256,7 @@ public class MainScreen
 		/*==================================================*/
 		/*=================Agregar Sub Menu=================*/
 		/*==================================================*/
+		
 		this.objAdministradorMenu.add(objMenu);
 	}
 	/*==================================================*/
@@ -367,11 +407,160 @@ public class MainScreen
 		/*==================================================*/
 		/*================Pack All Elements=================*/
 		/*==================================================*/
+		
 		this.objFrame.pack();
 		/*==================================================*/
 		/*================Make Frame Visible================*/
 		/*==================================================*/
 		this.objFrame.setVisible(true);
+	}
+	
+	private void createUserWindow(){
+		JLabel lblTitulo, lblUsername, lblPassword, lblReingresarPassword, lblPermisos, lblError;
+		JTextField txtFieldUsername; 
+		JComboBox cbPermisos;
+		JPasswordField passFieldPassword, passFieldReingresarPassword;
+		JButton btnAceptar, btnCancelar;
+		JFrame objFrame= this.objFrame;
+		Usuario us= this.usuario;
+		
+		lblError= new JLabel("<html><font color=\"red\">Las contraseñas no coinciden.</font></html>");
+		
+		this.objFrame.getContentPane().removeAll();
+		
+	
+		lblTitulo= new JLabel ("Crear usuario");
+		lblTitulo.setFont(this.title);
+		lblTitulo.setBounds(190, 5, 300, 50);
+		this.objFrame.getContentPane().add(lblTitulo);
+		
+		//////////////USERNAME////////////////
+		lblUsername =new JLabel("Nombre del usuario:");
+		lblUsername.setFont(this.labels);
+		lblUsername.setBounds(150, 75, 150, 10);
+		this.objFrame.getContentPane().add(lblUsername);
+		
+		txtFieldUsername= new JTextField();
+		txtFieldUsername.setBounds(280, 70, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldUsername);
+	
+		////////////////////////////////////////
+		
+		
+		///////////PASSWORD//////////////////
+		lblPassword= new JLabel ("Password:");
+		lblPassword.setFont(this.labels);
+		lblPassword.setBounds(150, 105, 150, 10);
+		this.objFrame.getContentPane().add(lblPassword);
+		
+		passFieldPassword= new JPasswordField();
+		passFieldPassword.setBounds(280, 100, 150, 25);
+		this.objFrame.getContentPane().add(passFieldPassword);
+		
+		lblReingresarPassword= new JLabel ("Reingreso:");
+		lblReingresarPassword.setFont(this.labels);
+		lblReingresarPassword.setBounds(150, 135, 150, 15);
+		this.objFrame.getContentPane().add(lblReingresarPassword);
+		
+		passFieldReingresarPassword= new JPasswordField();
+		passFieldReingresarPassword.setBounds(280, 130, 150, 25);
+		passFieldReingresarPassword.setToolTipText("Reingrese la contraseña para confirmación");
+		this.objFrame.getContentPane().add(passFieldReingresarPassword);
+		
+		///////////////////////////////////
+		
+		////////Permisos////////////////
+		lblPermisos= new JLabel ("Permiso:");
+		lblPermisos.setFont(this.labels);
+		lblPermisos.setBounds(150, 165, 150, 15);
+		this.objFrame.getContentPane().add(lblPermisos);
+		
+		cbPermisos= new JComboBox();
+		cbPermisos.addItem("Administrador");
+		cbPermisos.addItem("CallCenter");
+		cbPermisos.addItem("Consulta");
+		cbPermisos.addItem("R. Distribución");
+		cbPermisos.addItem("R. Facturación");
+		cbPermisos.addItem("R. Zona Entrega");
+		
+		cbPermisos.setBounds(280, 160, 150, 25);
+		this.objFrame.getContentPane().add(cbPermisos);
+		
+		////////////////////////////////////
+		
+		///////////Botones////////////////
+		btnAceptar = new JButton("Crear");
+		
+		btnAceptar.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				objFrame.repaint();
+				
+				if (txtFieldUsername.getText().isEmpty() || txtFieldUsername.getText() == null || 
+						passFieldPassword.getText().isEmpty() || passFieldPassword.getText() == null ||
+						passFieldReingresarPassword.getText().isEmpty() || passFieldReingresarPassword.getText()==null)
+				{
+					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (!passFieldPassword.getText().equals(passFieldReingresarPassword.getText()))
+				{
+					System.out.println("NO MATCH");
+					File objFile = new File("images\\ErrorIcon.png");
+					Image objImage;
+					try {
+						objImage = ImageIO.read(objFile).getScaledInstance(20, 20, 0);
+						JLabel lblErrorIcon = new JLabel(new ImageIcon(objImage));
+						lblErrorIcon.setBounds(370, 130, 150, 25);
+						objFrame.getContentPane().add(lblErrorIcon);
+						objFrame.getContentPane().add(lblError).setBounds(465, 130, 150, 30);
+						objFrame.repaint();
+						
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, "Error. Contacte al administrador.", "Error 304", JOptionPane.ERROR_MESSAGE);
+					}
+					return;
+				}
+				
+				if (txtFieldUsername.getText().equals(passFieldPassword.getText())){
+					JOptionPane.showMessageDialog(null, "El usuario y la contraseña no pueden ser iguales.", "Error", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+				if(Controlador.getInstance().crearUsuario(txtFieldUsername.getText(), passFieldPassword.getText(), cbPermisos.getSelectedItem().toString()))
+				{
+					JOptionPane.showMessageDialog(null, "¡Usuario creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+					createUserWindow();
+					
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Error creando el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+					createUserWindow();
+				}
+				
+			}
+			
+		});
+		
+		this.objFrame.getContentPane().add(btnAceptar).setBounds(150, 200, 140, 25);
+		
+		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				objFrame.getContentPane().removeAll();
+				objFrame.repaint();
+				
+			}
+			
+		});
+		this.objFrame.getContentPane().add(btnCancelar).setBounds(290, 200, 140, 25);
+
+		this.objFrame.repaint();
+	
 	}
 	/*==================================================*/
 	/*==================End Procedure===================*/

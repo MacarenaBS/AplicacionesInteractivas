@@ -29,9 +29,9 @@ public class Controlador {
 		return UsuariosDAO.getInstance().getUsuario(strUsername);
 	}
 	
-	private boolean verificacionPasswordUsuario(String strUsername, String strPassword){
-		return objUsuario.passwordVerificacion(strUsername, strPassword);
-	}
+//	private boolean verificacionPasswordUsuario(String strUsername, String strPassword){
+//		return objUsuario.passwordVerificacion(strUsername, strPassword);
+//	}
 	
 	public boolean Connect(String strUsername, String strPassword) throws ConnectionException, ParameterException, UsuarioException{
 
@@ -39,7 +39,7 @@ public class Controlador {
 			Usuario s= getUser(strUsername);
 			this.objUsuario= s;
 			
-			if (this.verificacionPasswordUsuario(strUsername,strPassword)){
+			if (this.objUsuario.passwordVerificacion(strUsername,strPassword)){
 				System.out.println("Connection succesful - Welcome "+s.getStrUsername());
 				return true;
 			}
@@ -65,6 +65,21 @@ public class Controlador {
 	
 	public void disconnect(){
 		this.objUsuario=null;
+	}
+	
+	public boolean crearUsuario(String strUsername, String strPassword, String strPermiso)
+	{
+		Usuario s= new Usuario(strUsername, strPassword, strPermiso);
+		try {
+			UsuariosDAO.getInstance().insertar(s);
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+		
 	}
 
 		
