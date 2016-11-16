@@ -2,12 +2,16 @@ package controlador;
 
 import java.util.Vector;
 
+import connections.ProductosDAO;
 import connections.UsuariosDAO;
+import exceptions.ClienteException;
 import exceptions.ConnectionException;
+import exceptions.FacturasException;
 import exceptions.ParameterException;
+import exceptions.ProductosException;
 import exceptions.UsuarioException;
+import model.Producto;
 import usuarios.*;
-import usuarios.Usuario;
 
 public class Controlador {
 	
@@ -16,6 +20,8 @@ public class Controlador {
 	private Vector<Rol> roles;
 	
 	private Controlador(){
+		
+		Vector<Rol> roles= new Vector<Rol>();
 		
 		Administrador admin = new Administrador();
 		roles.add(admin);
@@ -41,14 +47,10 @@ public class Controlador {
 		}
 		return instance; 
 	}
-	
-	private Usuario getUser(String strUsername) throws ConnectionException, ParameterException, UsuarioException{
+	/**DEBERIAMOS DEVOLVER VIEWS**/
+	public Usuario getUser(String strUsername) throws ConnectionException, ParameterException, UsuarioException{
 		return UsuariosDAO.getInstance().getUsuario(strUsername);
 	}
-	
-//	private boolean verificacionPasswordUsuario(String strUsername, String strPassword){
-//		return objUsuario.passwordVerificacion(strUsername, strPassword);
-//	}
 	
 	public boolean Connect(String strUsername, String strPassword) throws ConnectionException, ParameterException, UsuarioException{
 
@@ -85,8 +87,7 @@ public class Controlador {
 	}
 	
 	public boolean crearUsuario(String strUsername, String strPassword, String strPermiso)
-	{
-		
+	{	
 		Usuario s= new Usuario(strUsername, strPassword, strPermiso);
 		try {
 			UsuariosDAO.getInstance().insertar(s);
@@ -166,6 +167,41 @@ public class Controlador {
 		}
 	}
 	
+	public boolean crearProducto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado)
+	{
+		Producto p= new Producto(strTitulo, strDescripcion, fltPrecio, bolEstado);
+		try {
+			ProductosDAO.getInstance().insertar(p);
+			return true;
+		} catch (ConnectionException | ClienteException | ParameterException | FacturasException
+				| ProductosException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public Producto getProducto(int intNumero){
+		try {
+			return ProductosDAO.getInstance().getProducto(intNumero);
+		} catch (ConnectionException | ClienteException | ParameterException | ProductosException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public boolean eliminarProducto(int intnumero){
+		Producto p= getProducto(intnumero);
+		try {
+			ProductosDAO.getInstance().eliminar(p);
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
 	
 
 		
