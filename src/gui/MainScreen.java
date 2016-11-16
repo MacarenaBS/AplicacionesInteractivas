@@ -247,6 +247,18 @@ public class MainScreen
 			}
 			
 		});
+		
+		objModificacion.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("MODIFICAR USUARIO");
+				ModifyUserWindow();
+				objFrame.repaint();
+				
+			}
+			
+		});
 		/*==================================================*/
 		/*==================Agregar Items===================*/
 		/*==================================================*/
@@ -562,24 +574,191 @@ public class MainScreen
 		this.objFrame.repaint();
 	
 	}
+	
+	private void ModifyUserWindow(){
+		JLabel lblTitulo, lblUsername, lblPassword, lblReingresarPassword, lblPermisos, lblError;
+		JTextField txtFieldUsername; 
+		JComboBox cbPermisos;
+		JPasswordField passFieldPassword, passFieldReingresarPassword;
+		JButton btnAceptar, btnCancelar, btnBuscar;
+		JFrame objFrame= this.objFrame;
+		Usuario us= this.usuario;
+		
+		lblError= new JLabel("<html><font color=\"red\">Las contraseñas no coinciden.</font></html>");
+		
+		this.objFrame.getContentPane().removeAll();
+		
+	
+		lblTitulo= new JLabel ("Modificar usuario");
+		lblTitulo.setFont(this.title);
+		lblTitulo.setBounds(190, 5, 300, 50);
+		this.objFrame.getContentPane().add(lblTitulo);
+		
+		//////////////USERNAME////////////////
+		lblUsername =new JLabel("Nombre del usuario:");
+		lblUsername.setFont(this.labels);
+		lblUsername.setBounds(150, 75, 150, 10);
+		this.objFrame.getContentPane().add(lblUsername);
+		
+		txtFieldUsername= new JTextField();
+		txtFieldUsername.setBounds(280, 70, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldUsername);
+	
+		////////////////////////////////////////
+		
+		btnBuscar= new JButton("Buscar");
+		btnBuscar.setBounds(447, 70, 100, 25);
+		this.objFrame.getContentPane().add(btnBuscar);
+		
+		btnBuscar.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//Buscar  el usuario
+				//Si  lo encuentra
+				txtFieldUsername.setEditable(false);
+				JLabel lblPassword= new JLabel ("Password:"); //*
+				lblPassword.setBounds(150, 105, 150, 10);
+				objFrame.getContentPane().add(lblPassword);
+				
+				JPasswordField passFieldPassword= new JPasswordField();
+				passFieldPassword.setBounds(280, 100, 150, 25);
+				objFrame.getContentPane().add(passFieldPassword);
+				
+				JLabel lblReingresarPassword= new JLabel ("Reingreso:");
+//				lblReingresarPassword.setFont(this.labels);
+				lblReingresarPassword.setBounds(150, 135, 150, 15);
+				objFrame.getContentPane().add(lblReingresarPassword);
+				
+				JPasswordField passFieldReingresarPassword= new JPasswordField();
+				passFieldReingresarPassword.setBounds(280, 130, 150, 25);
+				passFieldReingresarPassword.setToolTipText("Reingrese la contraseña para confirmación");
+				objFrame.getContentPane().add(passFieldReingresarPassword);
+				
+				///////////////////////////////////
+				
+				////////Permisos////////////////
+				JLabel lblPermisos= new JLabel ("Permiso:");
+//				lblPermisos.setFont(this.labels);
+				lblPermisos.setBounds(150, 165, 150, 15);
+				objFrame.getContentPane().add(lblPermisos);
+				
+				JComboBox cbPermisos= new JComboBox();
+				cbPermisos.addItem("Administrador");
+				cbPermisos.addItem("CallCenter");
+				cbPermisos.addItem("Consulta");
+				cbPermisos.addItem("ResponsableDistribucion");
+				cbPermisos.addItem("ResponsableFacturacion");
+				cbPermisos.addItem("ResponsableZonaDeEntrega");
+				
+				cbPermisos.setBounds(280, 160, 150, 25);
+				objFrame.getContentPane().add(cbPermisos);
+				
+				////////////////////////////////////
+				JButton btnAceptar = new JButton("Crear");
+				
+				btnAceptar.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						objFrame.repaint();
+						
+						if (txtFieldUsername.getText().isEmpty() || txtFieldUsername.getText() == null || 
+								passFieldPassword.getText().isEmpty() || passFieldPassword.getText() == null ||
+								passFieldReingresarPassword.getText().isEmpty() || passFieldReingresarPassword.getText()==null)
+						{
+							JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						
+						if (!passFieldPassword.getText().equals(passFieldReingresarPassword.getText()))
+						{
+							System.out.println("NO MATCH");
+							File objFile = new File("images\\ErrorIcon.png");
+							Image objImage;
+							try {
+								objImage = ImageIO.read(objFile).getScaledInstance(20, 20, 0);
+								JLabel lblErrorIcon = new JLabel(new ImageIcon(objImage));
+								lblErrorIcon.setBounds(370, 130, 150, 25);
+								objFrame.getContentPane().add(lblErrorIcon);
+								objFrame.getContentPane().add(lblError).setBounds(465, 130, 150, 30);
+								objFrame.repaint();
+								
+							} catch (IOException e1) {
+								JOptionPane.showMessageDialog(null, "Error. Contacte al administrador.", "Error 304", JOptionPane.ERROR_MESSAGE);
+							}
+							return;
+						}
+						
+						if (txtFieldUsername.getText().equals(passFieldPassword.getText())){
+							JOptionPane.showMessageDialog(null, "El usuario y la contraseña no pueden ser iguales.", "Error", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						
+/**Modificar**/			if(Controlador.getInstance().crearUsuario(txtFieldUsername.getText(), passFieldPassword.getText(), cbPermisos.getSelectedItem().toString()))
+						{
+							JOptionPane.showMessageDialog(null, "¡Usuario modificado con exito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+							createUserWindow();
+							
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Error modificando el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+							createUserWindow();
+						}
+						
+					}
+					
+				});
+				
+				objFrame.getContentPane().add(btnAceptar).setBounds(150, 200, 140, 25);
+				
+				JButton btnCancelar = new JButton("Cancelar");
+				btnCancelar.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						objFrame.getContentPane().removeAll();
+						objFrame.repaint();
+						
+					}
+					
+				});
+				objFrame.getContentPane().add(btnCancelar).setBounds(290, 200, 140, 25);
+				objFrame.repaint();
+			}
+			
+			
+		});
+		
+		
+		
+		///////////Botones////////////////
+		
+
+		this.objFrame.repaint();
+	
+	}
+	
+	
 	/*==================================================*/
 	/*==================End Procedure===================*/
 	/*==================================================*/
-//	public static void main(String[] args) throws Throwable
-//	{
-//		/*==================================================*/
-//		/*====================Variables=====================*/
-//		/*==================================================*/
-//		MainScreen obj;
-//		/*==================================================*/
-//		/*===================Create Login===================*/
-//		/*==================================================*/
-//		obj = new MainScreen();
-//		/*==================================================*/
-//		/*===================End Objects====================*/
-//		/*==================================================*/
-//		obj.finalize();
-//	}
+	public static void main(String[] args) throws Throwable
+	{
+		/*==================================================*/
+		/*====================Variables=====================*/
+		/*==================================================*/
+		MainScreen obj;
+		Usuario u= new Usuario("admin","admin","Administrador");
+		/*==================================================*/
+		/*===================Create Login===================*/
+		/*==================================================*/
+		obj = new MainScreen(u);
+		/*==================================================*/
+		/*===================End Objects====================*/
+		/*==================================================*/
+		obj.finalize();
+	}
 	/*==================================================*/
 	/*=====================End Main=====================*/
 	/*==================================================*/
