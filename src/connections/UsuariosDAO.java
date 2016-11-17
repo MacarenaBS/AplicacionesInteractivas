@@ -3,18 +3,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
 import connections.Database;
-import exceptions.ClienteException;
 import exceptions.ConnectionException;
-import exceptions.FacturasException;
 import exceptions.ParameterException;
-import exceptions.ProductosException;
 import exceptions.UsuarioException;
-import model.Factura;
-import model.Producto;
 import usuarios.Usuario;
 public class UsuariosDAO
 {

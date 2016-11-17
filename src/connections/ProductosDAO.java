@@ -12,7 +12,6 @@ import exceptions.ConnectionException;
 import exceptions.FacturasException;
 import exceptions.ParameterException;
 import exceptions.ProductosException;
-import model.Factura;
 import model.Producto;
 public class ProductosDAO
 {
