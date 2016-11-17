@@ -29,12 +29,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import connections.ClientesDAO;
+import connections.ProductosDAO;
 import connections.UsuariosDAO;
 import controlador.Controlador;
 import exceptions.ConnectionException;
 import exceptions.ParameterException;
 import exceptions.UsuarioException;
 import model.Producto;
+import usuarios.Cliente;
 import usuarios.Usuario;
 /*==================================================*/
 /*===================End Imports====================*/
@@ -50,7 +53,7 @@ public class MainScreen
 	/*====================Constants=====================*/
 	/*==================================================*/
 	private final int intWidth = 600;
-	private final int intHeight = 300;
+	private final int intHeight = 350;
 	/*==================================================*/
 	/*====================Variables=====================*/
 	/*==================================================*/
@@ -166,6 +169,18 @@ public class MainScreen
 		objMenu.add(objAlta);
 		objMenu.add(objBaja);
 		objMenu.add(objModificacion);
+		
+		objAlta.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Alta cliente");
+				CreateClientWindow();
+				objFrame.repaint();
+				
+			}
+			
+		});
 		/*==================================================*/
 		/*=================Agregar Sub Menu=================*/
 		/*==================================================*/
@@ -225,6 +240,17 @@ public class MainScreen
 				ModifyProductWindow();
 				objFrame.repaint();
 				
+			}
+			
+		});
+		
+		objBaja.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Eliminar Producto");
+				DeleteProductWindow();
+				objFrame.repaint();
 			}
 			
 		});
@@ -763,13 +789,13 @@ public class MainScreen
 /**Modificar**/			if(Controlador.getInstance().modificarUsuario(txtFieldUsername.getText(), passFieldPassword.getText(), cbPermisos.getSelectedItem().toString()))
 						{
 							JOptionPane.showMessageDialog(null, "¡Usuario modificado con exito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
-							createUserWindow();
+							ModifyUserWindow();
 							
 						}
 						else
 						{
 							JOptionPane.showMessageDialog(null, "Error modificando el usuario", "Error", JOptionPane.ERROR_MESSAGE);
-							createUserWindow();
+							ModifyUserWindow();
 						}
 						
 					}
@@ -869,11 +895,12 @@ public class MainScreen
 				if(Controlador.getInstance().eliminarUsuario(txtFieldUsername.getText()))
 				{
 					JOptionPane.showMessageDialog(null, "Usuario eliminado con exito", "¡Enhorabuena!", JOptionPane.INFORMATION_MESSAGE);
-					ModifyUserWindow();
+					DeleteUserWindow();
 				}
 				else
 				{
 					JOptionPane.showMessageDialog(null, "Hubo un problema al eliminar el usuario.", "Error", JOptionPane.ERROR_MESSAGE);
+					DeleteUserWindow();
 				}
 
 				
@@ -1077,7 +1104,7 @@ public class MainScreen
 				lblPrecio.setBounds(150, 165, 150, 15);
 				objFrame.getContentPane().add(lblPrecio);
 				
-				JTextField txtFieldPrecio= new JTextField();
+				JTextField txtFieldPrecio= new JTextField(""+p.getPrecio());
 				txtFieldPrecio.setBounds(280, 165, 150, 25);
 				objFrame.getContentPane().add(txtFieldPrecio);
 				////////////////////////////////////
@@ -1098,7 +1125,20 @@ public class MainScreen
 				btnAceptar.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						objFrame.repaint();
+						p.setDescripcion(txtFieldDescripcion.getText());
+						p.setPrecio(Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")));
+						p.setTitulo(txtFieldProducto.getText());
+						p.setBolActivo(cbEstado.isSelected());
+						try {
+							ProductosDAO.getInstance().modificarProducto(p);
+							JOptionPane.showMessageDialog(null, "¡Producto modificado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+							ModifyProductWindow();
+						} catch (ConnectionException | ParameterException e1) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, "Error modificando el producto", "Error", JOptionPane.ERROR_MESSAGE);
+							ModifyProductWindow();
+						}
+						
 					}
 				});
 				
@@ -1260,6 +1300,142 @@ public class MainScreen
 				
 	}
 	
+	private void CreateClientWindow(){
+		JLabel lblTitulo, lblNombre, lblDNI, lblDomicilio, lblTelefono, lblMail,lblEstado;
+		JTextField txtFieldNombre,txtFieldDNI,txtFieldDomicilio,txtFieldTelefono, txtFieldMail; 
+		JCheckBox cbEstado;
+		JButton btnAceptar, btnCancelar;
+		JFrame objFrame= this.objFrame;
+		Usuario us= this.usuario;
+		
+		this.objFrame.getContentPane().removeAll();
+		
+	
+		lblTitulo= new JLabel ("Crear Cliente");
+		lblTitulo.setFont(this.title);
+		lblTitulo.setBounds(190, 5, 300, 50);
+		this.objFrame.getContentPane().add(lblTitulo);
+		
+		//////////////PRODUCTO////////////////
+		lblNombre =new JLabel("Nombre:");
+		lblNombre.setFont(this.labels);
+		lblNombre.setBounds(150, 75, 150, 10);
+		this.objFrame.getContentPane().add(lblNombre);
+		
+		txtFieldNombre= new JTextField();
+		txtFieldNombre.setBounds(280, 70, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldNombre);
+	
+		////////////////////////////////////////
+		
+		
+		///////////DESCRIPCION//////////////////
+		lblDNI= new JLabel ("DNI:");
+		lblDNI.setFont(this.labels);
+		lblDNI.setBounds(150, 105, 150, 10);
+		this.objFrame.getContentPane().add(lblDNI);
+		
+		txtFieldDNI= new JTextField();
+		txtFieldDNI.setBounds(280, 100, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldDNI);
+		
+		///////////////////////////////////
+		
+		////////PRECIO////////////////
+		lblDomicilio= new JLabel ("Domicilio:");
+		lblDomicilio.setFont(this.labels);
+		lblDomicilio.setBounds(150, 135, 150, 15);
+		this.objFrame.getContentPane().add(lblDomicilio);
+		
+		txtFieldDomicilio= new JTextField();
+		txtFieldDomicilio.setBounds(280, 130, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldDomicilio);
+		////////////////////////////////////
+		
+		////////TELEFONO////////////////////
+		lblTelefono= new JLabel ("Telefono:");
+		lblTelefono.setFont(this.labels);
+		lblTelefono.setBounds(150, 165, 150, 15);
+		this.objFrame.getContentPane().add(lblTelefono);
+		
+		txtFieldTelefono= new JTextField();
+		txtFieldTelefono.setBounds(280, 160, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldTelefono);
+		
+		lblMail= new JLabel ("Mail:");
+		lblMail.setFont(this.labels);
+		lblMail.setBounds(150, 195, 150, 15);
+		this.objFrame.getContentPane().add(lblMail);
+		
+		txtFieldMail= new JTextField();
+		txtFieldMail.setBounds(280, 190, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldMail);
+		
+		lblEstado= new JLabel ("Estado:");
+		lblEstado.setFont(this.labels);
+		lblEstado.setBounds(150, 225, 150, 15);
+		this.objFrame.getContentPane().add(lblEstado);
+		
+		cbEstado= new JCheckBox();
+		cbEstado.setBounds(343, 220, 150, 25);
+		cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+		cbEstado.setSelected(true);
+		this.objFrame.getContentPane().add(cbEstado);
+		
+		///////////Botones////////////////
+		btnAceptar = new JButton("Crear");
+		
+		btnAceptar.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				objFrame.repaint();
+				
+				if (txtFieldNombre.getText().isEmpty() || txtFieldNombre.getText() == null || 
+						txtFieldDNI.getText().isEmpty() || txtFieldDNI.getText() == null ||
+								txtFieldDomicilio.getText().isEmpty() || txtFieldDomicilio.getText()==null ||
+								txtFieldTelefono.getText().isEmpty() || txtFieldTelefono.getText()==null ||
+								txtFieldMail.getText().isEmpty() || txtFieldMail.getText()==null
+								)
+				{
+					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				
+				if(Controlador.getInstance().crearCliente(txtFieldNombre.getText(),Integer.parseInt(txtFieldDNI.getText()),txtFieldDomicilio.getText(), txtFieldTelefono.getText(),txtFieldMail.getText()))
+				{
+					JOptionPane.showMessageDialog(null, "¡Cliente creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+					CreateClientWindow();
+					
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Error creando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
+					CreateClientWindow();
+				}
+				
+			}
+			
+		});
+		
+		this.objFrame.getContentPane().add(btnAceptar).setBounds(150, 250, 140, 25);
+		
+		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				objFrame.getContentPane().removeAll();
+				objFrame.repaint();
+				
+			}
+			
+		});
+		this.objFrame.getContentPane().add(btnCancelar).setBounds(290, 250, 140, 25);
+
+		this.objFrame.repaint();
+	
+	}
 	
 	public static void main(String[] args) throws Throwable
 	{

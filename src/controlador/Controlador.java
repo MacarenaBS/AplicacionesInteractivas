@@ -2,6 +2,7 @@ package controlador;
 
 import java.util.Vector;
 
+import connections.ClientesDAO;
 import connections.ProductosDAO;
 import connections.UsuariosDAO;
 import exceptions.ClienteException;
@@ -21,7 +22,7 @@ public class Controlador {
 	
 	private Controlador(){
 		
-		Vector<Rol> roles= new Vector<Rol>();
+		roles= new Vector<Rol>();
 		
 		Administrador admin = new Administrador();
 		roles.add(admin);
@@ -99,9 +100,10 @@ public class Controlador {
 		
 		for (Rol rol: roles)
 		{
-			if (rol.getClass().getSimpleName() == strPermiso)
+			if (rol.getClass().getSimpleName().equals(strPermiso))
 			{
 				rol.addUsuario(s);
+				break;
 			}
 		}
 		
@@ -203,7 +205,18 @@ public class Controlador {
 		return true;
 	}
 	
-
+	public boolean crearCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail)
+	{
+		Cliente c= new Cliente(strNombre,intDNI,strDomicilio,strTelefono,strMail);
+		try {
+			ClientesDAO.getInstance().insertar(c);
+			return true;
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
 		
 		
 }

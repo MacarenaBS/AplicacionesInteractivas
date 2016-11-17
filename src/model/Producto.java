@@ -294,6 +294,14 @@ public class Producto
 	/*==================================================*/
 	/*===================End Function===================*/
 	/*==================================================*/
+
+	public Boolean getBolActivo() {
+		return bolActivo;
+	}
+
+	public void setBolActivo(Boolean bolActivo) {
+		this.bolActivo = bolActivo;
+	}
 }
 /*==================================================*/
 /*====================End Class=====================*/
