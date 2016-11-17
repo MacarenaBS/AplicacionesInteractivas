@@ -84,4 +84,9 @@ public class Administrador extends Rol
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public boolean soyAdministrador(){
+		
+		return true; 
+	}
 }

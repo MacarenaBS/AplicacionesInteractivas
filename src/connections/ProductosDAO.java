@@ -358,8 +358,8 @@ public class ProductosDAO
 			this.objConnection.executeQuery("UPDATE Productos SET strTitulo = '".concat(
 											objProducto.getTitulo()).concat("', strDescripcion = '").concat(
 											objProducto.getDescripcion()).concat("', fltPrecio = ").concat(
-											String.valueOf(objProducto.getPrecio())).concat(", bolActivo = ").concat(
-											String.valueOf(1)).concat(" WHERE intCodigo = ").concat(String.valueOf(objProducto.getCodigo())));
+											String.valueOf(objProducto.getPrecio())).concat(", bolActivo = ").concat(objProducto.getBolActivo()?
+											String.valueOf(1): String.valueOf(0)).concat(" WHERE intCodigo = ").concat(String.valueOf(objProducto.getCodigo())));
 		}
 		catch (SQLException objException)
 		{

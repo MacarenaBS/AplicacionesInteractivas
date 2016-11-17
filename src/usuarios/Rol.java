@@ -37,6 +37,25 @@ public abstract class Rol
 	 * @param strNumero Número del reclamo a cerrar
 	 */
 	public abstract void cerrarReclamo(String strNumero);
+	
+	public void addUsuario(Usuario us)
+	{
+		if (!this.colUsuarios.contains(us))
+		{
+			this.colUsuarios.add(us);
+		}
+	}
+	
+	public void removeUsuario(Usuario us)
+	{
+		for (Usuario usuario : colUsuarios)
+		{
+			if (us.getStrUsername().equals(usuario.getStrUsername()))
+			{
+				this.colUsuarios.remove(us);
+			}
+		}
+	}
 }
 /*==================================================*/
 /*====================End Class=====================*/

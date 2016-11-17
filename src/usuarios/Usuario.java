@@ -13,7 +13,7 @@ public class Usuario
 	/*==================================================*/
 	private String strUsername;
 	private String strPassword;
-//	private Rol objRol;
+	private Rol objRol;
 	private String strRol;
 	
 	
@@ -40,21 +40,21 @@ public class Usuario
 		this.strRol = strRol;
 	}
 	
-//	/**
-//	 * Devuelve el rol de un usuario.
-//	 * @return Rol objRol
-//	 */
-//	public Rol getRol() {
-//		return this.objRol;
-//	}
-//
-//	/**
-//	 * Establece elrol de un usuario.
-//	 * @param objRol
-//	 */
-//	public void setRol(Rol objRol) {
-//		this.objRol = objRol;
-//	}
+	/**
+	 * Devuelve el rol de un usuario.
+	 * @return Rol objRol
+	 */
+	public Rol getRol1() {
+		return this.objRol;
+	}
+
+	/**
+	 * Establece elrol de un usuario.
+	 * @param objRol
+	 */
+	public void setRol(Rol objRol) {
+		this.objRol = objRol;
+	}
 
 	public String getStrUsername() {
 		return strUsername;
