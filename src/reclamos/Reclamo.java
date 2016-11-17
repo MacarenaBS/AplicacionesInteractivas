@@ -247,7 +247,6 @@ public abstract class Reclamo
 		if (!this.colAcciones.contains(objAccion)){
 			this.colAcciones.add(objAccion);
 		}
-		
 		/*==================================================*/
 		/*=======Insertar Acción en la base de datos========*/
 		/*==================================================*/

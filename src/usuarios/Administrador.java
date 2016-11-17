@@ -38,13 +38,13 @@ public class Administrador extends Rol
 		objCliente = new Cliente(strNombre,intDni,strDomicilio,strTelefono,strMail);
 		ClientesDAO.getInstance().insertar(objCliente);
 	}
-	public void bajaCliente(Integer intCodCliente) throws ConnectionException, ParameterException, ClienteException
+	public void bajaCliente(String strCodCliente) throws ConnectionException, ParameterException, ClienteException
 	{
-		ClientesDAO.getInstance().eliminar(ClientesDAO.getInstance().getCliente(intCodCliente));
+		ClientesDAO.getInstance().eliminar(ClientesDAO.getInstance().getCliente(strCodCliente));
 	}
-	public void modificacionCliente(Integer intCodCliente, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, boolean bolEstado) throws ConnectionException, ParameterException
+	public void modificacionCliente(String strCodCliente, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, boolean bolEstado) throws ConnectionException, ParameterException
 	{
-		ClientesDAO.getInstance().modificarCliente(new Cliente(intCodCliente, strNombre, intDNI, strDomicilio, strTelefono, strMail,  bolEstado));
+		ClientesDAO.getInstance().modificarCliente(new Cliente(strCodCliente, strNombre, intDNI, strDomicilio, strTelefono, strMail,  bolEstado));
 	}
 	public void altaProducto(String strTitulo, String strDescripcion, float fltPrecio) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
 	{

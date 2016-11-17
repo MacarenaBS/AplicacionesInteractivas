@@ -53,10 +53,10 @@ public class UsuariosDAO
 	}
 	private Usuario getFromCache(String strUsuario)
 	{
-		for (Usuario u: this.colUsuarios)
+		for (Usuario objUsuario: this.colUsuarios)
 		{
-			if (u.soyUsuario(strUsuario))
-				return u;
+			if (objUsuario.soyUsuario(strUsuario))
+				return objUsuario;
 		}
 		return null; 
 	}
