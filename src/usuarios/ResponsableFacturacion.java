@@ -1,10 +1,4 @@
-/*==================================================*/
-/*=====================Package======================*/
-/*==================================================*/
 package usuarios;
-/*==================================================*/
-/*=====================Imports======================*/
-/*==================================================*/
 import java.util.Date;
 import javax.swing.JOptionPane;
 import connections.ReclamosFacturacionDAO;
@@ -16,45 +10,17 @@ import exceptions.ProductosException;
 import exceptions.ReclamoException;
 import model.Accion;
 import reclamos.ReclamoFacturacion;
-/*==================================================*/
-/*===================End Imports====================*/
-/*==================================================*/
-/**
- * @author ezequiel.de-luca
- * @version 1.0
- */
 public class ResponsableFacturacion extends Rol
 {
-	/*==================================================*/
-	/*===============Administrar Reclamo================*/
-	/*==================================================*/
-	/**
-	 * Agrega una nueva acción a un reclamo del tipo Facturación.
-	 * @param strNroReclamo Número de reclamo sobre el cual se ejecutará la acción
-	 * @throws ConnectionException 
-	 * @throws ReclamoException 
-	 */
 	@Override
 	public void administrarReclamo(String strNumero, String strDescripcion)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
 		ReclamoFacturacion objReclamo;
 		Accion objAccion;
-		/*==================================================*/
-		/*==================Crea La Acción==================*/
-		/*==================================================*/
 		objAccion = new Accion(new Date(), strDescripcion);
 		try
 		{
-			/*==================================================*/
-			/*===============Recupera El Reclamo================*/
-			/*==================================================*/
 			objReclamo = ReclamosFacturacionDAO.getInstance().getReclamo(strNumero);
-			/*==================================================*/
-			/*=Vincula el Reclamo con la Acción Correspondiente=*/
-			/*==================================================*/
 			objReclamo.asociarAccion(objAccion);
 		}
 		catch (ReclamoException objException)
@@ -82,32 +48,13 @@ public class ResponsableFacturacion extends Rol
 			JOptionPane.showMessageDialog(null, "No hay productos asociados al reclamo");
 		}
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*==================Cerrar Reclamo==================*/
-	/*==================================================*/
 	@Override
-	/**
-	 * Cierra el reclamo especificado
-	 * @param strNumero Número de Reclamo
-	 */
 	public void cerrarReclamo(String strNumero)
 	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
 		ReclamoFacturacion objReclamo;
 		try
 		{
-			/*==================================================*/
-			/*===============Recupera El Reclamo================*/
-			/*==================================================*/
 			objReclamo = ReclamosFacturacionDAO.getInstance().getReclamo(strNumero);
-			/*==================================================*/
-			/*==================Cerrar Reclamo==================*/
-			/*==================================================*/
 			objReclamo.cerrar();
 		}
 		catch (ReclamoException objException)
@@ -135,10 +82,4 @@ public class ResponsableFacturacion extends Rol
 			JOptionPane.showMessageDialog(null, "No hay productos asociados al reclamo");
 		}
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
 }
-/*==================================================*/
-/*====================End Class=====================*/
-/*==================================================*/

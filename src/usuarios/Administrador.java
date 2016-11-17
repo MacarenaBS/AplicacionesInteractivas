@@ -1,10 +1,5 @@
-/*==================================================*/
-/*=====================Package======================*/
-/*==================================================*/
 package usuarios;
-
 import java.util.ArrayList;
-
 import connections.ClientesDAO;
 import connections.ProductosDAO;
 import connections.UsuariosDAO;
@@ -16,11 +11,6 @@ import exceptions.ProductosException;
 import exceptions.UsuarioException;
 import model.Producto;
 import reclamos.Reclamo;
-
-/**
- * @author ezequiel.de-luca
- * @version 1.0
- */
 public class Administrador extends Rol
 {
 	public Administrador()
@@ -30,9 +20,9 @@ public class Administrador extends Rol
 	}
 	public void crearUsuario(String strUsername, String strPassword, String strRol) throws ConnectionException, ParameterException
 	{
-		Usuario us= new Usuario(strUsername, strPassword, strRol);
-		UsuariosDAO.getInstance().insertar(us);
-		
+		Usuario objUsuario;
+		objUsuario = new Usuario(strUsername, strPassword, strRol);
+		UsuariosDAO.getInstance().insertar(objUsuario);
 	}
 	public void bajaUsuario(String strUsername) throws ConnectionException, ParameterException, UsuarioException
 	{
@@ -44,8 +34,9 @@ public class Administrador extends Rol
 	}
 	public void altaCliente(Integer intDni, String strNombre, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
 	{
-		Cliente c= new Cliente(strNombre,intDni,strDomicilio,strTelefono,strMail);
-		ClientesDAO.getInstance().insertar(c);
+		Cliente objCliente;
+		objCliente = new Cliente(strNombre,intDni,strDomicilio,strTelefono,strMail);
+		ClientesDAO.getInstance().insertar(objCliente);
 	}
 	public void bajaCliente(Integer intCodCliente) throws ConnectionException, ParameterException, ClienteException
 	{
@@ -57,8 +48,9 @@ public class Administrador extends Rol
 	}
 	public void altaProducto(String strTitulo, String strDescripcion, float fltPrecio) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
 	{
-		Producto p= new Producto(strTitulo,strDescripcion,fltPrecio,true);
-		ProductosDAO.getInstance().insertar(p);
+		Producto objProducto;
+		objProducto = new Producto(strTitulo,strDescripcion,fltPrecio,true);
+		ProductosDAO.getInstance().insertar(objProducto);
 	}
 	public void bajaProducto(Integer intCodigo) throws ConnectionException, ParameterException, ClienteException, ProductosException
 	{
@@ -66,27 +58,22 @@ public class Administrador extends Rol
 	}
 	public void modificarProducto(Integer intCodigo, String strTitulo, String strDescripcion, float fltPrecio, boolean bolEstado) throws ConnectionException, ParameterException
 	{
-		Producto p= new Producto(intCodigo, strTitulo, strDescripcion, fltPrecio,bolEstado);
-		ProductosDAO.getInstance().modificarProducto(p);
+		Producto objProducto;
+		objProducto = new Producto(intCodigo, strTitulo, strDescripcion, fltPrecio,bolEstado);
+		ProductosDAO.getInstance().modificarProducto(objProducto);
 	}
-	
-	public void administrarReclamo(Integer intNroReclamo)
+	@Override
+	public void administrarReclamo(String strNumero, String strDescipcion)
 	{
-
+		//El Administrador no administra reclamos
 	}
 	@Override
-	public void administrarReclamo(String strNumero, String strDescipcion) {
-		// TODO Auto-generated method stub
-		
+	public void cerrarReclamo(String strNumero)
+	{
+		//El Administrador no puede cerrar reclamos
 	}
-	@Override
-	public void cerrarReclamo(String strNumero) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public boolean soyAdministrador(){
-		
+	public boolean soyAdministrador()
+	{
 		return true; 
 	}
 }
