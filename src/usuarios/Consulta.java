@@ -19,13 +19,13 @@ public class Consulta extends Rol
 		objReclamo = null;
 		try
 		{
-			switch (objType.toString())
+			switch (objType.toString().toLowerCase())
 			{
-			case "Cantidad" : objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero);break;
-			case "Producto" : objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero); break;
-			case "Faltante" : objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero); break;
-			case "Zona" : objReclamo = ReclamosZonaDAO.getInstance().getReclamo(strNumero); break;
-			case "Facturación" : objReclamo = ReclamosFacturacionDAO.getInstance().getReclamo(strNumero); break;
+			case "cantidad" : objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero);break;
+			case "producto" : objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero); break;
+			case "faltante" : objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero); break;
+			case "zona" : objReclamo = ReclamosZonaDAO.getInstance().getReclamo(strNumero); break;
+			case "facturación" : objReclamo = ReclamosFacturacionDAO.getInstance().getReclamo(strNumero); break;
 			}
 		}
 		catch (ReclamoException objException)

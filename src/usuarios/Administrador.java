@@ -1,5 +1,9 @@
 package usuarios;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import connections.ClientesDAO;
 import connections.ProductosDAO;
 import connections.UsuariosDAO;
@@ -18,49 +22,200 @@ public class Administrador extends Rol
 		this.colReclamos = new ArrayList<Reclamo>();
 		this.colUsuarios = new ArrayList<Usuario>();
 	}
-	public void crearUsuario(String strUsername, String strPassword, String strRol) throws ConnectionException, ParameterException
+	public void crearUsuario(String strUsername, String strPassword, String strRol)
 	{
 		Usuario objUsuario;
-		objUsuario = new Usuario(strUsername, strPassword, strRol);
-		UsuariosDAO.getInstance().insertar(objUsuario);
+		try
+		{
+			objUsuario = new Usuario(strUsername, strPassword, strRol);
+			UsuariosDAO.getInstance().insertar(objUsuario);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (SQLException objException)
+		{
+			objException.printStackTrace();
+		}
 	}
-	public void bajaUsuario(String strUsername) throws ConnectionException, ParameterException, UsuarioException
+	public void bajaUsuario(String strUsername)
 	{
-		UsuariosDAO.getInstance().eliminar(UsuariosDAO.getInstance().getUsuario(strUsername));
+		Usuario objUsuario;
+		try
+		{
+			objUsuario = UsuariosDAO.getInstance().getUsuario(strUsername);
+			UsuariosDAO.getInstance().eliminar(objUsuario);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (UsuarioException objException)
+		{
+			JOptionPane.showMessageDialog(null, "El usuario especificado no existe en la base de datos");
+		}
 	}
-	public void modificarUsuario(String strUsuario, String strPassword, String strRol) throws ConnectionException, ParameterException, UsuarioException
+	public void modificarUsuario(String strUsuario, String strPassword, String strRol)
 	{
-		UsuariosDAO.getInstance().modificarUsuario(UsuariosDAO.getInstance().getUsuario(strUsuario));
+		Usuario objUsuario;
+		try
+		{
+			objUsuario = UsuariosDAO.getInstance().getUsuario(strUsuario);
+			UsuariosDAO.getInstance().modificarUsuario(objUsuario);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (UsuarioException objException)
+		{
+			JOptionPane.showMessageDialog(null, "El usuario especificado no existe en la base de datos");
+		}
 	}
-	public void altaCliente(Integer intDni, String strNombre, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
+	public void altaCliente(Integer intDni, String strNombre, String strDomicilio, String strTelefono, String strMail)
 	{
 		Cliente objCliente;
-		objCliente = new Cliente(strNombre,intDni,strDomicilio,strTelefono,strMail);
-		ClientesDAO.getInstance().insertar(objCliente);
+		try
+		{
+			objCliente = new Cliente(strNombre,intDni,strDomicilio,strTelefono,strMail);
+			ClientesDAO.getInstance().insertar(objCliente);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
 	}
-	public void bajaCliente(String strCodCliente) throws ConnectionException, ParameterException, ClienteException
+	public void bajaCliente(Integer intCodCliente)
 	{
-		ClientesDAO.getInstance().eliminar(ClientesDAO.getInstance().getCliente(strCodCliente));
+		Cliente objCliente;
+		try
+		{
+			objCliente = ClientesDAO.getInstance().getCliente(intCodCliente);
+			ClientesDAO.getInstance().eliminar(objCliente);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (ClienteException objException)
+		{
+			JOptionPane.showMessageDialog(null, "El cliente especificado no existe en la base de datos");
+		}
 	}
-	public void modificacionCliente(String strCodCliente, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, boolean bolEstado) throws ConnectionException, ParameterException
+	public void modificacionCliente(Integer intCodCliente, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, boolean bolEstado)
 	{
-		ClientesDAO.getInstance().modificarCliente(new Cliente(strCodCliente, strNombre, intDNI, strDomicilio, strTelefono, strMail,  bolEstado));
+		Cliente objCliente;
+		try
+		{
+			objCliente = ClientesDAO.getInstance().getCliente(intCodCliente);
+			objCliente.actualizarDatos(strNombre, strDomicilio, strTelefono, strMail);
+			objCliente.setActivo(bolEstado);
+			ClientesDAO.getInstance().modificarCliente(objCliente);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (ClienteException objException)
+		{
+			JOptionPane.showMessageDialog(null, "El cliente especificado no existe en la base de datos");
+		}
 	}
-	public void altaProducto(String strTitulo, String strDescripcion, float fltPrecio) throws ConnectionException, ClienteException, ParameterException, FacturasException, ProductosException
+	public void altaProducto(String strTitulo, String strDescripcion, float fltPrecio)
 	{
 		Producto objProducto;
-		objProducto = new Producto(strTitulo,strDescripcion,fltPrecio,true);
-		ProductosDAO.getInstance().insertar(objProducto);
+		try
+		{
+			objProducto = new Producto(strTitulo,strDescripcion,fltPrecio,true);
+			ProductosDAO.getInstance().insertar(objProducto);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (ClienteException objException)
+		{
+			JOptionPane.showMessageDialog(null, "El cliente especificado no existe en la base de datos");
+		}
+		catch (FacturasException objException)
+		{
+			objException.printStackTrace(); //Por qué de factura?
+		}
+		catch (ProductosException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Error al insertar el producto en la base de datos");
+		}
 	}
-	public void bajaProducto(Integer intCodigo) throws ConnectionException, ParameterException, ClienteException, ProductosException
-	{
-		ProductosDAO.getInstance().eliminar(ProductosDAO.getInstance().getProducto(intCodigo));
-	}
-	public void modificarProducto(Integer intCodigo, String strTitulo, String strDescripcion, float fltPrecio, boolean bolEstado) throws ConnectionException, ParameterException
+	public void bajaProducto(Integer intCodigo)
 	{
 		Producto objProducto;
-		objProducto = new Producto(intCodigo, strTitulo, strDescripcion, fltPrecio,bolEstado);
-		ProductosDAO.getInstance().modificarProducto(objProducto);
+		try
+		{
+			objProducto = ProductosDAO.getInstance().getProducto(intCodigo);
+			ProductosDAO.getInstance().eliminar(objProducto);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
+		catch (ClienteException objException)
+		{
+			JOptionPane.showMessageDialog(null, "El cliente especificado no existe en la base de datos");
+		}
+		catch (ProductosException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Error al insertar el producto en la base de datos");
+		}
+	}
+	public void modificarProducto(Integer intCodigo, String strTitulo, String strDescripcion, float fltPrecio, boolean bolEstado)
+	{
+		Producto objProducto;
+		try
+		{
+			objProducto = new Producto(intCodigo, strTitulo, strDescripcion, fltPrecio,bolEstado);
+			ProductosDAO.getInstance().modificarProducto(objProducto);
+		}
+		catch (ConnectionException objException)
+		{
+			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
+		}
+		catch (ParameterException objException)
+		{
+			JOptionPane.showMessageDialog(null, "Uno o más parametros son erroneos");
+		}
 	}
 	@Override
 	public void administrarReclamo(String strNumero, String strDescipcion)

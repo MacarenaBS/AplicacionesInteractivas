@@ -1,24 +1,40 @@
 package controlador;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
+
 import javax.swing.JOptionPane;
+
 import connections.UsuariosDAO;
-import exceptions.ClienteException;
+import enumerations.Tipo;
 import exceptions.ConnectionException;
-import exceptions.FacturasException;
 import exceptions.ParameterException;
-import exceptions.ProductosException;
 import exceptions.UsuarioException;
+import model.Factura;
+import model.Producto;
+import reclamos.Reclamo;
 import usuarios.*;
+
 public class Controlador
 {
+	
 	private Usuario objUsuario;
 	private static Controlador objInstance;
-	private List<Rol> colRoles;
+	private Vector<Rol> roles;
 	private Rol objRol;
 	private Controlador()
 	{
-		this.colRoles= new ArrayList<Rol>();	
+//		roles= new Vector<Rol>();
+//		Administrador admin = new Administrador();
+//		roles.add(admin);
+//		CallCenter callCenter = new CallCenter();
+//		roles.add(callCenter);
+//		Consulta consulta= new Consulta();
+//		roles.add(consulta);
+//		ResponsableDistribucion rDistribucion= new ResponsableDistribucion();
+//		roles.add(rDistribucion);
+//		ResponsableFacturacion rFacturacion= new ResponsableFacturacion();
+//		roles.add(rFacturacion);
+//		ResponsableZonaDeEntrega rZonaDeEntrega= new ResponsableZonaDeEntrega();
+//		roles.add(rZonaDeEntrega);
 	}
 	public static Controlador getInstance()
 	{
@@ -28,6 +44,7 @@ public class Controlador
 		}
 		return objInstance; 
 	}
+	/*DEBERIAMOS DEVOLVER VIEWS*/
 	public Usuario getUser(String strUsername) throws ConnectionException, ParameterException, UsuarioException
 	{
 		return UsuariosDAO.getInstance().getUsuario(strUsername);
@@ -39,9 +56,9 @@ public class Controlador
 			case "Administrador" : this.objRol = new Administrador(); break;
 			case "CallCenter" : this.objRol = new CallCenter(); break;
 			case "Consulta" : this.objRol = new Consulta(); break;
-			case "ResponsableDistribucion" : this.objRol = new ResponsableDistribucion(); break;
-			case "ResponsableFacturacion" : this.objRol = new ResponsableFacturacion(); break;
-			case "ResponsableZonaDeEntrega" : this.objRol = new ResponsableZonaDeEntrega(); break;
+			case "Responsable Facturación" : this.objRol = new ResponsableFacturacion(); break;
+			case "Responsable Zona de Entrega" : this.objRol = new ResponsableZonaDeEntrega(); break;
+			default : this.objRol = new ResponsableDistribucion(); break; //Suponemos que siempre tiene asignado un rol. Como no quedan más opciones tiene que ser un responsable de cantidad, faltante o producto
 		}
 	}
 	public Boolean Connect(String strUsername, String strPassword) throws ConnectionException, ParameterException, UsuarioException
@@ -49,17 +66,17 @@ public class Controlador
 		Boolean bolAnswer;
 		try
 		{
-			this.objUsuario = getUser(strUsername);
+			this.objUsuario = getUser(strUsername);			
 			if (this.objUsuario.passwordVerificacion(strUsername,strPassword))
 			{
-				System.out.println("Connection succesful - Welcome "+ this.objUsuario.getStrUsername());
+				System.out.println("Connection succesful - Welcome " + this.objUsuario.getUsername());
 				this.setRol();
 				bolAnswer = true;
 			}
 			else
 			{
 				System.out.println("Connection unsuccesful - Username or Password incorrect.");
-				this.objUsuario=null;
+				this.objUsuario = null;
 				bolAnswer = false;
 			}
 		}
@@ -67,7 +84,7 @@ public class Controlador
 		{
 			bolAnswer = false;
 		}
-		return bolAnswer;
+		return bolAnswer;		
 	}
 	public Usuario currentUser()
 	{
@@ -75,183 +92,111 @@ public class Controlador
 	}
 	public void disconnect()
 	{
-		this.objUsuario=null;
+		this.objUsuario = null;
 	}
-	public Boolean crearUsuario(String strUsername, String strPassword, String strPermiso)
+	public void crearUsuario(String strUsername, String strPassword, String strPermiso)
 	{	
-		Boolean bolAnswer;
-		Usuario objUsuario;
-		bolAnswer = true;
-		objUsuario = new Usuario(strUsername, strPassword, strPermiso);
-		try
-		{
-			UsuariosDAO.getInstance().insertar(objUsuario);
-		}
-		catch (ConnectionException | ParameterException objException)
-		{
-			JOptionPane.showMessageDialog(null, "El usuario no se encuentra registrado en la base de datos");
-			objException.printStackTrace();
-			bolAnswer = false;
-		}
-		//Tenemos que cambiar Rol y Usuario para que el usuario tenga una lista de roles en lugar de que el rol tenga una lista de usuarios
-		//Ojo que solo le estamos pasando un permiso, con lo cual solo le damos de alta un rol. No confundir que me parece que estas tratando de dar de alta al usuario logeado
-		for (Rol objRol: colRoles)
-		{
-			if (objRol.getClass().getSimpleName().equals(strPermiso))
-			{
-				objRol.addUsuario(objUsuario);
-				break;
-			}
-		}
-		return bolAnswer;
+		((Administrador) this.objRol).crearUsuario(strUsername, strPassword, strPermiso);
+	}
+	public void eliminarUsuario(String strUsername)
+	{
+		((Administrador) this.objRol).bajaUsuario(strUsername);
+	}
+	public void modificarUsuario(String strUsername, String strPassword, String strRol)
+	{
+		((Administrador) this.objRol).modificarUsuario(strUsername, strPassword, strRol);
+	}
+	public void altaCliente(String strNombre, String strDomicilio,Integer intDNI, String strTelefono, String strMail)
+	{
+		((Administrador) this.objRol).altaCliente(intDNI, strNombre, strDomicilio, strTelefono, strMail);
 	}	
-	public Boolean eliminarUsuario(String strUsername)
+	public void bajaCliente(Integer intCodigo)
 	{
-		Boolean bolAnswer;
-		bolAnswer = true;
-		Usuario objUsuario;
-		try
-		{
-			objUsuario = UsuariosDAO.getInstance().getUsuario(strUsername);
-			try
-			{
-				UsuariosDAO.getInstance().eliminar(objUsuario);	
-				//Todo lo que sigue tiene que ir en el eliminar usuario del DAO
-				//for (Rol objRol: this.colRoles)
-				//{
-				//	if (objRol.getClass().getSimpleName() == objUsuario.getRol())
-				//	{
-				//		objRol.removeUsuario(objUsuario);
-				//	}
-				//}
-			}
-			catch (ConnectionException | ParameterException objException)
-			{
-				System.out.println("Controlador - eliminarUsuario - "+ objException.getMessage());
-				objException.printStackTrace();
-				bolAnswer = false;
-			}
-		}
-		catch (ConnectionException | ParameterException | UsuarioException objException)
-		{
-			JOptionPane.showMessageDialog(null, "El usuario no se encuentra registrado en la base de datos");
-			objException.printStackTrace();
-			bolAnswer = false;
-		}
-		return bolAnswer;
+		((Administrador) this.objRol).bajaCliente(intCodigo);
 	}
-	public Boolean modificarUsuario(String strUsername, String strPassword, String strRol)
+	public void modificarCliente(Integer intCodigo, String strNombre, String strDomicilio, Integer intDNI, String strTelefono, String strMail, Boolean bolEstado)
 	{
-		Boolean bolAnswer;
-		Usuario objUsuario;
-		try 
-		{
-			objUsuario = UsuariosDAO.getInstance().getUsuario(strUsername);
-			objUsuario.setStrPassword(strPassword);
-			objUsuario.setRol(strRol);
-			UsuariosDAO.getInstance().modificarUsuario(objUsuario);
-			//Esto tiene que ir en el modificar usuario del DAO. Solo se le esta agregando un rol
-			//for (Rol rol: roles)
-			//{
-			//	if (rol.getClass().getSimpleName() == s.getRol())
-			//	{
-			//		rol.removeUsuario(s);
-			//		rol.addUsuario(s);
-			//	}
-			//}
-			
-			bolAnswer = true;
-		}
-		catch (ConnectionException | ParameterException | UsuarioException objException)
-		{
-			System.out.println("Controlador - modificarUsuario - "+ objException.getMessage());
-			objException.printStackTrace();
-			bolAnswer= false;
-		}
-		return bolAnswer;
-	}
-	public void altaCliente(String strNombre, String strDomicilio, Integer intDNI, String strTelefono, String strMail)
-	{
-		try
-		{
-			((Administrador) this.objRol).altaCliente(intDNI, strNombre, strDomicilio, strTelefono, strMail);
-		}
-		catch (ConnectionException objException)
-		{
-			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
-		}
-		catch (ParameterException objException)
-		{
-			JOptionPane.showMessageDialog(null, "Parámetro no válido");
-		}
-	}
-	public void bajaCliente(String strCodigo)
-	{
-		try
-		{
-			((Administrador) this.objRol).bajaCliente(strCodigo);
-		}
-		catch (ConnectionException objException)
-		{
-			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
-		}
-		catch (ParameterException objException)
-		{
-			JOptionPane.showMessageDialog(null, "Parámetro no válido");
-		}
-		catch (ClienteException objException)
-		{
-			JOptionPane.showMessageDialog(null, "El cliente no existe en la base de datos");
-		}
-	}
-	public void modificarCliente(String strCodigo, String strNombre, String strDomicilio, Integer intDNI, String strTelefono, String strMail, Boolean bolEstado)
-	{
-		try
-		{
-			((Administrador) this.objRol).modificacionCliente(strCodigo, strNombre, intDNI, strDomicilio, strTelefono, strMail, bolEstado);
-		}	
-		catch (ConnectionException objException)
-		{
-			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
-		}
-		catch (ParameterException objException)
-		{
-			JOptionPane.showMessageDialog(null, "Parámetro no válido");
-		}
+		((Administrador) this.objRol).modificacionCliente(intCodigo, strNombre, intDNI, strDomicilio, strTelefono, strMail, bolEstado);
 	}
 	public void altaProducto(String strTitulo, String strDescripcion, float fltPrecio)
 	{
-		try
-		{
-			((Administrador) this.objRol).altaProducto(strTitulo, strDescripcion, fltPrecio);
-		}
-		catch (ConnectionException objException)
-		{
-			JOptionPane.showMessageDialog(null, "No se pudo establecer una conexión con la base de datos");
-		}
-		catch (ClienteException objException)
-		{
-			JOptionPane.showMessageDialog(null, "El cliente no existe en la base de datos");
-		}
-		catch (ParameterException objException)
-		{
-			JOptionPane.showMessageDialog(null, "Parámetro no válido");
-		}
-		catch (FacturasException objException)
-		{
-			JOptionPane.showMessageDialog(null, "Error con la factura asociada");
-		}
-		catch (ProductosException objException)
-		{
-			JOptionPane.showMessageDialog(null, "Error con la creación del producto");
-		}
+		((Administrador) this.objRol).altaProducto(strTitulo, strDescripcion, fltPrecio);
 	}
-	public void bajaProducto(Integer intCodigo) throws ConnectionException, ParameterException, ClienteException, ProductosException
+	public void bajaProducto(Integer intCodigo)
 	{
 		((Administrador) this.objRol).bajaProducto(intCodigo);
 	}
-	public void modificarProducto(Integer intCodigo, String strTitulo, String strDescripcion, float fltPrecio, boolean bolEstado) throws ConnectionException, ParameterException
+	public void modificarProducto(Integer intCodigo, String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado)
 	{
 		((Administrador) this.objRol).modificarProducto(intCodigo, strTitulo, strDescripcion, fltPrecio, bolEstado);
+	}
+	public void crearReclamoFacturacion(String strDescripcion, Cliente objCliente, Factura objFactura)
+	{
+		((CallCenter) this.objRol).crearReclamoFacturacion(strDescripcion, objCliente, objFactura);
+	}
+	public void crearReclamoZonaDeEntrega(String strDescripcion, String strZona, Cliente objCliente)
+	{
+		((CallCenter) this.objRol).crearReclamoZonaDeEntrega(strDescripcion, strZona, objCliente);
+	}
+	public void crearReclamoInconsistencia(String strDescripcion, Producto objProducto, Integer intCantidad, Cliente objCliente)
+	{
+		((CallCenter) this.objRol).crearReclamoInconsistencia(strDescripcion, objProducto, intCantidad, objCliente);
+	}
+	private Tipo getTipo(String strTipo)
+	{
+		Tipo objTipo;
+		switch (strTipo.toLowerCase())
+		{
+			case "facturacion" : objTipo = Tipo.FACTURACION;break;
+			case "faltante" : objTipo = Tipo.FALTANTE; break;
+			case "producto" : objTipo = Tipo.PRODUCTO; break;
+			case "zona" : objTipo = Tipo.ZONA; break;
+			default : objTipo = null; break;
+		}
+		return objTipo;
+	}
+	public Reclamo buscarReclamo(String strTipo, String strNumero)
+	{
+		Reclamo objReclamo;
+		Tipo objTipo;
+		objReclamo = null;
+		if (!strNumero.startsWith("REC"))
+		{
+			JOptionPane.showMessageDialog(null, "Número de reclamo no válido");
+		}
+		else
+		{
+			objTipo = this.getTipo(strTipo);
+			objReclamo = ((Consulta) this.objRol).obtenerReclamo(objTipo, strNumero);
+		}
+		return objReclamo;
+	}
+	public void cerrarReclamoFacturacion(String strNumero)
+	{
+		((ResponsableFacturacion) this.objRol).cerrarReclamo(strNumero);
+	}
+	public void cerrarReclamoZonaDeEntrega(String strNumero)
+	{
+		((ResponsableZonaDeEntrega) this.objRol).cerrarReclamo(strNumero);
+	}
+	public void cerrarReclamo(String strNumero)
+	{
+		((ResponsableDistribucion) this.objRol).cerrarReclamo(strNumero);
+	}
+	public void agregarAccionReclamoFacturación(String strNumero, String strDescripcion)
+	{
+		((ResponsableFacturacion) this.objRol).administrarReclamo(strNumero, strDescripcion);
+	}
+	public void agregarAccionReclamoZonaDeEntrega(String strNumero, String strDescripcion)
+	{
+		((ResponsableZonaDeEntrega) this.objRol).administrarReclamo(strNumero, strDescripcion);
+	}
+	public void agregarAccion(String strNumero, String strDescripcion)
+	{
+		((ResponsableDistribucion) this.objRol).administrarReclamo(strNumero, strDescripcion);
+	}
+	public void testConnect()
+	{
+		this.objRol = new Administrador();
 	}
 }

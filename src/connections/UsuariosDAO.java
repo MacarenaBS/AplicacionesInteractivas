@@ -53,10 +53,10 @@ public class UsuariosDAO
 	}
 	private Usuario getFromCache(String strUsuario)
 	{
-		for (Usuario objUsuario: this.colUsuarios)
+		for (Usuario u: this.colUsuarios)
 		{
-			if (objUsuario.soyUsuario(strUsuario))
-				return objUsuario;
+			if (u.soyUsuario(strUsuario))
+				return u;
 		}
 		return null; 
 	}
@@ -83,21 +83,22 @@ public class UsuariosDAO
 		}
 		return objUsuario;
 	}
-	private void insertarEnBase(Usuario objUsuario) throws ConnectionException, ParameterException
+	private void insertarEnBase(Usuario objUsuario) throws ConnectionException, ParameterException, SQLException
 	{
 		try
 		{
 			this.objConnection.executeQuery("INSERT INTO Usuarios (strNombre, strPassword, strRol)".concat(
-											"VALUES ( '").concat((objUsuario.getStrUsername()).concat("', '").concat(
-													objUsuario.getStrPassword()).concat("', '").concat(
+											"VALUES ( '").concat((objUsuario.getUsername()).concat("', '").concat(
+													objUsuario.getPassword()).concat("', '").concat(
 															objUsuario.getRol()).concat("')")));
 		}
 		catch (SQLException objException)
 		{
 			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo usuario");
+			throw new SQLException(objException.getMessage());
 		}
 	}
-	public void insertar(Usuario objUsuario) throws ConnectionException, ParameterException
+	public void insertar(Usuario objUsuario) throws ConnectionException, ParameterException, SQLException
 	{
 		if (this.colUsuarios.contains(objUsuario))
 		{
@@ -112,7 +113,7 @@ public class UsuariosDAO
 		try
 		{
 			this.objConnection.executeQuery("UPDATE Usuarios SET strPassword = '".concat(
-					objUsuario.getStrPassword()).concat("', strRol='").concat(objUsuario.getRol()).concat("' WHERE strNombre = '").concat((objUsuario.getStrUsername()).concat("'")));
+					objUsuario.getPassword()).concat("', strRol='").concat(objUsuario.getRol()).concat("' WHERE strNombre = '").concat((objUsuario.getUsername()).concat("'")));
 		}
 		catch (SQLException objException)
 		{
@@ -130,11 +131,11 @@ public class UsuariosDAO
 	{
 		try
 		{
-			this.objConnection.executeQuery("DELETE FROM Usuarios WHERE strNombre = '".concat(objUsuario.getStrUsername().concat("'")));
+			this.objConnection.executeQuery("DELETE FROM Usuarios WHERE strNombre = '".concat(objUsuario.getUsername().concat("'")));
 		}
 		catch (SQLException objException)
 		{
-			JOptionPane.showMessageDialog(null, "Error al eliminar el usuario "+objUsuario.getStrUsername()+" de la base de datos");
+			JOptionPane.showMessageDialog(null, "Error al eliminar el usuario "+objUsuario.getUsername()+" de la base de datos");
 		}
 	}
 	public void eliminar(Usuario objUsuario)

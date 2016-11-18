@@ -20,6 +20,7 @@ import connections.ReclamosFacturacionDAO;
 import connections.ReclamosInconsistenciasDAO;
 import connections.ReclamosZonaDAO;
 import connections.UsuariosDAO;
+import controlador.Controlador;
 import exceptions.ClienteException;
 import exceptions.ConnectionException;
 import exceptions.FacturasException;
@@ -32,7 +33,7 @@ import usuarios.Usuario;
 public class Prueba {
 
 	public static void main(String[] args) throws ParameterException, ConnectionException, ClienteException, FacturasException, ProductosException, ReclamoException {
-		Cliente m= new Cliente(1,"abcd", 1234, "Domicilio A", "47434323", "pruebaa@gmail.com", true); //Funciona
+//		Cliente m= new Cliente(1,"abcd", 1234, "Domicilio A", "47434323", "pruebaa@gmail.com", true); //Funciona
 //		ClientesDAO.getInstance().modificarCliente(m); //Funciona
 //		ClientesDAO.getInstance().insertar(m); //Funciona
 		//ClientesDAO.getInstance().eliminar(m); //Funciona
@@ -132,11 +133,11 @@ public class Prueba {
 		
 //		Usuario us= new Usuario("MacarenaBS","contraseñaModificada","CallCenter");
 //		UsuariosDAO.getInstance().modificarUsuario(us); //FUNCIONA
-	
-		
-		
-		
-		
+//		Crear una conexión de prueba
+//		Controlador.getInstance().testConnect(); //Funciona
+//		Controlador.getInstance().altaCliente("Ezequiel De Luca", "Conde 729 7° A", 32437130, "1568979393", "delucaezequiel@gmail.com"); //Funciona
+//		Controlador.getInstance().bajaCliente(1); //Funciona
+//		Controlador.getInstance().modificarCliente(1, "Eze", "Conde 729", 32437130, "45510383", "delucaezequiel@hotmail.com", false); //Funciona
 	}
 
 }
