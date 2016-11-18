@@ -83,7 +83,7 @@ public class UsuariosDAO
 		}
 		return objUsuario;
 	}
-	private void insertarEnBase(Usuario objUsuario) throws ConnectionException, ParameterException
+	private void insertarEnBase(Usuario objUsuario) throws ConnectionException, ParameterException, SQLException
 	{
 		try
 		{
@@ -95,9 +95,10 @@ public class UsuariosDAO
 		catch (SQLException objException)
 		{
 			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo usuario");
+			throw new SQLException(objException.getMessage());
 		}
 	}
-	public void insertar(Usuario objUsuario) throws ConnectionException, ParameterException
+	public void insertar(Usuario objUsuario) throws ConnectionException, ParameterException, SQLException
 	{
 		if (this.colUsuarios.contains(objUsuario))
 		{

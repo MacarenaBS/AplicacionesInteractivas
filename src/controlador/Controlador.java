@@ -1,5 +1,6 @@
 package controlador;
 
+import java.sql.SQLException;
 import java.util.Vector;
 
 import connections.ClientesDAO;
@@ -96,15 +97,9 @@ public class Controlador {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
-		}
-		
-		for (Rol rol: roles)
-		{
-			if (rol.getClass().getSimpleName().equals(strPermiso))
-			{
-				rol.addUsuario(s);
-				break;
-			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 		
 		return true;
@@ -126,14 +121,6 @@ public class Controlador {
 		try {
 			UsuariosDAO.getInstance().eliminar(s);
 			
-			for (Rol rol: roles)
-			{
-				if (rol.getClass().getSimpleName() == s.getRol())
-				{
-					rol.removeUsuario(s);
-				}
-			}
-			
 		} catch (ConnectionException | ParameterException e) {
 			System.out.println("Controlador - eliminarUsuario - "+e.getMessage());
 			e.printStackTrace();
@@ -152,15 +139,6 @@ public class Controlador {
 			s.setRol(strRol);
 			UsuariosDAO.getInstance().modificarUsuario(s);
 			
-			for (Rol rol: roles)
-			{
-				if (rol.getClass().getSimpleName() == s.getRol())
-				{
-					rol.removeUsuario(s);
-					rol.addUsuario(s);
-				}
-			}
-			
 			return true;
 		} catch (ConnectionException | ParameterException | UsuarioException e) {
 			System.out.println("Controlador - modificarUsuario - "+e.getMessage());
@@ -169,7 +147,7 @@ public class Controlador {
 		}
 	}
 	
-	public boolean crearProducto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado)
+	public boolean crearProducto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado) throws ConnectionException, ParameterException
 	{
 		Producto p= new Producto(strTitulo, strDescripcion, fltPrecio, bolEstado);
 		try {
@@ -205,11 +183,34 @@ public class Controlador {
 		return true;
 	}
 	
-	public boolean crearCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail)
+	public boolean crearCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
 	{
 		Cliente c= new Cliente(strNombre,intDNI,strDomicilio,strTelefono,strMail);
 		try {
 			ClientesDAO.getInstance().insertar(c);
+			return true;
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public Cliente getCliente(int intNumero){
+		try {
+			return ClientesDAO.getInstance().getCliente(intNumero);
+		} catch (ConnectionException | ClienteException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public boolean modificarCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
+	{
+		Cliente c= new Cliente(strNombre,intDNI,strDomicilio,strTelefono,strMail);
+		try {
+			ClientesDAO.getInstance().modificarCliente(c);
 			return true;
 		} catch (ConnectionException | ParameterException e) {
 			// TODO Auto-generated catch block
