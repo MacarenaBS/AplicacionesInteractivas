@@ -56,24 +56,24 @@ public class ProductosDAO
 	}
 	private Producto getFromCache(Integer intNumero)
 	{		
-//		for (Producto p: this.colProductos)
-//		{
-//			if (p.esProducto(intNumero))
-//				return p;
-//		}
-//		return null; 
-		Boolean bolEncontro;
-		Iterator<Producto> objIterator;
-		Producto objProducto;
-		objProducto = null;
-		bolEncontro = false;
-		objIterator = this.colProductos.iterator();
-		while ((objIterator.hasNext()) && (!bolEncontro))
+		for (Producto p: this.colProductos)
 		{
-			objProducto = objIterator.next();
-			bolEncontro = (objProducto.getCodigo() == intNumero);
+			if (p.esProducto(intNumero))
+				return p;
 		}
-		return objProducto;
+		return null; 
+//		Boolean bolEncontro;
+//		Iterator<Producto> objIterator;
+//		Producto objProducto;
+//		objProducto = null;
+//		bolEncontro = false;
+//		objIterator = this.colProductos.iterator();
+//		while ((objIterator.hasNext()) && (!bolEncontro))
+//		{
+//			objProducto = objIterator.next();
+//			bolEncontro = (objProducto.getCodigo() == intNumero);
+//		}
+//		return objProducto;
 	}
 	private Producto getFromDatabase(Integer intNumero) throws ConnectionException, ClienteException, ParameterException, ProductosException
 	{
@@ -177,22 +177,24 @@ public class ProductosDAO
 		this.eliminarEnCache(objProducto);
 		this.eliminarEnBase(objProducto);
 	}
-	public String newID()
+	public int newID()
 	{
-		String strAnswer;
+//		String strAnswer;
+		int intAnswer= 0;
 		ResultSet objResultSet;
-		strAnswer = null;
+//		strAnswer = null;
 		try
 		{
 			objResultSet = this.objConnection.getResultSet("SELECT COUNT(*) AS cantidad FROM productos");
 			objResultSet.next();
-			strAnswer = "PROD".concat(String.valueOf(objResultSet.getInt("cantidad")));
+			intAnswer=objResultSet.getInt("cantidad")+1;
+//			strAnswer = "PROD".concat(String.valueOf(objResultSet.getInt("cantidad")));
 		}
 		catch (SQLException objException)
 		{
 			JOptionPane.showMessageDialog(null, "Error al recuperar la cantidad de productos de la base");
 		}
-		return strAnswer;
+		return intAnswer;
 	}
 	public void close() throws ConnectionException
 	{

@@ -1,4 +1,5 @@
 package usuarios;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import connections.ClientesDAO;
 import connections.ProductosDAO;
@@ -18,7 +19,7 @@ public class Administrador extends Rol
 		this.colReclamos = new ArrayList<Reclamo>();
 		this.colUsuarios = new ArrayList<Usuario>();
 	}
-	public void crearUsuario(String strUsername, String strPassword, String strRol) throws ConnectionException, ParameterException
+	public void crearUsuario(String strUsername, String strPassword, String strRol) throws ConnectionException, ParameterException, SQLException
 	{
 		Usuario objUsuario;
 		objUsuario = new Usuario(strUsername, strPassword, strRol);

@@ -3,6 +3,9 @@
 /*==================================================*/
 package model;
 
+import connections.ProductosDAO;
+import exceptions.ConnectionException;
+import exceptions.ParameterException;
 import reclamos.ReclamoZona;
 
 /**
@@ -31,9 +34,9 @@ public class Producto
 		this.setActivo(bolEstado);
 	}
 	
-	public Producto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado)
+	public Producto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado) throws ConnectionException, ParameterException
 	{
-		this.setCodigo();
+		this.setCodigo(ProductosDAO.getInstance().newID());
 		this.setTitulo(strTitulo);
 		this.setDescripcion(strDescripcion);
 		this.setPrecio(fltPrecio);

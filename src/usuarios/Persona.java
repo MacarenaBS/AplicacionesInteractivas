@@ -1,7 +1,7 @@
 package usuarios;
 public abstract class Persona
 {
-	private String strCodigoPersona;
+	private int intCodigoPersona;
 	private String strNombre;
 	private Integer intDNI;
 	private String strDomicilio;
@@ -12,7 +12,7 @@ public abstract class Persona
 	{
 		return this.strNombre;
 	}
-	protected void setNombre(String strValue)
+	public void setNombre(String strValue)
 	{
 		this.strNombre = strValue;
 	}
@@ -20,7 +20,7 @@ public abstract class Persona
 	{
 		return this.intDNI;
 	}
-	protected void setDNI(Integer intValue)
+	public void setDNI(Integer intValue)
 	{
 		this.intDNI = intValue;
 	}
@@ -28,7 +28,7 @@ public abstract class Persona
 	{
 		return this.strDomicilio;
 	}
-	protected void setDomicilio(String strValue)
+	public void setDomicilio(String strValue)
 	{
 		this.strDomicilio = strValue;
 	}
@@ -36,7 +36,7 @@ public abstract class Persona
 	{
 		return this.strTelefono;
 	}
-	protected void setTelefono(String strValue)
+	public void setTelefono(String strValue)
 	{
 		this.strTelefono = strValue;
 	}
@@ -44,7 +44,7 @@ public abstract class Persona
 	{
 		return this.strMail;
 	}
-	protected void setMail(String strValue)
+	public void setMail(String strValue)
 	{
 		this.strMail = strValue;
 	}
@@ -52,21 +52,21 @@ public abstract class Persona
 	{
 		return bolActivo;
 	}
-	protected void setActivo(Boolean bolActivo)
+	public void setActivo(Boolean bolActivo)
 	{
 		this.bolActivo = bolActivo;
 	}
-	protected void setCodigoPersona(String strValue)
+	public void setCodigoPersona(int intValue)
 	{
-		this.strCodigoPersona = strValue;
+		this.intCodigoPersona = intValue;
 	}
-	public String getCodigoPersona()
+	public int getCodigoPersona()
 	{
-		return strCodigoPersona;
+		return intCodigoPersona;
 	}
-	public Boolean soyLaPersona(String strCodigo)
+	public Boolean soyLaPersona(int intCodigo)
 	{
-		return (this.getCodigoPersona() == strCodigo ? true : false);
+		return (this.getCodigoPersona() == intCodigo ? true : false);
 	}
 	public boolean equals(Persona objPersona)
 	{
