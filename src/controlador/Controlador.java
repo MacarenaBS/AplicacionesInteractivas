@@ -1,4 +1,9 @@
 package controlador;
+<<<<<<< HEAD
+=======
+
+import java.sql.SQLException;
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -96,6 +101,7 @@ public class Controlador
 	}
 	public void crearUsuario(String strUsername, String strPassword, String strPermiso)
 	{	
+<<<<<<< HEAD
 		((Administrador) this.objRol).crearUsuario(strUsername, strPassword, strPermiso);
 	}
 	public void eliminarUsuario(String strUsername)
@@ -152,17 +158,70 @@ public class Controlador
 			case "producto" : objTipo = Tipo.PRODUCTO; break;
 			case "zona" : objTipo = Tipo.ZONA; break;
 			default : objTipo = null; break;
+=======
+		Usuario s= new Usuario(strUsername, strPassword, strPermiso);
+		try {
+			UsuariosDAO.getInstance().insertar(s);
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 		}
 		return objTipo;
 	}
 	public Reclamo buscarReclamo(String strTipo, String strNumero)
 	{
+<<<<<<< HEAD
 		Reclamo objReclamo;
 		Tipo objTipo;
 		objReclamo = null;
 		if (!strNumero.startsWith("REC"))
+=======
+		Usuario s;
+		
+		try {
+			s = UsuariosDAO.getInstance().getUsuario(strUsername);
+		} catch (ConnectionException | ParameterException | UsuarioException e) {
+			System.out.println("Controlador - eliminarUsuario - "+e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		
+		try {
+			UsuariosDAO.getInstance().eliminar(s);
+			
+		} catch (ConnectionException | ParameterException e) {
+			System.out.println("Controlador - eliminarUsuario - "+e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean modificarUsuario(String strUsername, String strPassword, String strRol)
+	{
+		try 
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 		{
+<<<<<<< HEAD
 			JOptionPane.showMessageDialog(null, "Número de reclamo no válido");
+=======
+			Usuario s= UsuariosDAO.getInstance().getUsuario(strUsername);
+			s.setStrPassword(strPassword);
+			s.setRol(strRol);
+			UsuariosDAO.getInstance().modificarUsuario(s);
+			
+			return true;
+		} catch (ConnectionException | ParameterException | UsuarioException e) {
+			System.out.println("Controlador - modificarUsuario - "+e.getMessage());
+			e.printStackTrace();
+			return false;
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 		}
 		else
 		{
@@ -171,14 +230,48 @@ public class Controlador
 		}
 		return objReclamo;
 	}
+<<<<<<< HEAD
 	public void cerrarReclamoFacturacion(String strNumero)
+=======
+	
+	public boolean crearProducto(String strTitulo, String strDescripcion, float fltPrecio, Boolean bolEstado) throws ConnectionException, ParameterException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		((ResponsableFacturacion) this.objRol).cerrarReclamo(strNumero);
 	}
+<<<<<<< HEAD
 	public void cerrarReclamoZonaDeEntrega(String strNumero)
+=======
+	
+	public Producto getProducto(int intNumero){
+		try {
+			return ProductosDAO.getInstance().getProducto(intNumero);
+		} catch (ConnectionException | ClienteException | ParameterException | ProductosException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public boolean eliminarProducto(int intnumero){
+		Producto p= getProducto(intnumero);
+		try {
+			ProductosDAO.getInstance().eliminar(p);
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean crearCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		((ResponsableZonaDeEntrega) this.objRol).cerrarReclamo(strNumero);
 	}
+<<<<<<< HEAD
 	public void cerrarReclamo(String strNumero)
 	{
 		((ResponsableDistribucion) this.objRol).cerrarReclamo(strNumero);
@@ -200,3 +293,31 @@ public class Controlador
 		this.objRol = new Administrador();
 	}
 }
+=======
+	
+	public Cliente getCliente(int intNumero){
+		try {
+			return ClientesDAO.getInstance().getCliente(intNumero);
+		} catch (ConnectionException | ClienteException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public boolean modificarCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
+	{
+		Cliente c= new Cliente(strNombre,intDNI,strDomicilio,strTelefono,strMail);
+		try {
+			ClientesDAO.getInstance().modificarCliente(c);
+			return true;
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+		
+		
+}
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas

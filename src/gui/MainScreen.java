@@ -8,6 +8,7 @@ import java.awt.Container;
 /*==================================================*/
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -176,6 +177,18 @@ public class MainScreen
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("Alta cliente");
 				CreateClientWindow();
+				objFrame.repaint();
+				
+			}
+			
+		});
+		
+		objModificacion.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Modificar Cliente");
+				ModifyClientWindow();
 				objFrame.repaint();
 				
 			}
@@ -992,14 +1005,20 @@ public class MainScreen
 				}
 				
 				
-				if(Controlador.getInstance().crearProducto(txtFieldProducto.getText(), txtFieldDescripcion.getText(), Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")), cbEstado.isSelected()))
-				{
-					JOptionPane.showMessageDialog(null, "¡Producto creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
-					CreateProductWindow();
-					
-				}
-				else
-				{
+				try {
+					if(Controlador.getInstance().crearProducto(txtFieldProducto.getText(), txtFieldDescripcion.getText(), Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")), cbEstado.isSelected()))
+					{
+						JOptionPane.showMessageDialog(null, "¡Producto creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+						CreateProductWindow();
+						
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "Error creando el producto", "Error", JOptionPane.ERROR_MESSAGE);
+						CreateProductWindow();
+					}
+				} catch (NumberFormatException | HeadlessException | ConnectionException | ParameterException e1) {
+					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "Error creando el producto", "Error", JOptionPane.ERROR_MESSAGE);
 					CreateProductWindow();
 				}
@@ -1301,8 +1320,8 @@ public class MainScreen
 	}
 	
 	private void CreateClientWindow(){
-		JLabel lblTitulo, lblNombre, lblDNI, lblDomicilio, lblTelefono, lblMail,lblEstado;
-		JTextField txtFieldNombre,txtFieldDNI,txtFieldDomicilio,txtFieldTelefono, txtFieldMail; 
+		JLabel lblTitulo, lblNombre, lblDNI, lblMail, lblTelefono, lblDomicilio,lblEstado;
+		JTextField txtFieldNombre,txtFieldDNI,txtFieldMail,txtFieldTelefono, txtFieldDomicilio; 
 		JCheckBox cbEstado;
 		JButton btnAceptar, btnCancelar;
 		JFrame objFrame= this.objFrame;
@@ -1392,7 +1411,7 @@ public class MainScreen
 				
 				if (txtFieldNombre.getText().isEmpty() || txtFieldNombre.getText() == null || 
 						txtFieldDNI.getText().isEmpty() || txtFieldDNI.getText() == null ||
-								txtFieldDomicilio.getText().isEmpty() || txtFieldDomicilio.getText()==null ||
+								txtFieldMail.getText().isEmpty() || txtFieldMail.getText()==null ||
 								txtFieldTelefono.getText().isEmpty() || txtFieldTelefono.getText()==null ||
 								txtFieldMail.getText().isEmpty() || txtFieldMail.getText()==null
 								)
@@ -1402,16 +1421,21 @@ public class MainScreen
 				}
 				
 				
-				if(Controlador.getInstance().crearCliente(txtFieldNombre.getText(),Integer.parseInt(txtFieldDNI.getText()),txtFieldDomicilio.getText(), txtFieldTelefono.getText(),txtFieldMail.getText()))
-				{
-					JOptionPane.showMessageDialog(null, "¡Cliente creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
-					CreateClientWindow();
-					
-				}
-				else
-				{
+				try {
+					if(Controlador.getInstance().crearCliente(txtFieldNombre.getText(),Integer.parseInt(txtFieldDNI.getText()),txtFieldMail.getText(), txtFieldTelefono.getText(),txtFieldMail.getText()))
+					{
+						JOptionPane.showMessageDialog(null, "¡Cliente creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+						CreateClientWindow();
+						
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "Error creando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
+						CreateClientWindow();
+					}
+				} catch (NumberFormatException | HeadlessException | ConnectionException | ParameterException e1) {
 					JOptionPane.showMessageDialog(null, "Error creando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
-					CreateClientWindow();
+					e1.printStackTrace();
 				}
 				
 			}
@@ -1435,6 +1459,162 @@ public class MainScreen
 
 		this.objFrame.repaint();
 	
+	}
+	
+	private void ModifyClientWindow()
+	{
+		JLabel lblTitulo, lblCodigo;
+		JTextField txtFieldCodigo; 
+		JCheckBox cbEstado;
+		JButton btnAceptar, btnCancelar, btnBuscar;
+		JFrame objFrame= this.objFrame;
+		Usuario us= this.usuario;
+		
+		this.objFrame.getContentPane().removeAll();
+		
+	
+		lblTitulo= new JLabel ("Modificar Cliente");
+		lblTitulo.setFont(this.title);
+		lblTitulo.setBounds(170, 5, 350, 50);
+		this.objFrame.getContentPane().add(lblTitulo);
+		
+		//////////////USERNAME////////////////
+		lblCodigo =new JLabel("Codigo del Cliente:");
+		lblCodigo.setFont(this.labels);
+		lblCodigo.setBounds(150, 75, 150, 10);
+		this.objFrame.getContentPane().add(lblCodigo);
+		
+		txtFieldCodigo= new JTextField();
+		txtFieldCodigo.setBounds(280, 70, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldCodigo);
+	
+		////////////////////////////////////////
+		
+		btnBuscar= new JButton("Buscar");
+		btnBuscar.setBounds(447, 70, 100, 25);
+		this.objFrame.getContentPane().add(btnBuscar);
+		
+		btnBuscar.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//Buscar  el usuario
+				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText()== null)
+				{
+					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+				Cliente c= Controlador.getInstance().getCliente(Integer.parseInt(txtFieldCodigo.getText()));
+				if (c == null){
+					JOptionPane.showMessageDialog(null, "No hay un cliente que coincida con dicho codigo", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				//Si  lo encuentra
+				txtFieldCodigo.setEditable(false);
+				
+				JLabel lblNombre= new JLabel ("Nombre:"); //*
+				lblNombre.setBounds(150, 105, 150, 10);
+				objFrame.getContentPane().add(lblNombre);
+				
+				JTextField txtFieldNombre= new JTextField(c.getNombre());
+				txtFieldNombre.setBounds(280, 100, 150, 25);
+				objFrame.getContentPane().add(txtFieldNombre);
+				
+				JLabel lblDni= new JLabel ("Dni:");
+//				lblReingresarPassword.setFont(this.labels);
+				lblDni.setBounds(150, 135, 150, 15);
+				objFrame.getContentPane().add(lblDni);
+				
+				JTextField txtFieldDni= new JTextField(c.getDNI().toString());
+				txtFieldDni.setBounds(280, 130, 150, 25);
+				objFrame.getContentPane().add(txtFieldDni);
+				
+				///////////////////////////////////
+				
+				////////Permisos////////////////
+				JLabel lblDomicilio= new JLabel ("Domicilio:");
+//				lblPermisos.setFont(this.labels);
+				lblDomicilio.setBounds(150, 165, 150, 15);
+				objFrame.getContentPane().add(lblDomicilio);
+				
+				JTextField txtFieldDomicilio= new JTextField(c.getDomicilio());
+				txtFieldDomicilio.setBounds(280, 165, 150, 25);
+				objFrame.getContentPane().add(txtFieldDomicilio);
+				
+				JLabel lblTelefono= new JLabel ("Telefono:");
+//				lblPermisos.setFont(this.labels);
+				lblTelefono.setBounds(150, 195, 150, 15);
+				objFrame.getContentPane().add(lblTelefono);
+				
+				JTextField txtFieldTelefono= new JTextField(""+c.getTelefono());
+				txtFieldTelefono.setBounds(280, 195, 150, 25);
+				objFrame.getContentPane().add(txtFieldTelefono);
+				
+				JLabel lblMail= new JLabel ("Mail:");
+//				lblPermisos.setFont(this.labels);
+				lblMail.setBounds(150, 225, 150, 15);
+				objFrame.getContentPane().add(lblMail);
+				
+				JTextField txtFieldMail= new JTextField(""+c.getMail());
+				txtFieldMail.setBounds(280, 225, 150, 25);
+				objFrame.getContentPane().add(txtFieldMail);
+				////////////////////////////////////
+				
+				////////ESTADO////////////////////
+				JLabel lblEstado= new JLabel ("Estado:");
+				lblEstado.setBounds(150, 255, 150, 15);
+				objFrame.getContentPane().add(lblEstado);
+				
+				JCheckBox cbEstado= new JCheckBox();
+				cbEstado.setBounds(343, 255, 150, 15);
+				cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+				cbEstado.setSelected(true);
+				objFrame.getContentPane().add(cbEstado);
+				////////////////////////////////////
+				JButton btnAceptar = new JButton("Modificar");
+				
+				btnAceptar.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+//						c.(txtFieldDescripcion.getText());
+//						p.setPrecio(Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")));
+//						p.setTitulo(txtFieldProducto.getText());
+//						p.setBolActivo(cbEstado.isSelected());
+						try {
+							Controlador.getInstance().modificarCliente(txtFieldNombre.getText(), Integer.parseInt(txtFieldDni.getText()), txtFieldDomicilio.getText(), txtFieldTelefono.getText(), txtFieldMail.getText());
+							JOptionPane.showMessageDialog(null, "¡Cliente modificado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+							ModifyClientWindow();
+						} catch (ConnectionException | ParameterException e1) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, "Error modificando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
+							ModifyClientWindow();
+						}
+						
+					}
+				});
+				
+				objFrame.getContentPane().add(btnAceptar).setBounds(150, 215, 140, 25);
+				
+				JButton btnCancelar = new JButton("Cancelar");
+				btnCancelar.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						objFrame.getContentPane().removeAll();
+						objFrame.repaint();
+					}
+				});
+				objFrame.getContentPane().add(btnCancelar).setBounds(290, 215, 140, 25);
+				objFrame.repaint();
+			}
+		});
+		
+		
+		
+		///////////Botones////////////////
+		
+
+		this.objFrame.repaint();
 	}
 	
 	public static void main(String[] args) throws Throwable

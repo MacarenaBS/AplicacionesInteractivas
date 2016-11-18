@@ -22,7 +22,11 @@ public class Administrador extends Rol
 		this.colReclamos = new ArrayList<Reclamo>();
 		this.colUsuarios = new ArrayList<Usuario>();
 	}
+<<<<<<< HEAD
 	public void crearUsuario(String strUsername, String strPassword, String strRol)
+=======
+	public void crearUsuario(String strUsername, String strPassword, String strRol) throws ConnectionException, ParameterException, SQLException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		Usuario objUsuario;
 		try

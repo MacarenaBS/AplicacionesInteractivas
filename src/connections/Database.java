@@ -183,6 +183,7 @@ public class Database
 		    	/*===================Show Message===================*/
 			    /*==================================================*/
 				System.out.println("SQL statement execution failed: "+objException.getMessage());
+				throw new SQLException(objException.getMessage());
 			}
 		}
 		/*==================================================*/
@@ -194,6 +195,7 @@ public class Database
 	    	/*===================Show Message===================*/
 		    /*==================================================*/
 			System.out.println("SQL statement could not be created: "+objException.getMessage());
+			throw new SQLException(objException.getMessage());
 		}
 		/*==================================================*/
 		/*=================Return ResulsSet=================*/
@@ -253,6 +255,7 @@ public class Database
 		    	/*===================Show Message===================*/
 			    /*==================================================*/
 				System.out.println("SQL statement execution failed: "+objException.getMessage());
+				throw new SQLException(objException.getMessage());
 			}
 		}
 		/*==================================================*/
@@ -264,6 +267,7 @@ public class Database
 	    	/*===================Show Message===================*/
 		    /*==================================================*/
 			System.out.println("SQL statement could not be created: "+objException.getMessage());
+			throw new SQLException(objException.getMessage());
 		}
 	}
 	/*==================================================*/

@@ -16,9 +16,9 @@ public class Cliente extends Persona
 		this.setMail(strMail);
 		this.setActivo(true);
 	}
-	public Cliente(String strCodigo, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, Boolean bolActivo)
+	public Cliente(int intCodigo, String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, Boolean bolActivo) throws ConnectionException
 	{
-		this.setCodigoPersona(strCodigo);
+		this.setCodigoPersona(intCodigo);
 		this.setDNI(intDNI);
 		this.setNombre(strNombre);
 		this.setDomicilio(strDomicilio);

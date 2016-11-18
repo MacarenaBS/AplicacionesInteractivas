@@ -42,7 +42,11 @@ public class ClientesDAO
 	{
 		return this.objConnection.getConnection();
 	}
+<<<<<<< HEAD
 	public Cliente getCliente(String strNumero) throws ConnectionException, ClienteException
+=======
+	public Cliente getCliente(Integer intNumero) throws ConnectionException, ClienteException, ParameterException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		Cliente objCliente;
 		objCliente = this.getFromCache(strNumero);
@@ -52,8 +56,13 @@ public class ClientesDAO
 		}
 		return objCliente;
 	}
+<<<<<<< HEAD
 	private Cliente getFromCache(String strNumero)
+=======
+	private Cliente getFromCache(Integer intNumero) //*
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
+		/*
 		Boolean bolEncontro;
 		Iterator<Cliente> objIterator;
 		Cliente objCliente;
@@ -66,8 +75,20 @@ public class ClientesDAO
 			bolEncontro = (objCliente.getCodigoPersona() == strNumero);
 		}
 		return objCliente;
+		*/
+		
+		for  (Cliente c: this.colClientes){
+			if (c.esCliente(intNumero)){
+				return c;
+			}
+		}
+		return null;
 	}
+<<<<<<< HEAD
 	private Cliente getFromDatabase(String strNumero) throws ConnectionException, ClienteException
+=======
+	private Cliente getFromDatabase(Integer intNumero) throws ConnectionException, ClienteException, ParameterException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		Cliente objCliente;
 		ResultSet objClientes;
@@ -90,13 +111,12 @@ public class ClientesDAO
 		}
 		return objCliente;
 	}
-	private void insertarEnBase(Cliente objCliente)
+	private void insertarEnBase(Cliente objCliente) throws ConnectionException
 	{
 		try
 		{
 			this.objConnection.executeQuery("INSERT INTO Clientes (intCodigo, strNombre, intDNI, strDomicilio, strTelefono, strMail, bolActivo)".concat(
-											"VALUES ( ").concat(
-												String.valueOf(objCliente.getCodigoPersona())).concat(", '").concat(
+											"VALUES ( ").concat(String.valueOf(objCliente.getCodigoPersona())).concat(", '").concat(
 												objCliente.getNombre()).concat("', ").concat(
 												String.valueOf(objCliente.getDNI())).concat(", '").concat(
 												objCliente.getDomicilio()).concat("', '").concat(
@@ -109,7 +129,7 @@ public class ClientesDAO
 			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo Cliente");
 		}
 	}
-	public void insertar(Cliente objCliente)
+	public void insertar(Cliente objCliente) throws ConnectionException
 	{
 		if (!this.colClientes.contains(objCliente))
 		{
@@ -173,11 +193,12 @@ public class ClientesDAO
 			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo Cliente");
 		}
 	}
-	public String newId() throws ConnectionException
+	public int newId() throws ConnectionException
 	{
 		String strAnswer;
 		ResultSet objAnswer;
 		strAnswer = null;
+		int intAnswer=0;
 		try
 		{
 			objAnswer = this.objConnection.getResultSet("SELECT COUNT(*) AS Cantidad FROM Clientes");
@@ -188,14 +209,15 @@ public class ClientesDAO
 			else
 			{
 				objAnswer.next();
-				strAnswer = "CLI".concat(String.valueOf(objAnswer.getInt("Cantidad")));
+//				strAnswer = "CLI".concat(String.valueOf(objAnswer.getInt("Cantidad")));
+				intAnswer= objAnswer.getInt("Cantidad")+1;
 			}
 		}
 		catch (SQLException objException)
 		{
 			throw new ConnectionException("Error en la conexión con la base de datos");
 		}
-		return strAnswer;
+		return intAnswer;
 	}
 	public void close() throws ConnectionException
 	{
