@@ -2,6 +2,8 @@
 /*=====================Package======================*/
 /*==================================================*/
 package gui;
+
+import java.awt.Color;
 import java.awt.Container;
 /*==================================================*/
 /*=====================Imports======================*/
@@ -12,6 +14,9 @@ import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -28,36 +33,46 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import connections.ClientesDAO;
+import connections.FacturasDAO;
 import connections.ProductosDAO;
 import connections.UsuariosDAO;
 import controlador.Controlador;
+import exceptions.ClienteException;
 import exceptions.ConnectionException;
+import exceptions.FacturasException;
 import exceptions.ParameterException;
+import exceptions.ProductosException;
 import exceptions.UsuarioException;
+import model.Factura;
+import model.ItemFactura;
 import model.Producto;
 import usuarios.Cliente;
 import usuarios.Usuario;
+
 /*==================================================*/
 /*===================End Imports====================*/
 /*==================================================*/
 /**
  * JFrame para usuario de Call Center
+ * 
  * @version 1.0
- * @author ezequiel.de-luca 
+ * @author ezequiel.de-luca
  */
-public class MainScreen
-{
-	/*==================================================*/
-	/*====================Constants=====================*/
-	/*==================================================*/
+public class MainScreen {
+	/* ================================================== */
+	/* ====================Constants===================== */
+	/* ================================================== */
 	private final int intWidth = 600;
-	private final int intHeight = 350;
-	/*==================================================*/
-	/*====================Variables=====================*/
-	/*==================================================*/
+	private final int intHeight = 600;
+	/* ================================================== */
+	/* ====================Variables===================== */
+	/* ================================================== */
 	private JFrame objFrame;
 	private JMenuBar objMenuBar;
 	private JMenu objAdministradorMenu;
@@ -68,173 +83,185 @@ public class MainScreen
 	private JMenu objResponsableZonaDeEntregaMenu;
 	private Font title, labels;
 	private Usuario usuario;
-	
-	
-	/*==================================================*/
-	/*===================Constructor====================*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ===================Constructor==================== */
+	/* ================================================== */
 	/**
 	 * Constructor for main JFrame. It will require log in credentials.
-	 * @throws IOException file not found
+	 * 
+	 * @throws IOException
+	 *             file not found
 	 */
-	public MainScreen (Usuario us)
-	{
-		this.usuario= us;
-		this.title= new Font("Georgia", Font.BOLD, 30);
-		this.labels=new Font("Arial",Font.BOLD,12);
-		/*==================================================*/
-		/*================Create Java Frame=================*/
-		/*==================================================*/
+	public MainScreen(Usuario us) {
+		this.usuario = us;
+		this.title = new Font("Georgia", Font.BOLD, 30);
+		this.labels = new Font("Arial", Font.BOLD, 12);
+		/* ================================================== */
+		/* ================Create Java Frame================= */
+		/* ================================================== */
 		this.createJavaFrame();
-		/*==================================================*/
-		/*===================Create Menus===================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ===================Create Menus=================== */
+		/* ================================================== */
 		this.createMenus(us);
-		/*==================================================*/
-		/*============Add Elements To Java Frame============*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ============Add Elements To Java Frame============ */
+		/* ================================================== */
 		this.addElements();
-		/*==================================================*/
-		/*==============Define Exit Operation===============*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==============Define Exit Operation=============== */
+		/* ================================================== */
 		this.objFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	/*==================================================*/
-	/*=================End Constructor==================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*==================Create JFrame===================*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* =================End Constructor================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ==================Create JFrame=================== */
+	/* ================================================== */
 	/**
-	 * Create the JFrame, set the defined sizes (once defined resizing is not allowed) and title.
-	 * No layout is defined, elements will be displayed on matrix position schema.
+	 * Create the JFrame, set the defined sizes (once defined resizing is not
+	 * allowed) and title. No layout is defined, elements will be displayed on
+	 * matrix position schema.
 	 */
-	private void createJavaFrame()
-	{
-		/*==================================================*/
-		/*==================Create JFrame===================*/
-		/*==================================================*/
+	private void createJavaFrame() {
+		/* ================================================== */
+		/* ==================Create JFrame=================== */
+		/* ================================================== */
 		this.objFrame = new JFrame();
-		/*==================================================*/
-		/*==================Set Frame Size==================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Set Frame Size================== */
+		/* ================================================== */
 		this.objFrame.setPreferredSize(new Dimension(this.intWidth, this.intHeight));
-		/*==================================================*/
-		/*=================Prevent Resizing=================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* =================Prevent Resizing================= */
+		/* ================================================== */
 		this.objFrame.setResizable(false);
-		/*==================================================*/
-		/*==================Set No Layout===================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Set No Layout=================== */
+		/* ================================================== */
 		this.objFrame.setLayout(null);
-		/*==================================================*/
-		/*=================Set Frame Title==================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* =================Set Frame Title================== */
+		/* ================================================== */
 		this.objFrame.setTitle("Aplicaciones Interactivas 2C2016");
-		/*==================================================*/
-		/*================Set Frame Location================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ================Set Frame Location================ */
+		/* ================================================== */
 		this.objFrame.setLocationByPlatform(true);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*===========Administrador Clientes Menu============*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ===========Administrador Clientes Menu============ */
+	/* ================================================== */
 	/**
 	 * Administrador Clientes Menu
 	 */
-	private void clientesMenu()
-	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
+	private void clientesMenu() {
+		/* ================================================== */
+		/* ====================Variables===================== */
+		/* ================================================== */
 		JMenu objMenu;
 		JMenuItem objAlta;
 		JMenuItem objBaja;
 		JMenuItem objModificacion;
-		/*==================================================*/
-		/*==================Crear Sub Menu==================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Crear Sub Menu================== */
+		/* ================================================== */
 		objMenu = new JMenu("Clientes");
-		/*==================================================*/
-		/*===================Crear Items====================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ===================Crear Items==================== */
+		/* ================================================== */
 		objAlta = new JMenuItem("Alta");
 		objBaja = new JMenuItem("Baja");
 		objModificacion = new JMenuItem("Modificación");
-		/*==================================================*/
-		/*==================Agregar Items===================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Agregar Items=================== */
+		/* ================================================== */
 		objMenu.add(objAlta);
 		objMenu.add(objBaja);
 		objMenu.add(objModificacion);
-		
-		objAlta.addActionListener(new ActionListener(){
+
+		objAlta.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("Alta cliente");
 				CreateClientWindow();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
-		
-		objModificacion.addActionListener(new ActionListener(){
+
+		objModificacion.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("Modificar Cliente");
 				ModifyClientWindow();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
-		/*==================================================*/
-		/*=================Agregar Sub Menu=================*/
-		/*==================================================*/
+
+		objBaja.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Eliminar Cliente");
+				DeleteClientWindow();
+				objFrame.repaint();
+			}
+
+		});
+		/* ================================================== */
+		/* =================Agregar Sub Menu================= */
+		/* ================================================== */
 		this.objAdministradorMenu.add(objMenu);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*===========Administrador Productos Menu===========*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ===========Administrador Productos Menu=========== */
+	/* ================================================== */
 	/**
 	 * Administrador Productos Menu
 	 */
-	private void productosMenu()
-	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
+	private void productosMenu() {
+		/* ================================================== */
+		/* ====================Variables===================== */
+		/* ================================================== */
 		JMenu objMenu;
 		JMenuItem objAlta;
 		JMenuItem objBaja;
 		JMenuItem objModificacion;
-		/*==================================================*/
-		/*==================Crear Sub Menu==================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Crear Sub Menu================== */
+		/* ================================================== */
 		objMenu = new JMenu("Productos");
-		/*==================================================*/
-		/*===================Crear Items====================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ===================Crear Items==================== */
+		/* ================================================== */
 		objAlta = new JMenuItem("Alta");
 		objBaja = new JMenuItem("Baja");
 		objModificacion = new JMenuItem("Modificación");
-		/*==================================================*/
-		/*==================Agregar Items===================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Agregar Items=================== */
+		/* ================================================== */
 		objMenu.add(objAlta);
 		objMenu.add(objBaja);
 		objMenu.add(objModificacion);
-		
-		objAlta.addActionListener(new ActionListener(){
+
+		objAlta.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -242,22 +269,22 @@ public class MainScreen
 				CreateProductWindow();
 				objFrame.repaint();
 			}
-			
+
 		});
-		
-		objModificacion.addActionListener(new ActionListener(){
+
+		objModificacion.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Modificar Producto");
 				ModifyProductWindow();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
-		
-		objBaja.addActionListener(new ActionListener(){
+
+		objBaja.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -265,46 +292,46 @@ public class MainScreen
 				DeleteProductWindow();
 				objFrame.repaint();
 			}
-			
+
 		});
-		/*==================================================*/
-		/*=================Agregar Sub Menu=================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* =================Agregar Sub Menu================= */
+		/* ================================================== */
 		this.objAdministradorMenu.add(objMenu);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*===========Administrador Usuarios Menu============*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ===========Administrador Usuarios Menu============ */
+	/* ================================================== */
 	/**
 	 * Administrador Usuarios Menu
 	 */
-	private void usuariosMenu()
-	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
+	private void usuariosMenu() {
+		/* ================================================== */
+		/* ====================Variables===================== */
+		/* ================================================== */
 		JMenu objMenu;
 		JMenuItem objAlta;
 		JMenuItem objBaja;
 		JMenuItem objModificacion;
-		JFrame objFrame= this.objFrame;
-		/*==================================================*/
-		/*==================Crear Sub Menu==================*/
-		/*==================================================*/
+		JFrame objFrame = this.objFrame;
+		/* ================================================== */
+		/* ==================Crear Sub Menu================== */
+		/* ================================================== */
 		objMenu = new JMenu("Usuarios");
-		/*==================================================*/
-		/*===================Crear Items====================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ===================Crear Items==================== */
+		/* ================================================== */
 		objAlta = new JMenuItem("Alta");
 		objBaja = new JMenuItem("Baja");
 		objModificacion = new JMenuItem("Modificación");
-		/*==================================================*/
-		/*=================Agregar Comportamiento=================*/
-		/*==================================================*/
-		objAlta.addActionListener(new ActionListener(){
+		/* ================================================== */
+		/* =================Agregar Comportamiento================= */
+		/* ================================================== */
+		objAlta.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -312,102 +339,114 @@ public class MainScreen
 				createUserWindow();
 				objFrame.repaint();
 			}
-			
+
 		});
-		
-		objModificacion.addActionListener(new ActionListener(){
+
+		objModificacion.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("MODIFICAR USUARIO");				
+				System.out.println("MODIFICAR USUARIO");
 				ModifyUserWindow();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
-		
-		objBaja.addActionListener(new ActionListener(){
+
+		objBaja.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("ELIMINAR USUARIO");
 				DeleteUserWindow();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
-		/*==================================================*/
-		/*==================Agregar Items===================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Agregar Items=================== */
+		/* ================================================== */
 		objMenu.add(objAlta);
 		objMenu.add(objBaja);
 		objMenu.add(objModificacion);
-		/*==================================================*/
-		/*=================Agregar Sub Menu=================*/
-		/*==================================================*/
-		
+		/* ================================================== */
+		/* =================Agregar Sub Menu================= */
+		/* ================================================== */
+
 		this.objAdministradorMenu.add(objMenu);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*=============Crear Menu Administrador=============*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* =============Crear Menu Administrador============= */
+	/* ================================================== */
 	/**
 	 * Menu Administrador
 	 */
-	private void createMenuAdministrator()
-	{
-		/*==================================================*/
-		/*====================Crear Menu====================*/
-		/*==================================================*/
+	private void createMenuAdministrator() {
+		/* ================================================== */
+		/* ====================Crear Menu==================== */
+		/* ================================================== */
 		this.objAdministradorMenu = new JMenu("Administrador");
-		/*==================================================*/
-		/*=================Crear Sub Menus==================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* =================Crear Sub Menus================== */
+		/* ================================================== */
 		this.clientesMenu();
 		this.productosMenu();
 		this.usuariosMenu();
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*==============Crear Menu Call Center==============*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ==============Crear Menu Call Center============== */
+	/* ================================================== */
 	/**
 	 * Menu Call Center
 	 */
-	private void createMenuCallCenter()
-	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
+	private void createMenuCallCenter() {
+		/* ================================================== */
+		/* ====================Variables===================== */
+		/* ================================================== */
 		JMenuItem objReclamoFacturacion;
 		JMenuItem objReclamoZonaDeEntrega;
 		JMenuItem objReclamoProducto;
 		JMenuItem objReclamoFaltante;
 		JMenuItem objReclamoCantidad;
 		JMenuItem objReclamoCompuesto;
-		/*==================================================*/
-		/*====================Crear Menu====================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ====================Crear Menu==================== */
+		/* ================================================== */
 		this.objCallCenterMenu = new JMenu("CallCenter");
-		/*==================================================*/
-		/*===================Crear Items====================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ===================Crear Items==================== */
+		/* ================================================== */
 		objReclamoFacturacion = new JMenuItem("Nuevo Reclamo Facturación");
 		objReclamoZonaDeEntrega = new JMenuItem("Nuevo Reclamo Zona de Entrega");
 		objReclamoProducto = new JMenuItem("Nuevo Reclamo Producto");
 		objReclamoFaltante = new JMenuItem("Nuevo Reclamo Faltante");
 		objReclamoCantidad = new JMenuItem("Nuevo Reclamo Cantidad");
 		objReclamoCompuesto = new JMenuItem("Nuevo Reclamo Compuesto");
-		/*==================================================*/
-		/*==================Agregar Items===================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ==================Agregar Items=================== */
+		/* ================================================== */
+
+		objReclamoFacturacion.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Crear Nuevo Reclamo Facturacion");
+				CreateNuevoReclamoFactuacionWindow();
+				objFrame.repaint();
+			}
+
+		});
+
 		this.objCallCenterMenu.add(objReclamoFacturacion);
 		this.objCallCenterMenu.add(objReclamoZonaDeEntrega);
 		this.objCallCenterMenu.add(objReclamoProducto);
@@ -415,26 +454,26 @@ public class MainScreen
 		this.objCallCenterMenu.add(objReclamoCantidad);
 		this.objCallCenterMenu.add(objReclamoCompuesto);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*===================Create Menus===================*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ===================Create Menus=================== */
+	/* ================================================== */
 	/**
 	 * Create Menu for actions.
 	 */
-	private void createMenus(Usuario us)
-	{
-		/*==================================================*/
-		/*=================Create Menu Bar==================*/
-		/*==================================================*/
+	private void createMenus(Usuario us) {
+		/* ================================================== */
+		/* =================Create Menu Bar================== */
+		/* ================================================== */
 		this.objMenuBar = new JMenuBar();
-		/*==================================================*/
-		/*============Create Administrator Menu=============*/
-		/*==================================================*/
-		
-		switch (us.getRol()){
+		/* ================================================== */
+		/* ============Create Administrator Menu============= */
+		/* ================================================== */
+
+		switch (us.getRol()) {
 		case "Administrador":
 			this.createMenuAdministrator();
 			this.objMenuBar.add(this.objAdministradorMenu);
@@ -460,146 +499,148 @@ public class MainScreen
 			this.objMenuBar.add(this.objResponsableZonaDeEntregaMenu);
 			break;
 		default:
-			JOptionPane.showMessageDialog(null, "El usuario se encuentra mal configurado y no posee un rol acorde al sistema.", "Error", JOptionPane.ERROR_MESSAGE);
-			
+			JOptionPane.showMessageDialog(null,
+					"El usuario se encuentra mal configurado y no posee un rol acorde al sistema.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+
 		}
-		
-//		this.createMenuAdministrator();
-		/*==================================================*/
-		/*=============Create Call Center Menu==============*/
-		/*==================================================*/
-//		this.createMenuCallCente();
-//		this.objConsultaMenu = new JMenu("Consulta");
-//		this.objResponsableDistribucionMenu = new JMenu("Resp Distribución");
-//		this.objResponsableFactuacionMenu = new JMenu("Resp Facturación");
-//		this.objResponsableZonaDeEntregaMenu = new JMenu("Resp Zona De Entrega");
-//		this.objMenuBar.add(this.objAdministradorMenu);
-//		this.objMenuBar.add(this.objCallCenterMenu);
-//		this.objMenuBar.add(this.objConsultaMenu);
-//		this.objMenuBar.add(this.objResponsableDistribucionMenu);
-//		this.objMenuBar.add(this.objResponsableFactuacionMenu);
-//		this.objMenuBar.add(this.objResponsableZonaDeEntregaMenu);
+
+		// this.createMenuAdministrator();
+		/* ================================================== */
+		/* =============Create Call Center Menu============== */
+		/* ================================================== */
+		// this.createMenuCallCente();
+		// this.objConsultaMenu = new JMenu("Consulta");
+		// this.objResponsableDistribucionMenu = new JMenu("Resp Distribución");
+		// this.objResponsableFactuacionMenu = new JMenu("Resp Facturación");
+		// this.objResponsableZonaDeEntregaMenu = new JMenu("Resp Zona De
+		// Entrega");
+		// this.objMenuBar.add(this.objAdministradorMenu);
+		// this.objMenuBar.add(this.objCallCenterMenu);
+		// this.objMenuBar.add(this.objConsultaMenu);
+		// this.objMenuBar.add(this.objResponsableDistribucionMenu);
+		// this.objMenuBar.add(this.objResponsableFactuacionMenu);
+		// this.objMenuBar.add(this.objResponsableZonaDeEntregaMenu);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	/*==================================================*/
-	/*==============Add Elements To JFrame==============*/
-	/*==================================================*/
+
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+	/* ================================================== */
+	/* ==============Add Elements To JFrame============== */
+	/* ================================================== */
 	/**
-	 * Add each one of the created elements to the JFrame, pack them and set the JFrame as visible.
+	 * Add each one of the created elements to the JFrame, pack them and set the
+	 * JFrame as visible.
 	 */
-	private void addElements()
-	{
-		/*==================================================*/
-		/*===================Add Elements===================*/
-		/*==================================================*/
+	private void addElements() {
+		/* ================================================== */
+		/* ===================Add Elements=================== */
+		/* ================================================== */
 		this.objFrame.setJMenuBar(this.objMenuBar);
-		/*==================================================*/
-		/*================Pack All Elements=================*/
-		/*==================================================*/
-		
+		/* ================================================== */
+		/* ================Pack All Elements================= */
+		/* ================================================== */
+
 		this.objFrame.pack();
-		/*==================================================*/
-		/*================Make Frame Visible================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ================Make Frame Visible================ */
+		/* ================================================== */
 		this.objFrame.setVisible(true);
 	}
-	/*==================================================*/
-	/*==================End Procedure===================*/
-	/*==================================================*/
-	
-	private void createUserWindow(){
+	/* ================================================== */
+	/* ==================End Procedure=================== */
+	/* ================================================== */
+
+	private void createUserWindow() {
 		JLabel lblTitulo, lblUsername, lblPassword, lblReingresarPassword, lblPermisos, lblError;
-		JTextField txtFieldUsername; 
+		JTextField txtFieldUsername;
 		JComboBox cbPermisos;
 		JPasswordField passFieldPassword, passFieldReingresarPassword;
 		JButton btnAceptar, btnCancelar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
-		lblError= new JLabel("<html><font color=\"red\">Las contraseñas no coinciden.</font></html>");
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
+		lblError = new JLabel("<html><font color=\"red\">Las contraseñas no coinciden.</font></html>");
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Crear usuario");
+
+		lblTitulo = new JLabel("Crear usuario");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(190, 5, 300, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////USERNAME////////////////
-		lblUsername =new JLabel("Nombre del usuario:");
+
+		////////////// USERNAME////////////////
+		lblUsername = new JLabel("Nombre del usuario:");
 		lblUsername.setFont(this.labels);
 		lblUsername.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblUsername);
-		
-		txtFieldUsername= new JTextField();
+
+		txtFieldUsername = new JTextField();
 		txtFieldUsername.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldUsername);
-	
+
 		////////////////////////////////////////
-		
-		
-		///////////PASSWORD//////////////////
-		lblPassword= new JLabel ("Password:");
+
+		/////////// PASSWORD//////////////////
+		lblPassword = new JLabel("Password:");
 		lblPassword.setFont(this.labels);
 		lblPassword.setBounds(150, 105, 150, 10);
 		this.objFrame.getContentPane().add(lblPassword);
-		
-		passFieldPassword= new JPasswordField();
+
+		passFieldPassword = new JPasswordField();
 		passFieldPassword.setBounds(280, 100, 150, 25);
 		this.objFrame.getContentPane().add(passFieldPassword);
-		
-		lblReingresarPassword= new JLabel ("Reingreso:");
+
+		lblReingresarPassword = new JLabel("Reingreso:");
 		lblReingresarPassword.setFont(this.labels);
 		lblReingresarPassword.setBounds(150, 135, 150, 15);
 		this.objFrame.getContentPane().add(lblReingresarPassword);
-		
-		passFieldReingresarPassword= new JPasswordField();
+
+		passFieldReingresarPassword = new JPasswordField();
 		passFieldReingresarPassword.setBounds(280, 130, 150, 25);
 		passFieldReingresarPassword.setToolTipText("Reingrese la contraseña para confirmación");
 		this.objFrame.getContentPane().add(passFieldReingresarPassword);
-		
+
 		///////////////////////////////////
-		
-		////////Permisos////////////////
-		lblPermisos= new JLabel ("Permiso:");
+
+		//////// Permisos////////////////
+		lblPermisos = new JLabel("Permiso:");
 		lblPermisos.setFont(this.labels);
 		lblPermisos.setBounds(150, 165, 150, 15);
 		this.objFrame.getContentPane().add(lblPermisos);
-		
-		cbPermisos= new JComboBox();
+
+		cbPermisos = new JComboBox();
 		cbPermisos.addItem("Administrador");
 		cbPermisos.addItem("CallCenter");
 		cbPermisos.addItem("Consulta");
 		cbPermisos.addItem("ResponsableDistribucion");
 		cbPermisos.addItem("ResponsableFacturacion");
 		cbPermisos.addItem("ResponsableZonaDeEntrega");
-		
+
 		cbPermisos.setBounds(280, 160, 150, 25);
 		this.objFrame.getContentPane().add(cbPermisos);
-		
+
 		////////////////////////////////////
-		
-		///////////Botones////////////////
+
+		/////////// Botones////////////////
 		btnAceptar = new JButton("Crear");
-		
-		btnAceptar.addActionListener(new ActionListener(){
+
+		btnAceptar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				objFrame.repaint();
-				
-				if (txtFieldUsername.getText().isEmpty() || txtFieldUsername.getText() == null || 
-						passFieldPassword.getText().isEmpty() || passFieldPassword.getText() == null ||
-						passFieldReingresarPassword.getText().isEmpty() || passFieldReingresarPassword.getText()==null)
-				{
-					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+
+				if (txtFieldUsername.getText().isEmpty() || txtFieldUsername.getText() == null
+						|| passFieldPassword.getText().isEmpty() || passFieldPassword.getText() == null
+						|| passFieldReingresarPassword.getText().isEmpty()
+						|| passFieldReingresarPassword.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
-				if (!passFieldPassword.getText().equals(passFieldReingresarPassword.getText()))
-				{
+
+				if (!passFieldPassword.getText().equals(passFieldReingresarPassword.getText())) {
 					System.out.println("NO MATCH");
 					File objFile = new File("images\\ErrorIcon.png");
 					Image objImage;
@@ -610,173 +651,170 @@ public class MainScreen
 						objFrame.getContentPane().add(lblErrorIcon);
 						objFrame.getContentPane().add(lblError).setBounds(465, 130, 150, 30);
 						objFrame.repaint();
-						
+
 					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(null, "Error. Contacte al administrador.", "Error 304", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Error. Contacte al administrador.", "Error 304",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					return;
 				}
-				
-				if (txtFieldUsername.getText().equals(passFieldPassword.getText())){
-					JOptionPane.showMessageDialog(null, "El usuario y la contraseña no pueden ser iguales.", "Error", JOptionPane.WARNING_MESSAGE);
+
+				if (txtFieldUsername.getText().equals(passFieldPassword.getText())) {
+					JOptionPane.showMessageDialog(null, "El usuario y la contraseña no pueden ser iguales.", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				if(Controlador.getInstance().crearUsuario(txtFieldUsername.getText(), passFieldPassword.getText(), cbPermisos.getSelectedItem().toString()))
-				{
-					JOptionPane.showMessageDialog(null, "¡Usuario creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+
+				if (Controlador.getInstance().crearUsuario(txtFieldUsername.getText(), passFieldPassword.getText(),
+						cbPermisos.getSelectedItem().toString())) {
+					JOptionPane.showMessageDialog(null, "¡Usuario creado con éxito!", "Enhorabuena",
+							JOptionPane.INFORMATION_MESSAGE);
 					createUserWindow();
-					
-				}
-				else
-				{
+
+				} else {
 					JOptionPane.showMessageDialog(null, "Error creando el usuario", "Error", JOptionPane.ERROR_MESSAGE);
 					createUserWindow();
 				}
-				
+
 			}
-			
+
 		});
-		
+
 		this.objFrame.getContentPane().add(btnAceptar).setBounds(150, 200, 140, 25);
-		
+
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.addActionListener(new ActionListener(){
+		btnCancelar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				objFrame.getContentPane().removeAll();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
 		this.objFrame.getContentPane().add(btnCancelar).setBounds(290, 200, 140, 25);
 
 		this.objFrame.repaint();
-	
+
 	}
-	
-	private void ModifyUserWindow(){
+
+	private void ModifyUserWindow() {
 		JLabel lblTitulo, lblUsername, lblPassword, lblReingresarPassword, lblPermisos, lblError;
-		JTextField txtFieldUsername; 
+		JTextField txtFieldUsername;
 		JComboBox cbPermisos;
 		JPasswordField passFieldPassword, passFieldReingresarPassword;
 		JButton btnAceptar, btnCancelar, btnBuscar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
-		lblError= new JLabel("<html><font color=\"red\">Las contraseñas no coinciden.</font></html>");
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
+		lblError = new JLabel("<html><font color=\"red\">Las contraseñas no coinciden.</font></html>");
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Modificar usuario");
+
+		lblTitulo = new JLabel("Modificar usuario");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(190, 5, 300, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////USERNAME////////////////
-		lblUsername =new JLabel("Nombre del usuario:");
+
+		////////////// USERNAME////////////////
+		lblUsername = new JLabel("Nombre del usuario:");
 		lblUsername.setFont(this.labels);
 		lblUsername.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblUsername);
-		
-		txtFieldUsername= new JTextField();
+
+		txtFieldUsername = new JTextField();
 		txtFieldUsername.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldUsername);
-	
+
 		////////////////////////////////////////
-		
-		btnBuscar= new JButton("Buscar");
+
+		btnBuscar = new JButton("Buscar");
 		btnBuscar.setBounds(447, 70, 100, 25);
 		this.objFrame.getContentPane().add(btnBuscar);
-		
-		btnBuscar.addActionListener(new ActionListener(){
+
+		btnBuscar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Buscar  el usuario
-				if (txtFieldUsername.getText().isEmpty() | txtFieldUsername.getText()== null)
-				{
-					JOptionPane.showMessageDialog(null, "Ingrese un usuario por favor", "Error", JOptionPane.WARNING_MESSAGE);
+				// Buscar el usuario
+				if (txtFieldUsername.getText().isEmpty() | txtFieldUsername.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Ingrese un usuario por favor", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				try 
-				{
-					Usuario s= Controlador.getInstance().getUser(txtFieldUsername.getText());
+
+				try {
+					Usuario s = Controlador.getInstance().getUser(txtFieldUsername.getText());
 				} catch (ConnectionException e) {
 					JOptionPane.showMessageDialog(null, "Error de conexión", "Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 					return;
-				} catch (ParameterException e2)
-				{
+				} catch (ParameterException e2) {
 					e2.printStackTrace();
 					return;
-				}
-				catch (UsuarioException e3)
-				{
-					JOptionPane.showMessageDialog(null, "No se encontro un usuario con ese nombre", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (UsuarioException e3) {
+					JOptionPane.showMessageDialog(null, "No se encontro un usuario con ese nombre", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				//Si  lo encuentra
+				// Si lo encuentra
 				txtFieldUsername.setEditable(false);
-				JLabel lblPassword= new JLabel ("Password:"); //*
+				JLabel lblPassword = new JLabel("Password:"); // *
 				lblPassword.setBounds(150, 105, 150, 10);
 				objFrame.getContentPane().add(lblPassword);
-				
-				JPasswordField passFieldPassword= new JPasswordField();
+
+				JPasswordField passFieldPassword = new JPasswordField();
 				passFieldPassword.setBounds(280, 100, 150, 25);
 				objFrame.getContentPane().add(passFieldPassword);
-				
-				JLabel lblReingresarPassword= new JLabel ("Reingreso:");
-//				lblReingresarPassword.setFont(this.labels);
+
+				JLabel lblReingresarPassword = new JLabel("Reingreso:");
+				// lblReingresarPassword.setFont(this.labels);
 				lblReingresarPassword.setBounds(150, 135, 150, 15);
 				objFrame.getContentPane().add(lblReingresarPassword);
-				
-				JPasswordField passFieldReingresarPassword= new JPasswordField();
+
+				JPasswordField passFieldReingresarPassword = new JPasswordField();
 				passFieldReingresarPassword.setBounds(280, 130, 150, 25);
 				passFieldReingresarPassword.setToolTipText("Reingrese la contraseña para confirmación");
 				objFrame.getContentPane().add(passFieldReingresarPassword);
-				
+
 				///////////////////////////////////
-				
-				////////Permisos////////////////
-				JLabel lblPermisos= new JLabel ("Permiso:");
-//				lblPermisos.setFont(this.labels);
+
+				//////// Permisos////////////////
+				JLabel lblPermisos = new JLabel("Permiso:");
+				// lblPermisos.setFont(this.labels);
 				lblPermisos.setBounds(150, 165, 150, 15);
 				objFrame.getContentPane().add(lblPermisos);
-				
-				JComboBox cbPermisos= new JComboBox();
+
+				JComboBox cbPermisos = new JComboBox();
 				cbPermisos.addItem("Administrador");
 				cbPermisos.addItem("CallCenter");
 				cbPermisos.addItem("Consulta");
 				cbPermisos.addItem("ResponsableDistribucion");
 				cbPermisos.addItem("ResponsableFacturacion");
 				cbPermisos.addItem("ResponsableZonaDeEntrega");
-				
+
 				cbPermisos.setBounds(280, 160, 150, 25);
 				objFrame.getContentPane().add(cbPermisos);
-				
+
 				////////////////////////////////////
 				JButton btnAceptar = new JButton("Modificar");
-				
-				btnAceptar.addActionListener(new ActionListener(){
+
+				btnAceptar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						objFrame.repaint();
-						
-						if (txtFieldUsername.getText().isEmpty() || txtFieldUsername.getText() == null || 
-								passFieldPassword.getText().isEmpty() || passFieldPassword.getText() == null ||
-								passFieldReingresarPassword.getText().isEmpty() || passFieldReingresarPassword.getText()==null)
-						{
-							JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+
+						if (txtFieldUsername.getText().isEmpty() || txtFieldUsername.getText() == null
+								|| passFieldPassword.getText().isEmpty() || passFieldPassword.getText() == null
+								|| passFieldReingresarPassword.getText().isEmpty()
+								|| passFieldReingresarPassword.getText() == null) {
+							JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar",
+									"Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
-						
-						if (!passFieldPassword.getText().equals(passFieldReingresarPassword.getText()))
-						{
+
+						if (!passFieldPassword.getText().equals(passFieldReingresarPassword.getText())) {
 							System.out.println("NO MATCH");
 							File objFile = new File("images\\ErrorIcon.png");
 							Image objImage;
@@ -787,361 +825,357 @@ public class MainScreen
 								objFrame.getContentPane().add(lblErrorIcon);
 								objFrame.getContentPane().add(lblError).setBounds(465, 130, 150, 30);
 								objFrame.repaint();
-								
+
 							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(null, "Error. Contacte al administrador.", "Error 304", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(null, "Error. Contacte al administrador.", "Error 304",
+										JOptionPane.ERROR_MESSAGE);
 							}
 							return;
 						}
-						
-						if (txtFieldUsername.getText().equals(passFieldPassword.getText())){
-							JOptionPane.showMessageDialog(null, "El usuario y la contraseña no pueden ser iguales.", "Error", JOptionPane.WARNING_MESSAGE);
+
+						if (txtFieldUsername.getText().equals(passFieldPassword.getText())) {
+							JOptionPane.showMessageDialog(null, "El usuario y la contraseña no pueden ser iguales.",
+									"Error", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
-						/**Controlador.getInstance().crearUsuario(txtFieldUsername.getText(), passFieldPassword.getText(), cbPermisos.getSelectedItem().toString())
-/**Modificar**/			if(Controlador.getInstance().modificarUsuario(txtFieldUsername.getText(), passFieldPassword.getText(), cbPermisos.getSelectedItem().toString()))
-						{
-							JOptionPane.showMessageDialog(null, "¡Usuario modificado con exito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+						/**
+						 * Controlador.getInstance().crearUsuario(txtFieldUsername.getText(),
+						 * passFieldPassword.getText(),
+						 * cbPermisos.getSelectedItem().toString()) /**Modificar
+						 **/
+						if (Controlador.getInstance().modificarUsuario(txtFieldUsername.getText(),
+								passFieldPassword.getText(), cbPermisos.getSelectedItem().toString())) {
+							JOptionPane.showMessageDialog(null, "¡Usuario modificado con exito!", "Enhorabuena",
+									JOptionPane.INFORMATION_MESSAGE);
 							ModifyUserWindow();
-							
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Error modificando el usuario", "Error", JOptionPane.ERROR_MESSAGE);
+
+						} else {
+							JOptionPane.showMessageDialog(null, "Error modificando el usuario", "Error",
+									JOptionPane.ERROR_MESSAGE);
 							ModifyUserWindow();
 						}
-						
+
 					}
-					
+
 				});
-				
+
 				objFrame.getContentPane().add(btnAceptar).setBounds(150, 200, 140, 25);
-				
+
 				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.addActionListener(new ActionListener(){
+				btnCancelar.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						objFrame.getContentPane().removeAll();
 						objFrame.repaint();
-						
+
 					}
-					
+
 				});
 				objFrame.getContentPane().add(btnCancelar).setBounds(290, 200, 140, 25);
 				objFrame.repaint();
 			}
-			
-			
+
 		});
-		
-		
-		
-		///////////Botones////////////////
-		
+
+		/////////// Botones////////////////
 
 		this.objFrame.repaint();
-	
+
 	}
-	
-	private void DeleteUserWindow(){
+
+	private void DeleteUserWindow() {
 		JLabel lblTitulo, lblUsername;
-		JTextField txtFieldUsername; 
+		JTextField txtFieldUsername;
 
 		JButton btnEliminar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Eliminar usuario");
+
+		lblTitulo = new JLabel("Eliminar usuario");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(190, 5, 300, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////USERNAME////////////////
-		lblUsername =new JLabel("Nombre del usuario:");
+
+		////////////// USERNAME////////////////
+		lblUsername = new JLabel("Nombre del usuario:");
 		lblUsername.setFont(this.labels);
 		lblUsername.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblUsername);
-		
-		txtFieldUsername= new JTextField();
+
+		txtFieldUsername = new JTextField();
 		txtFieldUsername.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldUsername);
-	
+
 		////////////////////////////////////////
-		
-		btnEliminar= new JButton("Eliminar");
+
+		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setBounds(447, 70, 100, 25);
 		this.objFrame.getContentPane().add(btnEliminar);
-		
-		btnEliminar.addActionListener(new ActionListener(){
+
+		btnEliminar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Buscar  el usuario
-				if (txtFieldUsername.getText().isEmpty() | txtFieldUsername.getText()== null)
-				{
-					JOptionPane.showMessageDialog(null, "Ingrese un usuario por favor", "Error", JOptionPane.WARNING_MESSAGE);
+				// Buscar el usuario
+				if (txtFieldUsername.getText().isEmpty() | txtFieldUsername.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Ingrese un usuario por favor", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				try 
-				{
-					Usuario s= Controlador.getInstance().getUser(txtFieldUsername.getText());
+
+				try {
+					Usuario s = Controlador.getInstance().getUser(txtFieldUsername.getText());
 				} catch (ConnectionException e) {
 					JOptionPane.showMessageDialog(null, "Error de conexión", "Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 					return;
-				} catch (ParameterException e2)
-				{
+				} catch (ParameterException e2) {
 					e2.printStackTrace();
 					return;
-				}
-				catch (UsuarioException e3)
-				{
-					JOptionPane.showMessageDialog(null, "No se encontro un usuario con ese nombre", "Error", JOptionPane.WARNING_MESSAGE);
+				} catch (UsuarioException e3) {
+					JOptionPane.showMessageDialog(null, "No se encontro un usuario con ese nombre", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				if(Controlador.getInstance().eliminarUsuario(txtFieldUsername.getText()))
-				{
-					JOptionPane.showMessageDialog(null, "Usuario eliminado con exito", "¡Enhorabuena!", JOptionPane.INFORMATION_MESSAGE);
+
+				if (Controlador.getInstance().eliminarUsuario(txtFieldUsername.getText())) {
+					JOptionPane.showMessageDialog(null, "Usuario eliminado con exito", "¡Enhorabuena!",
+							JOptionPane.INFORMATION_MESSAGE);
 					DeleteUserWindow();
-				}
-				else
-				{
-					JOptionPane.showMessageDialog(null, "Hubo un problema al eliminar el usuario.", "Error", JOptionPane.ERROR_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Hubo un problema al eliminar el usuario.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					DeleteUserWindow();
 				}
 
-				
 				////////////////////////////////////
-				
-				}	
-				});
-				
+
+			}
+		});
+
 	}
-	
-	private void CreateProductWindow(){
+
+	private void CreateProductWindow() {
 		JLabel lblTitulo, lblProducto, lblDescripcion, lblPrecio, lblEstado;
-		JTextField txtFieldProducto,txtFieldDescripcion,txtFieldPrecio,txtFieldEstado; 
+		JTextField txtFieldProducto, txtFieldDescripcion, txtFieldPrecio, txtFieldEstado;
 		JCheckBox cbEstado;
 		JButton btnAceptar, btnCancelar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Crear Producto");
+
+		lblTitulo = new JLabel("Crear Producto");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(190, 5, 300, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////PRODUCTO////////////////
-		lblProducto =new JLabel("Nombre del producto:");
+
+		////////////// PRODUCTO////////////////
+		lblProducto = new JLabel("Nombre del producto:");
 		lblProducto.setFont(this.labels);
 		lblProducto.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblProducto);
-		
-		txtFieldProducto= new JTextField();
+
+		txtFieldProducto = new JTextField();
 		txtFieldProducto.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldProducto);
-	
+
 		////////////////////////////////////////
-		
-		
-		///////////DESCRIPCION//////////////////
-		lblDescripcion= new JLabel ("Descripción:");
+
+		/////////// DESCRIPCION//////////////////
+		lblDescripcion = new JLabel("Descripción:");
 		lblDescripcion.setFont(this.labels);
 		lblDescripcion.setBounds(150, 105, 150, 10);
 		this.objFrame.getContentPane().add(lblDescripcion);
-		
-		txtFieldDescripcion= new JTextField();
+
+		txtFieldDescripcion = new JTextField();
 		txtFieldDescripcion.setBounds(280, 100, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldDescripcion);
-		
+
 		///////////////////////////////////
-		
-		////////PRECIO////////////////
-		lblPrecio= new JLabel ("Precio:");
+
+		//////// PRECIO////////////////
+		lblPrecio = new JLabel("Precio:");
 		lblPrecio.setFont(this.labels);
 		lblPrecio.setBounds(150, 135, 150, 15);
 		this.objFrame.getContentPane().add(lblPrecio);
-		
-		txtFieldPrecio= new JTextField();
+
+		txtFieldPrecio = new JTextField();
 		txtFieldPrecio.setBounds(280, 130, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldPrecio);
 		////////////////////////////////////
-		
-		////////ESTADO////////////////////
-		lblEstado= new JLabel ("Estado:");
+
+		//////// ESTADO////////////////////
+		lblEstado = new JLabel("Estado:");
 		lblEstado.setFont(this.labels);
 		lblEstado.setBounds(150, 165, 150, 15);
 		this.objFrame.getContentPane().add(lblEstado);
-		
-		cbEstado= new JCheckBox();
+
+		cbEstado = new JCheckBox();
 		cbEstado.setBounds(343, 165, 150, 15);
-		cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+		cbEstado.setToolTipText(
+				"Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
 		cbEstado.setSelected(true);
 		this.objFrame.getContentPane().add(cbEstado);
-		
-		///////////Botones////////////////
+
+		/////////// Botones////////////////
 		btnAceptar = new JButton("Crear");
-		
-		btnAceptar.addActionListener(new ActionListener(){
+
+		btnAceptar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				objFrame.repaint();
-				
-				if (txtFieldProducto.getText().isEmpty() || txtFieldProducto.getText() == null || 
-						txtFieldDescripcion.getText().isEmpty() || txtFieldDescripcion.getText() == null ||
-								txtFieldPrecio.getText().isEmpty() || txtFieldPrecio.getText()==null)
-				{
-					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+
+				if (txtFieldProducto.getText().isEmpty() || txtFieldProducto.getText() == null
+						|| txtFieldDescripcion.getText().isEmpty() || txtFieldDescripcion.getText() == null
+						|| txtFieldPrecio.getText().isEmpty() || txtFieldPrecio.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
-				
+
 				try {
-					if(Controlador.getInstance().crearProducto(txtFieldProducto.getText(), txtFieldDescripcion.getText(), Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")), cbEstado.isSelected()))
-					{
-						JOptionPane.showMessageDialog(null, "¡Producto creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+					if (Controlador.getInstance().crearProducto(txtFieldProducto.getText(),
+							txtFieldDescripcion.getText(), Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")),
+							cbEstado.isSelected())) {
+						JOptionPane.showMessageDialog(null, "¡Producto creado con éxito!", "Enhorabuena",
+								JOptionPane.INFORMATION_MESSAGE);
 						CreateProductWindow();
-						
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(null, "Error creando el producto", "Error", JOptionPane.ERROR_MESSAGE);
+
+					} else {
+						JOptionPane.showMessageDialog(null, "Error creando el producto", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						CreateProductWindow();
 					}
 				} catch (NumberFormatException | HeadlessException | ConnectionException | ParameterException e1) {
 					// TODO Auto-generated catch block
-					JOptionPane.showMessageDialog(null, "Error creando el producto", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Error creando el producto", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					CreateProductWindow();
 				}
-				
+
 			}
-			
+
 		});
-		
+
 		this.objFrame.getContentPane().add(btnAceptar).setBounds(150, 200, 140, 25);
-		
+
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.addActionListener(new ActionListener(){
+		btnCancelar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				objFrame.getContentPane().removeAll();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
 		this.objFrame.getContentPane().add(btnCancelar).setBounds(290, 200, 140, 25);
 
 		this.objFrame.repaint();
-	
+
 	}
-	
-	private void ModifyProductWindow()
-	{
+
+	private void ModifyProductWindow() {
 		JLabel lblTitulo, lblCodigo, lblProducto, lblDescripcion, lblPrecio, lblEstado;
-		JTextField txtFieldCodigo, txtFieldProducto,txtFieldDescripcion,txtFieldPrecio,txtFieldEstado; 
+		JTextField txtFieldCodigo, txtFieldProducto, txtFieldDescripcion, txtFieldPrecio, txtFieldEstado;
 		JCheckBox cbEstado;
 		JButton btnAceptar, btnCancelar, btnBuscar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Modificar Producto");
+
+		lblTitulo = new JLabel("Modificar Producto");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(170, 5, 350, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////USERNAME////////////////
-		lblCodigo =new JLabel("Codigo del producto:");
+
+		////////////// USERNAME////////////////
+		lblCodigo = new JLabel("Codigo del producto:");
 		lblCodigo.setFont(this.labels);
 		lblCodigo.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblCodigo);
-		
-		txtFieldCodigo= new JTextField();
+
+		txtFieldCodigo = new JTextField();
 		txtFieldCodigo.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldCodigo);
-	
+
 		////////////////////////////////////////
-		
-		btnBuscar= new JButton("Buscar");
+
+		btnBuscar = new JButton("Buscar");
 		btnBuscar.setBounds(447, 70, 100, 25);
 		this.objFrame.getContentPane().add(btnBuscar);
-		
-		btnBuscar.addActionListener(new ActionListener(){
+
+		btnBuscar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Buscar  el usuario
-				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText()== null)
-				{
-					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error", JOptionPane.WARNING_MESSAGE);
+				// Buscar el usuario
+				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				Producto p= Controlador.getInstance().getProducto(Integer.parseInt(txtFieldCodigo.getText()));
-				if (p == null){
-					JOptionPane.showMessageDialog(null, "No hay un producto que coincida con dicho codigo", "Error", JOptionPane.ERROR_MESSAGE);
+
+				Producto p = Controlador.getInstance().getProducto(Integer.parseInt(txtFieldCodigo.getText()));
+				if (p == null) {
+					JOptionPane.showMessageDialog(null, "No hay un producto que coincida con dicho codigo", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				//Si  lo encuentra
+				// Si lo encuentra
 				txtFieldCodigo.setEditable(false);
-				
-				JLabel lblProducto= new JLabel ("Producto:"); //*
+
+				JLabel lblProducto = new JLabel("Producto:"); // *
 				lblProducto.setBounds(150, 105, 150, 10);
 				objFrame.getContentPane().add(lblProducto);
-				
-				JTextField txtFieldProducto= new JTextField(p.getTitulo());
+
+				JTextField txtFieldProducto = new JTextField(p.getTitulo());
 				txtFieldProducto.setBounds(280, 100, 150, 25);
 				objFrame.getContentPane().add(txtFieldProducto);
-				
-				JLabel lblDescripcion= new JLabel ("Descripcion:");
-//				lblReingresarPassword.setFont(this.labels);
+
+				JLabel lblDescripcion = new JLabel("Descripcion:");
+				// lblReingresarPassword.setFont(this.labels);
 				lblDescripcion.setBounds(150, 135, 150, 15);
 				objFrame.getContentPane().add(lblDescripcion);
-				
-				JTextField txtFieldDescripcion= new JTextField(p.getDescripcion());
+
+				JTextField txtFieldDescripcion = new JTextField(p.getDescripcion());
 				txtFieldDescripcion.setBounds(280, 130, 150, 25);
 				objFrame.getContentPane().add(txtFieldDescripcion);
-				
+
 				///////////////////////////////////
-				
-				////////Permisos////////////////
-				JLabel lblPrecio= new JLabel ("Precio:");
-//				lblPermisos.setFont(this.labels);
+
+				//////// Permisos////////////////
+				JLabel lblPrecio = new JLabel("Precio:");
+				// lblPermisos.setFont(this.labels);
 				lblPrecio.setBounds(150, 165, 150, 15);
 				objFrame.getContentPane().add(lblPrecio);
-				
-				JTextField txtFieldPrecio= new JTextField(""+p.getPrecio());
+
+				JTextField txtFieldPrecio = new JTextField("" + p.getPrecio());
 				txtFieldPrecio.setBounds(280, 165, 150, 25);
 				objFrame.getContentPane().add(txtFieldPrecio);
 				////////////////////////////////////
-				
-				////////ESTADO////////////////////
-				JLabel lblEstado= new JLabel ("Estado:");
+
+				//////// ESTADO////////////////////
+				JLabel lblEstado = new JLabel("Estado:");
 				lblEstado.setBounds(150, 195, 150, 15);
 				objFrame.getContentPane().add(lblEstado);
-				
-				JCheckBox cbEstado= new JCheckBox();
+
+				JCheckBox cbEstado = new JCheckBox();
 				cbEstado.setBounds(343, 195, 150, 15);
-				cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+				cbEstado.setToolTipText(
+						"Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
 				cbEstado.setSelected(true);
 				objFrame.getContentPane().add(cbEstado);
 				////////////////////////////////////
 				JButton btnAceptar = new JButton("Modificar");
-				
-				btnAceptar.addActionListener(new ActionListener(){
+
+				btnAceptar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						p.setDescripcion(txtFieldDescripcion.getText());
@@ -1150,21 +1184,23 @@ public class MainScreen
 						p.setBolActivo(cbEstado.isSelected());
 						try {
 							ProductosDAO.getInstance().modificarProducto(p);
-							JOptionPane.showMessageDialog(null, "¡Producto modificado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "¡Producto modificado con éxito!", "Enhorabuena",
+									JOptionPane.INFORMATION_MESSAGE);
 							ModifyProductWindow();
 						} catch (ConnectionException | ParameterException e1) {
 							// TODO Auto-generated catch block
-							JOptionPane.showMessageDialog(null, "Error modificando el producto", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Error modificando el producto", "Error",
+									JOptionPane.ERROR_MESSAGE);
 							ModifyProductWindow();
 						}
-						
+
 					}
 				});
-				
+
 				objFrame.getContentPane().add(btnAceptar).setBounds(150, 215, 140, 25);
-				
+
 				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.addActionListener(new ActionListener(){
+				btnCancelar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						objFrame.getContentPane().removeAll();
@@ -1175,130 +1211,127 @@ public class MainScreen
 				objFrame.repaint();
 			}
 		});
-		
-		
-		
-		///////////Botones////////////////
-		
+
+		/////////// Botones////////////////
 
 		this.objFrame.repaint();
 	}
-	
-	private void DeleteProductWindow(){
+
+	private void DeleteProductWindow() {
 		JLabel lblTitulo, lblCodigo, lblProducto, lblDescripcion, lblPrecio, lblEstado;
-		JTextField txtFieldCodigo, txtFieldProducto,txtFieldDescripcion,txtFieldPrecio,txtFieldEstado; 
+		JTextField txtFieldCodigo, txtFieldProducto, txtFieldDescripcion, txtFieldPrecio, txtFieldEstado;
 		JCheckBox cbEstado;
 		JButton btnAceptar, btnCancelar, btnBuscar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Eliminar Producto");
+
+		lblTitulo = new JLabel("Eliminar Producto");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(170, 5, 350, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////USERNAME////////////////
-		lblCodigo =new JLabel("Codigo del producto:");
+
+		////////////// USERNAME////////////////
+		lblCodigo = new JLabel("Codigo del producto:");
 		lblCodigo.setFont(this.labels);
 		lblCodigo.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblCodigo);
-		
-		txtFieldCodigo= new JTextField();
+
+		txtFieldCodigo = new JTextField();
 		txtFieldCodigo.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldCodigo);
-	
+
 		////////////////////////////////////////
-		
-		btnBuscar= new JButton("Buscar");
+
+		btnBuscar = new JButton("Buscar");
 		btnBuscar.setBounds(447, 70, 100, 25);
 		this.objFrame.getContentPane().add(btnBuscar);
-		
-		btnBuscar.addActionListener(new ActionListener(){
+
+		btnBuscar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Buscar  el usuario
-				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText()== null)
-				{
-					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error", JOptionPane.WARNING_MESSAGE);
+				// Buscar el usuario
+				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				Producto p= Controlador.getInstance().getProducto(Integer.parseInt(txtFieldCodigo.getText()));
-				if (p == null){
-					JOptionPane.showMessageDialog(null, "No hay un producto que coincida con dicho codigo", "Error", JOptionPane.ERROR_MESSAGE);
+
+				Producto p = Controlador.getInstance().getProducto(Integer.parseInt(txtFieldCodigo.getText()));
+				if (p == null) {
+					JOptionPane.showMessageDialog(null, "No hay un producto que coincida con dicho codigo", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				//Si  lo encuentra
+				// Si lo encuentra
 				txtFieldCodigo.setEditable(false);
-				
-				JLabel lblProducto= new JLabel ("Producto:"); //*
+
+				JLabel lblProducto = new JLabel("Producto:"); // *
 				lblProducto.setBounds(150, 105, 150, 10);
 				objFrame.getContentPane().add(lblProducto);
-				
-				JTextField txtFieldProducto= new JTextField(p.getTitulo());
+
+				JTextField txtFieldProducto = new JTextField(p.getTitulo());
 				txtFieldProducto.setBounds(280, 100, 150, 25);
 				objFrame.getContentPane().add(txtFieldProducto);
-				
-				JLabel lblDescripcion= new JLabel ("Descripcion:");
-//				lblReingresarPassword.setFont(this.labels);
+
+				JLabel lblDescripcion = new JLabel("Descripcion:");
+				// lblReingresarPassword.setFont(this.labels);
 				lblDescripcion.setBounds(150, 135, 150, 15);
 				objFrame.getContentPane().add(lblDescripcion);
-				
-				JTextField txtFieldDescripcion= new JTextField(p.getDescripcion());
+
+				JTextField txtFieldDescripcion = new JTextField(p.getDescripcion());
 				txtFieldDescripcion.setBounds(280, 130, 150, 25);
 				objFrame.getContentPane().add(txtFieldDescripcion);
-				
+
 				///////////////////////////////////
-				
-				////////Permisos////////////////
-				JLabel lblPrecio= new JLabel ("Precio:");
-//				lblPermisos.setFont(this.labels);
+
+				//////// Permisos////////////////
+				JLabel lblPrecio = new JLabel("Precio:");
+				// lblPermisos.setFont(this.labels);
 				lblPrecio.setBounds(150, 165, 150, 15);
 				objFrame.getContentPane().add(lblPrecio);
-				
-				JTextField txtFieldPrecio= new JTextField();
+
+				JTextField txtFieldPrecio = new JTextField();
 				txtFieldPrecio.setBounds(280, 165, 150, 25);
 				objFrame.getContentPane().add(txtFieldPrecio);
 				////////////////////////////////////
-				
-				////////ESTADO////////////////////
-				JLabel lblEstado= new JLabel ("Estado:");
+
+				//////// ESTADO////////////////////
+				JLabel lblEstado = new JLabel("Estado:");
 				lblEstado.setBounds(150, 195, 150, 15);
 				objFrame.getContentPane().add(lblEstado);
-				
-				JCheckBox cbEstado= new JCheckBox();
+
+				JCheckBox cbEstado = new JCheckBox();
 				cbEstado.setBounds(343, 195, 150, 15);
-				cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+				cbEstado.setToolTipText(
+						"Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
 				cbEstado.setSelected(true);
 				objFrame.getContentPane().add(cbEstado);
 				////////////////////////////////////
 				JButton btnAceptar = new JButton("Eliminar");
-				
-				btnAceptar.addActionListener(new ActionListener(){
+
+				btnAceptar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if (Controlador.getInstance().eliminarProducto(Integer.parseInt(txtFieldCodigo.getText())))
-						{
-							JOptionPane.showMessageDialog(null, "¡Producto eliminado con exito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+						if (Controlador.getInstance().eliminarProducto(Integer.parseInt(txtFieldCodigo.getText()))) {
+							JOptionPane.showMessageDialog(null, "¡Producto eliminado con exito!", "Enhorabuena",
+									JOptionPane.INFORMATION_MESSAGE);
 							DeleteProductWindow();
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Hubo un error eliminando el producto.", "Error", JOptionPane.ERROR_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(null, "Hubo un error eliminando el producto.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 							DeleteProductWindow();
 						}
 						objFrame.repaint();
 					}
 				});
-				
+
 				objFrame.getContentPane().add(btnAceptar).setBounds(150, 215, 140, 25);
-				
+
 				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.addActionListener(new ActionListener(){
+				btnCancelar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						objFrame.getContentPane().removeAll();
@@ -1309,333 +1342,772 @@ public class MainScreen
 				objFrame.repaint();
 			}
 		});
-		
-		
-		
-		///////////Botones////////////////
-		
+
+		/////////// Botones////////////////
 
 		this.objFrame.repaint();
-				
+
 	}
-	
-	private void CreateClientWindow(){
-		JLabel lblTitulo, lblNombre, lblDNI, lblMail, lblTelefono, lblDomicilio,lblEstado;
-		JTextField txtFieldNombre,txtFieldDNI,txtFieldMail,txtFieldTelefono, txtFieldDomicilio; 
+
+	private void CreateClientWindow() {
+		JLabel lblTitulo, lblNombre, lblDNI, lblMail, lblTelefono, lblDomicilio, lblEstado;
+		JTextField txtFieldNombre, txtFieldDNI, txtFieldMail, txtFieldTelefono, txtFieldDomicilio;
 		JCheckBox cbEstado;
 		JButton btnAceptar, btnCancelar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Crear Cliente");
+
+		lblTitulo = new JLabel("Crear Cliente");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(190, 5, 300, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////PRODUCTO////////////////
-		lblNombre =new JLabel("Nombre:");
+
+		////////////// PRODUCTO////////////////
+		lblNombre = new JLabel("Nombre:");
 		lblNombre.setFont(this.labels);
 		lblNombre.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblNombre);
-		
-		txtFieldNombre= new JTextField();
+
+		txtFieldNombre = new JTextField();
 		txtFieldNombre.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldNombre);
-	
+
 		////////////////////////////////////////
-		
-		
-		///////////DESCRIPCION//////////////////
-		lblDNI= new JLabel ("DNI:");
+
+		/////////// DESCRIPCION//////////////////
+		lblDNI = new JLabel("DNI:");
 		lblDNI.setFont(this.labels);
 		lblDNI.setBounds(150, 105, 150, 10);
 		this.objFrame.getContentPane().add(lblDNI);
-		
-		txtFieldDNI= new JTextField();
+
+		txtFieldDNI = new JTextField();
 		txtFieldDNI.setBounds(280, 100, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldDNI);
-		
+
 		///////////////////////////////////
-		
-		////////PRECIO////////////////
-		lblDomicilio= new JLabel ("Domicilio:");
+
+		//////// PRECIO////////////////
+		lblDomicilio = new JLabel("Domicilio:");
 		lblDomicilio.setFont(this.labels);
 		lblDomicilio.setBounds(150, 135, 150, 15);
 		this.objFrame.getContentPane().add(lblDomicilio);
-		
-		txtFieldDomicilio= new JTextField();
+
+		txtFieldDomicilio = new JTextField();
 		txtFieldDomicilio.setBounds(280, 130, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldDomicilio);
 		////////////////////////////////////
-		
-		////////TELEFONO////////////////////
-		lblTelefono= new JLabel ("Telefono:");
+
+		//////// TELEFONO////////////////////
+		lblTelefono = new JLabel("Telefono:");
 		lblTelefono.setFont(this.labels);
 		lblTelefono.setBounds(150, 165, 150, 15);
 		this.objFrame.getContentPane().add(lblTelefono);
-		
-		txtFieldTelefono= new JTextField();
+
+		txtFieldTelefono = new JTextField();
 		txtFieldTelefono.setBounds(280, 160, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldTelefono);
-		
-		lblMail= new JLabel ("Mail:");
+
+		lblMail = new JLabel("Mail:");
 		lblMail.setFont(this.labels);
 		lblMail.setBounds(150, 195, 150, 15);
 		this.objFrame.getContentPane().add(lblMail);
-		
-		txtFieldMail= new JTextField();
+
+		txtFieldMail = new JTextField();
 		txtFieldMail.setBounds(280, 190, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldMail);
-		
-		lblEstado= new JLabel ("Estado:");
+
+		lblEstado = new JLabel("Estado:");
 		lblEstado.setFont(this.labels);
 		lblEstado.setBounds(150, 225, 150, 15);
 		this.objFrame.getContentPane().add(lblEstado);
-		
-		cbEstado= new JCheckBox();
+
+		cbEstado = new JCheckBox();
 		cbEstado.setBounds(343, 220, 150, 25);
-		cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+		cbEstado.setToolTipText(
+				"Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
 		cbEstado.setSelected(true);
 		this.objFrame.getContentPane().add(cbEstado);
-		
-		///////////Botones////////////////
+
+		/////////// Botones////////////////
 		btnAceptar = new JButton("Crear");
-		
-		btnAceptar.addActionListener(new ActionListener(){
+
+		btnAceptar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				objFrame.repaint();
-				
-				if (txtFieldNombre.getText().isEmpty() || txtFieldNombre.getText() == null || 
-						txtFieldDNI.getText().isEmpty() || txtFieldDNI.getText() == null ||
-								txtFieldMail.getText().isEmpty() || txtFieldMail.getText()==null ||
-								txtFieldTelefono.getText().isEmpty() || txtFieldTelefono.getText()==null ||
-								txtFieldMail.getText().isEmpty() || txtFieldMail.getText()==null
-								)
-				{
-					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error", JOptionPane.ERROR_MESSAGE);
+
+				if (txtFieldNombre.getText().isEmpty() || txtFieldNombre.getText() == null
+						|| txtFieldDNI.getText().isEmpty() || txtFieldDNI.getText() == null
+						|| txtFieldMail.getText().isEmpty() || txtFieldMail.getText() == null
+						|| txtFieldTelefono.getText().isEmpty() || txtFieldTelefono.getText() == null
+						|| txtFieldMail.getText().isEmpty() || txtFieldMail.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Debe completar todos los campos para continuar", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
-				
+
 				try {
-					if(Controlador.getInstance().crearCliente(txtFieldNombre.getText(),Integer.parseInt(txtFieldDNI.getText()),txtFieldMail.getText(), txtFieldTelefono.getText(),txtFieldMail.getText()))
-					{
-						JOptionPane.showMessageDialog(null, "¡Cliente creado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
+					if (Controlador.getInstance().crearCliente(txtFieldNombre.getText(),
+							Integer.parseInt(txtFieldDNI.getText()), txtFieldMail.getText(), txtFieldTelefono.getText(),
+							txtFieldMail.getText())) {
+						JOptionPane.showMessageDialog(null, "¡Cliente creado con éxito!", "Enhorabuena",
+								JOptionPane.INFORMATION_MESSAGE);
 						CreateClientWindow();
-						
-					}
-					else
-					{
-						JOptionPane.showMessageDialog(null, "Error creando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
+
+					} else {
+						JOptionPane.showMessageDialog(null, "Error creando el cliente", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						CreateClientWindow();
 					}
 				} catch (NumberFormatException | HeadlessException | ConnectionException | ParameterException e1) {
 					JOptionPane.showMessageDialog(null, "Error creando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
 					e1.printStackTrace();
 				}
-				
+
 			}
-			
+
 		});
-		
+
 		this.objFrame.getContentPane().add(btnAceptar).setBounds(150, 250, 140, 25);
-		
+
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.addActionListener(new ActionListener(){
+		btnCancelar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				objFrame.getContentPane().removeAll();
 				objFrame.repaint();
-				
+
 			}
-			
+
 		});
 		this.objFrame.getContentPane().add(btnCancelar).setBounds(290, 250, 140, 25);
 
 		this.objFrame.repaint();
-	
+
 	}
-	
-	private void ModifyClientWindow()
-	{
+
+	private void DeleteClientWindow() {
 		JLabel lblTitulo, lblCodigo;
-		JTextField txtFieldCodigo; 
+		JTextField txtFieldCodigo;
 		JCheckBox cbEstado;
 		JButton btnAceptar, btnCancelar, btnBuscar;
-		JFrame objFrame= this.objFrame;
-		Usuario us= this.usuario;
-		
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
 		this.objFrame.getContentPane().removeAll();
-		
-	
-		lblTitulo= new JLabel ("Modificar Cliente");
+
+		lblTitulo = new JLabel("Eliminar Cliente");
 		lblTitulo.setFont(this.title);
 		lblTitulo.setBounds(170, 5, 350, 50);
 		this.objFrame.getContentPane().add(lblTitulo);
-		
-		//////////////USERNAME////////////////
-		lblCodigo =new JLabel("Codigo del Cliente:");
+
+		////////////// USERNAME////////////////
+		lblCodigo = new JLabel("Codigo del Cliente:");
 		lblCodigo.setFont(this.labels);
 		lblCodigo.setBounds(150, 75, 150, 10);
 		this.objFrame.getContentPane().add(lblCodigo);
-		
-		txtFieldCodigo= new JTextField();
+
+		txtFieldCodigo = new JTextField();
 		txtFieldCodigo.setBounds(280, 70, 150, 25);
 		this.objFrame.getContentPane().add(txtFieldCodigo);
-	
+
 		////////////////////////////////////////
-		
-		btnBuscar= new JButton("Buscar");
+
+		btnBuscar = new JButton("Buscar");
 		btnBuscar.setBounds(447, 70, 100, 25);
 		this.objFrame.getContentPane().add(btnBuscar);
-		
-		btnBuscar.addActionListener(new ActionListener(){
+
+		btnBuscar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Buscar  el usuario
-				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText()== null)
-				{
-					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error", JOptionPane.WARNING_MESSAGE);
+				// Buscar el usuario
+				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				Cliente c= Controlador.getInstance().getCliente(Integer.parseInt(txtFieldCodigo.getText()));
-				if (c == null){
-					JOptionPane.showMessageDialog(null, "No hay un cliente que coincida con dicho codigo", "Error", JOptionPane.ERROR_MESSAGE);
+
+				Cliente c = Controlador.getInstance().getCliente(Integer.parseInt(txtFieldCodigo.getText()));
+				if (c == null) {
+					JOptionPane.showMessageDialog(null, "No hay un cliente que coincida con dicho codigo", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				//Si  lo encuentra
+				// Si lo encuentra
 				txtFieldCodigo.setEditable(false);
-				
-				JLabel lblNombre= new JLabel ("Nombre:"); //*
+
+				JLabel lblNombre = new JLabel("Nombre:"); // *
 				lblNombre.setBounds(150, 105, 150, 10);
 				objFrame.getContentPane().add(lblNombre);
-				
-				JTextField txtFieldNombre= new JTextField(c.getNombre());
+
+				JTextField txtFieldNombre = new JTextField(c.getNombre());
 				txtFieldNombre.setBounds(280, 100, 150, 25);
 				objFrame.getContentPane().add(txtFieldNombre);
-				
-				JLabel lblDni= new JLabel ("Dni:");
-//				lblReingresarPassword.setFont(this.labels);
+				txtFieldNombre.setEditable(false);
+
+				JLabel lblDni = new JLabel("Dni:");
+				// lblReingresarPassword.setFont(this.labels);
 				lblDni.setBounds(150, 135, 150, 15);
 				objFrame.getContentPane().add(lblDni);
-				
-				JTextField txtFieldDni= new JTextField(c.getDNI().toString());
+
+				JTextField txtFieldDni = new JTextField(c.getDNI().toString());
 				txtFieldDni.setBounds(280, 130, 150, 25);
 				objFrame.getContentPane().add(txtFieldDni);
-				
+				txtFieldDni.setEditable(false);
 				///////////////////////////////////
-				
-				////////Permisos////////////////
-				JLabel lblDomicilio= new JLabel ("Domicilio:");
-//				lblPermisos.setFont(this.labels);
+
+				//////// Permisos////////////////
+				JLabel lblDomicilio = new JLabel("Domicilio:");
+				// lblPermisos.setFont(this.labels);
 				lblDomicilio.setBounds(150, 165, 150, 15);
 				objFrame.getContentPane().add(lblDomicilio);
-				
-				JTextField txtFieldDomicilio= new JTextField(c.getDomicilio());
+
+				JTextField txtFieldDomicilio = new JTextField(c.getDomicilio());
 				txtFieldDomicilio.setBounds(280, 165, 150, 25);
 				objFrame.getContentPane().add(txtFieldDomicilio);
-				
-				JLabel lblTelefono= new JLabel ("Telefono:");
-//				lblPermisos.setFont(this.labels);
+				txtFieldDomicilio.setEditable(false);
+
+				JLabel lblTelefono = new JLabel("Telefono:");
+				// lblPermisos.setFont(this.labels);
 				lblTelefono.setBounds(150, 195, 150, 15);
 				objFrame.getContentPane().add(lblTelefono);
-				
-				JTextField txtFieldTelefono= new JTextField(""+c.getTelefono());
+
+				JTextField txtFieldTelefono = new JTextField("" + c.getTelefono());
 				txtFieldTelefono.setBounds(280, 195, 150, 25);
 				objFrame.getContentPane().add(txtFieldTelefono);
-				
-				JLabel lblMail= new JLabel ("Mail:");
-//				lblPermisos.setFont(this.labels);
+				txtFieldTelefono.setEditable(false);
+
+				JLabel lblMail = new JLabel("Mail:");
+				// lblPermisos.setFont(this.labels);
 				lblMail.setBounds(150, 225, 150, 15);
 				objFrame.getContentPane().add(lblMail);
-				
-				JTextField txtFieldMail= new JTextField(""+c.getMail());
+
+				JTextField txtFieldMail = new JTextField("" + c.getMail());
 				txtFieldMail.setBounds(280, 225, 150, 25);
 				objFrame.getContentPane().add(txtFieldMail);
+				txtFieldMail.setEditable(false);
 				////////////////////////////////////
-				
-				////////ESTADO////////////////////
-				JLabel lblEstado= new JLabel ("Estado:");
-				lblEstado.setBounds(150, 255, 150, 15);
-				objFrame.getContentPane().add(lblEstado);
-				
-				JCheckBox cbEstado= new JCheckBox();
-				cbEstado.setBounds(343, 255, 150, 15);
-				cbEstado.setToolTipText("Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
-				cbEstado.setSelected(true);
-				objFrame.getContentPane().add(cbEstado);
+
+				//////// ESTADO////////////////////
+				// JLabel lblEstado= new JLabel ("Estado:");
+				// lblEstado.setBounds(150, 255, 150, 15);
+				// objFrame.getContentPane().add(lblEstado);
+				//
+				// JCheckBox cbEstado= new JCheckBox();
+				// cbEstado.setBounds(343, 255, 150, 15);
+				// cbEstado.setToolTipText("Si la casilla se encuentra marcada,
+				// significa que esta ACTIVO. En caso contrario, INACTIVO.");
+				// cbEstado.setSelected(true);
+				// objFrame.getContentPane().add(cbEstado);
 				////////////////////////////////////
-				JButton btnAceptar = new JButton("Modificar");
-				
-				btnAceptar.addActionListener(new ActionListener(){
+				JButton btnAceptar = new JButton("Eliminar");
+
+				btnAceptar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-//						c.(txtFieldDescripcion.getText());
-//						p.setPrecio(Float.parseFloat(txtFieldPrecio.getText().replace(",", ".")));
-//						p.setTitulo(txtFieldProducto.getText());
-//						p.setBolActivo(cbEstado.isSelected());
 						try {
-							Controlador.getInstance().modificarCliente(txtFieldNombre.getText(), Integer.parseInt(txtFieldDni.getText()), txtFieldDomicilio.getText(), txtFieldTelefono.getText(), txtFieldMail.getText());
-							JOptionPane.showMessageDialog(null, "¡Cliente modificado con éxito!", "Enhorabuena", JOptionPane.INFORMATION_MESSAGE);
-							ModifyClientWindow();
+							if (Controlador.getInstance().eliminarCliente(Integer.parseInt(txtFieldCodigo.getText()))) {
+								JOptionPane.showMessageDialog(null, "¡Cliente eliminado con éxito!", "Enhorabuena",
+										JOptionPane.INFORMATION_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(null, "Error eliminando el cliente", "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
+
+							DeleteClientWindow();
 						} catch (ConnectionException | ParameterException e1) {
 							// TODO Auto-generated catch block
-							JOptionPane.showMessageDialog(null, "Error modificando el cliente", "Error", JOptionPane.ERROR_MESSAGE);
-							ModifyClientWindow();
+							JOptionPane.showMessageDialog(null, "Error eliminando el cliente", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							DeleteClientWindow();
 						}
-						
+
 					}
 				});
-				
-				objFrame.getContentPane().add(btnAceptar).setBounds(150, 215, 140, 25);
-				
+
+				objFrame.getContentPane().add(btnAceptar).setBounds(150, 285, 140, 25);
+
 				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.addActionListener(new ActionListener(){
+				btnCancelar.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						objFrame.getContentPane().removeAll();
 						objFrame.repaint();
 					}
 				});
-				objFrame.getContentPane().add(btnCancelar).setBounds(290, 215, 140, 25);
+				objFrame.getContentPane().add(btnCancelar).setBounds(290, 285, 140, 25);
 				objFrame.repaint();
 			}
 		});
-		
-		
-		
-		///////////Botones////////////////
-		
+
+		/////////// Botones////////////////
 
 		this.objFrame.repaint();
 	}
-	
-	public static void main(String[] args) throws Throwable
-	{
-		/*==================================================*/
-		/*====================Variables=====================*/
-		/*==================================================*/
+
+	private void ModifyClientWindow() {
+		JLabel lblTitulo, lblCodigo;
+		JTextField txtFieldCodigo;
+		JCheckBox cbEstado;
+		JButton btnAceptar, btnCancelar, btnBuscar;
+		JFrame objFrame = this.objFrame;
+		Usuario us = this.usuario;
+
+		this.objFrame.getContentPane().removeAll();
+
+		lblTitulo = new JLabel("Modificar Cliente");
+		lblTitulo.setFont(this.title);
+		lblTitulo.setBounds(170, 5, 350, 50);
+		this.objFrame.getContentPane().add(lblTitulo);
+
+		////////////// USERNAME////////////////
+		lblCodigo = new JLabel("Codigo del Cliente:");
+		lblCodigo.setFont(this.labels);
+		lblCodigo.setBounds(150, 75, 150, 10);
+		this.objFrame.getContentPane().add(lblCodigo);
+
+		txtFieldCodigo = new JTextField();
+		txtFieldCodigo.setBounds(280, 70, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldCodigo);
+
+		////////////////////////////////////////
+
+		btnBuscar = new JButton("Buscar");
+		btnBuscar.setBounds(447, 70, 100, 25);
+		this.objFrame.getContentPane().add(btnBuscar);
+
+		btnBuscar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// Buscar el usuario
+				if (txtFieldCodigo.getText().isEmpty() | txtFieldCodigo.getText() == null) {
+					JOptionPane.showMessageDialog(null, "Ingrese un codigo de producto por favor", "Error",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				Cliente c = Controlador.getInstance().getCliente(Integer.parseInt(txtFieldCodigo.getText()));
+				if (c == null) {
+					JOptionPane.showMessageDialog(null, "No hay un cliente que coincida con dicho codigo", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				// Si lo encuentra
+				txtFieldCodigo.setEditable(false);
+
+				JLabel lblNombre = new JLabel("Nombre:"); // *
+				lblNombre.setBounds(150, 105, 150, 10);
+				objFrame.getContentPane().add(lblNombre);
+
+				JTextField txtFieldNombre = new JTextField(c.getNombre());
+				txtFieldNombre.setBounds(280, 100, 150, 25);
+				objFrame.getContentPane().add(txtFieldNombre);
+
+				JLabel lblDni = new JLabel("Dni:");
+				// lblReingresarPassword.setFont(this.labels);
+				lblDni.setBounds(150, 135, 150, 15);
+				objFrame.getContentPane().add(lblDni);
+
+				JTextField txtFieldDni = new JTextField(c.getDNI().toString());
+				txtFieldDni.setBounds(280, 130, 150, 25);
+				objFrame.getContentPane().add(txtFieldDni);
+
+				///////////////////////////////////
+
+				//////// Permisos////////////////
+				JLabel lblDomicilio = new JLabel("Domicilio:");
+				// lblPermisos.setFont(this.labels);
+				lblDomicilio.setBounds(150, 165, 150, 15);
+				objFrame.getContentPane().add(lblDomicilio);
+
+				JTextField txtFieldDomicilio = new JTextField(c.getDomicilio());
+				txtFieldDomicilio.setBounds(280, 165, 150, 25);
+				objFrame.getContentPane().add(txtFieldDomicilio);
+
+				JLabel lblTelefono = new JLabel("Telefono:");
+				// lblPermisos.setFont(this.labels);
+				lblTelefono.setBounds(150, 195, 150, 15);
+				objFrame.getContentPane().add(lblTelefono);
+
+				JTextField txtFieldTelefono = new JTextField("" + c.getTelefono());
+				txtFieldTelefono.setBounds(280, 195, 150, 25);
+				objFrame.getContentPane().add(txtFieldTelefono);
+
+				JLabel lblMail = new JLabel("Mail:");
+				// lblPermisos.setFont(this.labels);
+				lblMail.setBounds(150, 225, 150, 15);
+				objFrame.getContentPane().add(lblMail);
+
+				JTextField txtFieldMail = new JTextField("" + c.getMail());
+				txtFieldMail.setBounds(280, 225, 150, 25);
+				objFrame.getContentPane().add(txtFieldMail);
+				////////////////////////////////////
+
+				//////// ESTADO////////////////////
+				JLabel lblEstado = new JLabel("Estado:");
+				lblEstado.setBounds(150, 255, 150, 15);
+				objFrame.getContentPane().add(lblEstado);
+
+				JCheckBox cbEstado = new JCheckBox();
+				cbEstado.setBounds(343, 255, 150, 15);
+				cbEstado.setToolTipText(
+						"Si la casilla se encuentra marcada, significa que esta ACTIVO. En caso contrario, INACTIVO.");
+				cbEstado.setSelected(true);
+				objFrame.getContentPane().add(cbEstado);
+				////////////////////////////////////
+				JButton btnAceptar = new JButton("Modificar");
+
+				btnAceptar.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// c.(txtFieldDescripcion.getText());
+						// p.setPrecio(Float.parseFloat(txtFieldPrecio.getText().replace(",",
+						// ".")));
+						// p.setTitulo(txtFieldProducto.getText());
+						// p.setBolActivo(cbEstado.isSelected());
+						try {
+							Controlador.getInstance().modificarCliente(Integer.parseInt(txtFieldCodigo.getText()),
+									txtFieldNombre.getText(), Integer.parseInt(txtFieldDni.getText()),
+									txtFieldDomicilio.getText(), txtFieldTelefono.getText(), txtFieldMail.getText(),
+									cbEstado.isSelected());
+							JOptionPane.showMessageDialog(null, "¡Cliente modificado con éxito!", "Enhorabuena",
+									JOptionPane.INFORMATION_MESSAGE);
+							ModifyClientWindow();
+						} catch (ConnectionException | ParameterException e1) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, "Error modificando el cliente", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							ModifyClientWindow();
+						}
+
+					}
+				});
+
+				objFrame.getContentPane().add(btnAceptar).setBounds(150, 285, 140, 25);
+
+				JButton btnCancelar = new JButton("Cancelar");
+				btnCancelar.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						objFrame.getContentPane().removeAll();
+						objFrame.repaint();
+					}
+				});
+				objFrame.getContentPane().add(btnCancelar).setBounds(290, 285, 140, 25);
+				objFrame.repaint();
+			}
+		});
+
+		/////////// Botones////////////////
+
+		this.objFrame.repaint();
+	}
+
+	/////////// VENTANAS CALL CENTER /////////////////
+
+	private void CreateNuevoReclamoFactuacionWindow() {
+		JLabel lblTitulo, lblDescripcion, lblCliente, lblFactura, lblErrorCliente, lblErrorFactura;
+		JTextField txtFieldDescripcion, txtFieldCliente, txtFieldFactura;
+		JButton btnAceptar, btnCancelar, btnBuscarCliente, btnBuscarFactura, btnConfirmar, btnDeshacer,btnCrear;
+		JFrame objFrame = this.objFrame;
+		
+		this.objFrame.getContentPane().removeAll();
+
+		lblTitulo = new JLabel("Nuevo Reclamo Facturación");
+		lblTitulo.setFont(this.title);
+		lblTitulo.setBounds(100, 5, 450, 50);
+		this.objFrame.getContentPane().add(lblTitulo);
+		
+		lblDescripcion = new JLabel("Descripcion:");
+		lblDescripcion.setFont(this.labels);
+		lblDescripcion.setBounds(150, 75, 150, 10);
+		this.objFrame.getContentPane().add(lblDescripcion);
+
+		txtFieldDescripcion = new JTextField();
+		txtFieldDescripcion.setBounds(280, 70, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldDescripcion);
+		
+		////////////Cliente////////////////
+		JTable tblTaskListClients = new JTable();
+		DefaultTableModel modelClients = new DefaultTableModel(
+				new String[] { "Codigo", "Nombre", "DNI", "Domicilio", "Telefono", "Email" }, 0);
+		tblTaskListClients.setModel(modelClients);
+		tblTaskListClients.setPreferredScrollableViewportSize(new Dimension(500, 100));
+		tblTaskListClients.setFillsViewportHeight(true);
+		JScrollPane scrollPaneClients = new JScrollPane(tblTaskListClients);
+
+		
+		lblCliente = new JLabel("Codigo Cliente:");
+		lblCliente.setFont(this.labels);
+		lblCliente.setBounds(150, 105, 150, 10);
+		this.objFrame.getContentPane().add(lblCliente);
+
+		txtFieldCliente = new JTextField();
+		txtFieldCliente.setBounds(280, 100, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldCliente);
+		
+		
+		
+		btnBuscarCliente= new JButton("Buscar");
+		btnBuscarCliente.setBounds(440, 100, 100, 25);
+		this.objFrame.getContentPane().add(btnBuscarCliente);
+		
+		lblErrorCliente= new JLabel("");
+		lblErrorCliente.setForeground(Color.red);
+		lblErrorCliente.setFont(this.labels);
+		lblErrorCliente.setBounds(100, 170, 450, 25);
+		this.objFrame.getContentPane().add(lblErrorCliente);
+		
+		txtFieldCliente.addMouseListener(new MouseAdapter(){
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				lblErrorCliente.setText("");
+				modelClients.setRowCount(0);
+			}
+			
+		});
+		
+		btnBuscarCliente.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (txtFieldCliente.getText().isEmpty() || txtFieldCliente.getText()==null){
+					lblErrorCliente.setText("Debe ingresar el Codigo del Cliente para poder buscarlo en la base de datos");
+					return;
+				}
+				if (modelClients.getRowCount()>0){
+					modelClients.setRowCount(0);
+				}
+					
+				Cliente c=Controlador.getInstance().getCliente(Integer.parseInt(txtFieldCliente.getText()));
+				if (c==null)
+				{
+					lblErrorCliente.setText("El código de cliente ingresado no coincide con nuestros registros.");
+					return;
+				}
+				else
+				{
+					/** "Codigo", "Nombre", "DNI", "Domicilio", "Telefono", "Email" **/
+					modelClients.addRow(new Object[]{c.getCodigoPersona(),c.getNombre(), c.getDNI(), c.getDomicilio(), c.getTelefono(), c.getMail(), "nooo" });
+				}
+			}
+			
+		});
+		
+		scrollPaneClients.setBounds(10, 130, intWidth-30, 40);
+		this.objFrame.getContentPane().add(scrollPaneClients);
+		
+		
+		//////////////FACTURA/////////////////
+		lblFactura = new JLabel("Numero factura:");
+		lblFactura.setFont(this.labels);
+		lblFactura.setBounds(150, 200, 150, 10);
+		this.objFrame.getContentPane().add(lblFactura);
+
+		txtFieldFactura = new JTextField();
+		txtFieldFactura.setBounds(280, 195, 150, 25);
+		this.objFrame.getContentPane().add(txtFieldFactura);
+		
+		lblErrorFactura = new JLabel("");
+		lblErrorFactura.setFont(this.labels);
+		lblErrorFactura.setForeground(Color.red);
+		lblErrorFactura.setBounds(150, 360, 150, 10);
+		this.objFrame.getContentPane().add(lblErrorFactura);
+		
+		
+		btnBuscarFactura= new JButton("Buscar");
+		btnBuscarFactura.setBounds(440, 195, 100, 25);
+		this.objFrame.getContentPane().add(btnBuscarFactura);
+		
+		JTable tblTaskListFacturas = new JTable();
+		DefaultTableModel modelFactura = new DefaultTableModel(
+				new String[] { "Numero de Factura", "Descripcion", "Fecha"}, 0);
+		tblTaskListFacturas.setModel(modelFactura);
+		tblTaskListFacturas.setPreferredScrollableViewportSize(new Dimension(500, 100));
+		tblTaskListFacturas.setFillsViewportHeight(true);
+		JScrollPane scrollPaneFacturas = new JScrollPane(tblTaskListFacturas);
+		
+		JTable tblTaskListProductos = new JTable();
+		DefaultTableModel modelProducto = new DefaultTableModel(
+				new String[] { "Numero de Producto","Titulo", "Descripcion","Precio", "Cantidad"}, 0);
+		tblTaskListProductos.setModel(modelProducto);
+		tblTaskListProductos.setPreferredScrollableViewportSize(new Dimension(500, 100));
+		tblTaskListProductos.setFillsViewportHeight(true);
+		JScrollPane scrollPaneProductos = new JScrollPane(tblTaskListProductos);
+		scrollPaneProductos.setBounds(10, 265, intWidth-30, 80);
+		this.objFrame.getContentPane().add(scrollPaneProductos);
+		
+		txtFieldFactura.addMouseListener(new MouseAdapter(){
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				lblErrorFactura.setText("");
+				modelFactura.setRowCount(0);
+				modelProducto.setRowCount(0);
+			}
+			
+		});
+		
+		btnBuscarFactura.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (modelFactura.getRowCount()>0){
+					modelFactura.setRowCount(0);
+				}
+				if (modelProducto.getRowCount()>0){
+					modelProducto.setRowCount(0);
+					
+				}
+				if (txtFieldFactura.getText().isEmpty() || txtFieldFactura.getText()==null){
+					lblErrorCliente.setText("Debe ingresar el Codigo de Factura para poder buscarla en la base de datos");
+					return;
+				}
+				
+				Factura f=Controlador.getInstance().getFactura(Integer.parseInt(txtFieldFactura.getText()));
+				if (f==null)
+				{
+					lblErrorCliente.setText("El código de factura ingresada no coincide con nuestros registros.");
+					return;
+				}
+				else
+				{
+					
+					modelFactura.addRow(new Object[]{f.getNumero(),f.getDescripcion(),f.getFecha()});
+					
+					for (ItemFactura p: f.getProductos()){
+						Producto producto= p.getProducto();
+						modelProducto.addRow(new Object[]{producto.getCodigo(),producto.getTitulo(), producto.getDescripcion(), producto.getPrecio(), p.getCantidad()});
+					}
+				}
+			}
+			
+		});
+		scrollPaneFacturas.setBounds(10, 225, intWidth-30, 40);
+		this.objFrame.getContentPane().add(scrollPaneFacturas);
+		
+		btnConfirmar= new JButton("Confirmar reclamo");
+		btnConfirmar.setBounds(10, 350, 283, 25);
+		this.objFrame.getContentPane().add(btnConfirmar);
+		
+		btnConfirmar.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				txtFieldFactura.setEnabled(false);
+				txtFieldCliente.setEnabled(false);
+				txtFieldDescripcion.setEnabled(false);
+			}
+			
+		});
+		
+		btnDeshacer= new JButton("Modificar reclamo");
+		btnDeshacer.setBounds(295, 350, 283, 25);
+		this.objFrame.getContentPane().add(btnDeshacer);
+		
+		btnDeshacer.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				txtFieldFactura.setEnabled(true);
+				txtFieldCliente.setEnabled(true);
+				txtFieldDescripcion.setEnabled(true);
+			}
+			
+		});
+		
+		btnCrear= new JButton("Crear reclamo");
+		btnCrear.setBounds(10, 390, 283, 50);
+		this.objFrame.getContentPane().add(btnCrear);
+		
+		btnCrear.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if  (txtFieldFactura.getText().isEmpty()  || txtFieldFactura.getText()==null
+						|| txtFieldCliente.getText().isEmpty() ||txtFieldCliente.getText()==null
+						|| txtFieldDescripcion.getText().isEmpty() ||txtFieldDescripcion.getText()==null
+						||  modelClients.getRowCount()==0 || modelFactura.getRowCount()==0 || modelProducto.getRowCount()==0)
+				{
+					JOptionPane.showMessageDialog(null,
+							"Los campos no pueden ser nulos o no se han realizado las verificaciones correctas.", "Error al crear Reclamo Facturación",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				   int reply = JOptionPane.showConfirmDialog(null, "Esta seguro que desea crear este reclamo de facturación?", "Crear Reclamo Facturacion", JOptionPane.YES_NO_OPTION);
+			        if (reply == JOptionPane.YES_OPTION) {
+			        	Cliente c = null;
+						try {
+							c = ClientesDAO.getInstance().getCliente(Integer.parseInt(txtFieldCliente.getText()));
+						} catch (NumberFormatException | ConnectionException | ClienteException
+								| ParameterException e) {
+							JOptionPane.showMessageDialog(null,
+									"Error 302 - Contacte a un administrador", "Error al crear Reclamo Facturación",
+									JOptionPane.ERROR_MESSAGE);
+						}
+			        	Factura f = null;
+						try {
+							f = FacturasDAO.getInstance().getFactura(Integer.parseInt(txtFieldFactura.getText()));
+						} catch (NumberFormatException | ConnectionException | ClienteException | ParameterException
+								| FacturasException | ProductosException e) {
+							JOptionPane.showMessageDialog(null,
+									"Error 303 - Contacte a un administrador", "Error al crear Reclamo Facturación",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						
+			        	if(Controlador.getInstance().crearReclamoFacturacion(txtFieldDescripcion.getText(), c, f)){
+			        		JOptionPane.showMessageDialog(null,
+									"¡Reclamo de Facturación creado con éxito!", "Enhorabuena",
+									JOptionPane.INFORMATION_MESSAGE);
+			        	}else{
+			        		JOptionPane.showMessageDialog(null,
+									"Error al crear Reclamo Facturación", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+			        }
+			        else {
+			           System.exit(0);
+			        }
+			}
+			
+		});
+		
+		btnCancelar= new JButton("Cancelar");
+		btnCancelar.setBounds(295, 390, 283, 50);
+		this.objFrame.getContentPane().add(btnCancelar);
+		
+		
+		
+
+		
+
+		this.objFrame.repaint();
+
+	}
+
+	public static void main(String[] args) throws Throwable {
+		/* ================================================== */
+		/* ====================Variables===================== */
+		/* ================================================== */
 		MainScreen obj;
-		Usuario u= new Usuario("admin","admin","Administrador");
-		/*==================================================*/
-		/*===================Create Login===================*/
-		/*==================================================*/
+//		Usuario u = new Usuario("admin", "admin", "Administrador");
+		Usuario u= new  Usuario("CallCenter","callcenter","CallCenter");
+		/* ================================================== */
+		/* ===================Create Login=================== */
+		/* ================================================== */
 		obj = new MainScreen(u);
-		/*==================================================*/
-		/*===================End Objects====================*/
-		/*==================================================*/
+		/* ================================================== */
+		/* ===================End Objects==================== */
+		/* ================================================== */
 		obj.finalize();
 	}
-	/*==================================================*/
-	/*=====================End Main=====================*/
-	/*==================================================*/
+	/* ================================================== */
+	/* =====================End Main===================== */
+	/* ================================================== */
 }
-/*==================================================*/
-/*====================End Class=====================*/
+/* ================================================== */
+/* ====================End Class===================== */

@@ -39,7 +39,7 @@ public class Administrador extends Rol
 		objCliente = new Cliente(strNombre,intDni,strDomicilio,strTelefono,strMail);
 		ClientesDAO.getInstance().insertar(objCliente);
 	}
-	public void bajaCliente(Integer intCodCliente) throws ConnectionException, ParameterException, ClienteException
+	public void bajaCliente(Integer intCodCliente) throws ConnectionException, ParameterException, ClienteException, SQLException
 	{
 		ClientesDAO.getInstance().eliminar(ClientesDAO.getInstance().getCliente(intCodCliente));
 	}

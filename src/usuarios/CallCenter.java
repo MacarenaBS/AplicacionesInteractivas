@@ -17,8 +17,7 @@ public class CallCenter extends Rol
 		ReclamoFacturacion objReclamo;
 		try
 		{
-			objReclamo = new ReclamoFacturacion(ReclamosFacturacionDAO.getInstance().newId(), strDescripcion, objCliente, objFactura);
-			ReclamosFacturacionDAO.getInstance().insertar(objReclamo);
+			ReclamosFacturacionDAO.getInstance().insertarEnBase(strDescripcion, objCliente,objFactura);
 		}
 		catch (ConnectionException objException)
 		{

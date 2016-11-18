@@ -8,6 +8,7 @@ package reclamos;
 import java.util.ArrayList;
 import java.util.Date;
 
+import connections.ReclamosFacturacionDAO;
 import exceptions.ConnectionException;
 import exceptions.ParameterException;
 import model.Accion;
@@ -41,9 +42,9 @@ public class ReclamoFacturacion extends Reclamo
 	 * @throws ParameterException 
 	 * @throws ConnectionException 
 	 */
-	public ReclamoFacturacion(String strNumero, String strDescripcion, Cliente objCliente, Factura objFactura) throws ConnectionException, ParameterException
+	public ReclamoFacturacion(String strCodigo, String strDescripcion, Cliente objCliente, Factura objFactura) throws ConnectionException, ParameterException
 	{
-		this.setNumero(strNumero);
+		this.setNumero(strCodigo);
 		this.setDescripcion(strDescripcion);
 		this.setEstado("ingresado");
 		this.setFecha(new Date());
@@ -81,8 +82,6 @@ public class ReclamoFacturacion extends Reclamo
 		/*==================================================*/
 		this.setNumero(strNumero);
 		this.setDescripcion(strDescripcion);
-		
-		
 		this.setEstado(strEstado);
 		this.setFecha(new Date());
 		this.setCliente(objCliente);
@@ -90,6 +89,14 @@ public class ReclamoFacturacion extends Reclamo
 		this.setFactura(objFactura);
 //		this.colAcciones = new ArrayList<Accion>();
 		
+	}
+	
+	public void inicializar() throws ConnectionException, ParameterException{
+		Accion objAccion = new Accion(new Date(), "Apertura de Reclamo");
+		/*==================================================*/
+		/*==================Asociar Acción==================*/
+		/*==================================================*/
+		this.asociarAccion(objAccion);
 	}
 	/*==================================================*/
 	/*=================End Constructor==================*/
@@ -128,6 +135,7 @@ public class ReclamoFacturacion extends Reclamo
 	/*==================================================*/
 	/*===================End Function===================*/
 	/*==================================================*/
+	
 }
 /*==================================================*/
 /*====================End Class=====================*/

@@ -13,7 +13,9 @@ import exceptions.FacturasException;
 import exceptions.ParameterException;
 import exceptions.ProductosException;
 import exceptions.ReclamoException;
+import model.Factura;
 import reclamos.ReclamoFacturacion;
+import usuarios.Cliente;
 public class ReclamosFacturacionDAO
 {
 	private static ReclamosFacturacionDAO objInstance;
@@ -142,33 +144,39 @@ public class ReclamosFacturacionDAO
 		this.colReclamos.add(objReclamo);
 		this.actualizarBase(objReclamo);
 	}
-	private void insertarEnBase(ReclamoFacturacion objReclamo) throws ConnectionException, ParameterException
+	public void insertarEnBase(/*ReclamoFacturacion objReclamo*/String strDescripcion, Cliente objCliente, Factura objFactura) throws ConnectionException, ParameterException
 	{
 		try
 		{
+			String codigo= newId();
 			this.objConnection.executeQuery("INSERT INTO ReclamosFacturacion (strNumero, strDescripcion, strEstado, intFactura, intCliente)".concat(
 											"VALUES ( ").concat("'").concat(
-												objReclamo.getNumero()).concat("', '").concat(
-												objReclamo.getDescripción()).concat("', '").concat(
-												objReclamo.getEstado().toString()).concat("', ").concat(
-												String.valueOf(objReclamo.getFactura().getNumero())).concat(", ").concat(
-												String.valueOf(objReclamo.getCliente().getCodigoPersona())).concat(")"));
+												codigo).concat("', '").concat(
+												strDescripcion).concat("', '").concat(
+												"ingresado").concat("', ").concat(
+												String.valueOf(objFactura.getNumero())).concat(", ").concat(
+												String.valueOf(objCliente.getCodigoPersona())).concat(")"));
 			
-			objReclamo = new ReclamoFacturacion(objReclamo.getNumero(), objReclamo.getDescripción(), objReclamo.getCliente(), objReclamo.getFactura());
+			ReclamoFacturacion objReclamo = new ReclamoFacturacion(codigo,strDescripcion, objCliente, objFactura);
+			
+			if (!this.colReclamos.contains(objReclamo))
+			{
+				this.colReclamos.add(objReclamo);
+			}
 		}
 		catch (SQLException objException)
 		{
 			JOptionPane.showMessageDialog(null, "Error al actualizar la base de datos con un nuevo Reclamo de Facturacion");
 		}
 	}
-	public void insertar(ReclamoFacturacion objReclamo) throws ConnectionException, ParameterException
-	{
-		if (!this.colReclamos.contains(objReclamo))
-		{
-			this.colReclamos.add(objReclamo);
-		}
-		this.insertarEnBase(objReclamo);
-	}
+//	public void insertar(ReclamoFacturacion objReclamo) throws ConnectionException, ParameterException
+//	{
+//		if (!this.colReclamos.contains(objReclamo))
+//		{
+//			this.colReclamos.add(objReclamo);
+//		}
+//		this.insertarEnBase(objReclamo);
+//	}
 	public String newId() throws ConnectionException
 	{
 		String strAnswer;
@@ -184,7 +192,8 @@ public class ReclamosFacturacionDAO
 			else
 			{
 				objAnswer.next();
-				strAnswer = "RECFAC".concat(String.valueOf(objAnswer.getInt("Cantidad")));
+				int cantidad= objAnswer.getInt("Cantidad")+1;
+				strAnswer = (String.valueOf(cantidad));
 			}
 		}
 		catch (SQLException objException)

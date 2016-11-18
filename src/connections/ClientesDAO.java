@@ -146,7 +146,7 @@ public class ClientesDAO
 //			}
 //		}		
 	}
-	private void eliminarEnBase(Cliente objCliente)
+	private void eliminarEnBase(Cliente objCliente) throws SQLException
 	{
 		try
 		{
@@ -155,9 +155,10 @@ public class ClientesDAO
 		catch (SQLException objException)
 		{
 			JOptionPane.showMessageDialog(null, "Error al eliminar de la base de datos con un Cliente");
+			throw new SQLException(objException.getMessage());
 		}
 	}
-	public void eliminar(Cliente objCliente)
+	public void eliminar(Cliente objCliente) throws SQLException
 	{
 		this.eliminarEnCache(objCliente);
 		this.eliminarEnBase(objCliente);

@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import connections.ClientesDAO;
+import connections.FacturasDAO;
 import connections.ProductosDAO;
+import connections.ReclamosFacturacionDAO;
 import connections.UsuariosDAO;
 import exceptions.ClienteException;
 import exceptions.ConnectionException;
@@ -12,7 +14,9 @@ import exceptions.FacturasException;
 import exceptions.ParameterException;
 import exceptions.ProductosException;
 import exceptions.UsuarioException;
+import model.Factura;
 import model.Producto;
+import reclamos.ReclamoFacturacion;
 import usuarios.*;
 
 public class Controlador {
@@ -206,11 +210,52 @@ public class Controlador {
 		return null;
 	}
 	
-	public boolean modificarCliente(String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail) throws ConnectionException, ParameterException
+	public boolean modificarCliente(int intCodigo,String strNombre, Integer intDNI, String strDomicilio, String strTelefono, String strMail, boolean bolEstado) throws ConnectionException, ParameterException
 	{
-		Cliente c= new Cliente(strNombre,intDNI,strDomicilio,strTelefono,strMail);
+		Cliente c= new Cliente(intCodigo,strNombre,intDNI,strDomicilio,strTelefono,strMail,bolEstado);
 		try {
 			ClientesDAO.getInstance().modificarCliente(c);
+			return true;
+		} catch (ConnectionException | ParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean eliminarCliente(int intNumero) throws ConnectionException, ParameterException
+	{
+		Cliente c;
+		try {
+			c = ClientesDAO.getInstance().getCliente(intNumero);
+		} catch (ClienteException e1) {
+			return false;
+		}
+		try {
+			ClientesDAO.getInstance().eliminar(c);
+			return true;
+		} catch (ConnectionException | ParameterException| SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public Factura getFactura(int intNumero)
+	{
+		try {
+			return FacturasDAO.getInstance().getFactura(intNumero);
+		} catch (ConnectionException | ClienteException | ParameterException | FacturasException
+				| ProductosException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public boolean crearReclamoFacturacion(String strDescripcion, Cliente objCliente, Factura objFactura){
+		
+		try {
+			ReclamosFacturacionDAO.getInstance().insertarEnBase(strDescripcion, objCliente,objFactura);
 			return true;
 		} catch (ConnectionException | ParameterException e) {
 			// TODO Auto-generated catch block
