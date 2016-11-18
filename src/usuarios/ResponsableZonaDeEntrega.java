@@ -20,6 +20,7 @@ public class ResponsableZonaDeEntrega extends Rol
 		{
 			objReclamo = ReclamosZonaDAO.getInstance().getReclamo(strNumero);
 			objReclamo.asociarAccion(objAccion);
+			ReclamosZonaDAO.getInstance().actualizar(objReclamo);
 		}
 		catch (ReclamoException objException)
 		{

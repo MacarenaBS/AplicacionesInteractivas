@@ -18,7 +18,7 @@ public abstract class Rol
 	{
 		for (Usuario usuario : colUsuarios)
 		{
-			if (us.getStrUsername().equals(usuario.getStrUsername()))
+			if (us.getUsername().equals(usuario.getUsername()))
 			{
 				this.colUsuarios.remove(us);
 			}

@@ -51,6 +51,7 @@ public class ResponsableDistribucion extends Rol
 		{
 			objReclamo = ReclamosInconsistenciasDAO.getInstance().getReclamo(strNumero);
 			objReclamo.cerrar();
+			ReclamosInconsistenciasDAO.getInstance().actualizar(objReclamo);
 		}
 		catch (ReclamoException objException)
 		{

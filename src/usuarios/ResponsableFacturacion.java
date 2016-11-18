@@ -22,6 +22,7 @@ public class ResponsableFacturacion extends Rol
 		{
 			objReclamo = ReclamosFacturacionDAO.getInstance().getReclamo(strNumero);
 			objReclamo.asociarAccion(objAccion);
+			ReclamosFacturacionDAO.getInstance().actualizar(objReclamo);
 		}
 		catch (ReclamoException objException)
 		{

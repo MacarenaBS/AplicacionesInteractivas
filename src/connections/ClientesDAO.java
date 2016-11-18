@@ -42,17 +42,25 @@ public class ClientesDAO
 	{
 		return this.objConnection.getConnection();
 	}
+<<<<<<< HEAD
+	public Cliente getCliente(String strNumero) throws ConnectionException, ClienteException
+=======
 	public Cliente getCliente(Integer intNumero) throws ConnectionException, ClienteException, ParameterException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		Cliente objCliente;
-		objCliente = this.getFromCache(intNumero);
+		objCliente = this.getFromCache(strNumero);
 		if (objCliente == null)
 		{
-			objCliente = this.getFromDatabase(intNumero);
+			objCliente = this.getFromDatabase(strNumero);
 		}
 		return objCliente;
 	}
+<<<<<<< HEAD
+	private Cliente getFromCache(String strNumero)
+=======
 	private Cliente getFromCache(Integer intNumero) //*
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		/*
 		Boolean bolEncontro;
@@ -64,7 +72,7 @@ public class ClientesDAO
 		while ((objIterator.hasNext()) && (!bolEncontro))
 		{
 			objCliente = objIterator.next();
-			bolEncontro = (objCliente.getCodigoPersona() == intNumero);
+			bolEncontro = (objCliente.getCodigoPersona() == strNumero);
 		}
 		return objCliente;
 		*/
@@ -76,21 +84,25 @@ public class ClientesDAO
 		}
 		return null;
 	}
+<<<<<<< HEAD
+	private Cliente getFromDatabase(String strNumero) throws ConnectionException, ClienteException
+=======
 	private Cliente getFromDatabase(Integer intNumero) throws ConnectionException, ClienteException, ParameterException
+>>>>>>> branch 'master' of https://github.com/MacarenaBS/AplicacionesInteractivas
 	{
 		Cliente objCliente;
 		ResultSet objClientes;
 		objCliente = null;
 		try
 		{
-			objClientes = this.objConnection.getResultSet("SELECT * FROM Clientes WHERE intCodigo = ".concat(String.valueOf(intNumero)));
+			objClientes = this.objConnection.getResultSet("SELECT * FROM Clientes WHERE strCodigo = ".concat(String.valueOf(strNumero)));
 			if (objClientes.next())
 			{
-				objCliente = new Cliente(objClientes.getInt("intCodigo"), objClientes.getString("strNombre"), objClientes.getInt("intDNI"), objClientes.getString("strDomicilio"), objClientes.getString("strTelefono"), objClientes.getString("strMail"), objClientes.getInt("bolActivo") == 1 ? true : false);
+				objCliente = new Cliente(objClientes.getString("strCodigo"), objClientes.getString("strNombre"), objClientes.getInt("intDNI"), objClientes.getString("strDomicilio"), objClientes.getString("strTelefono"), objClientes.getString("strMail"), objClientes.getInt("bolActivo") == 1 ? true : false);
 			}
 			else
 			{
-				throw new ClienteException("No existe ningún cliente con el código ".concat(String.valueOf(intNumero)).concat(" en los registros almacenados."));
+				throw new ClienteException("No existe ningún cliente con el código ".concat(String.valueOf(strNumero)).concat(" en los registros almacenados."));
 			}
 		}
 		catch (SQLException objException)

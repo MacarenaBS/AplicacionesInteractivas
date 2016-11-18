@@ -27,35 +27,19 @@ public class Usuario
 	{
 		this.objRol = objRol;
 	}
-	public String getStrUsername()
-	{
-		return strUsername;
-	}
-	public void setStrUsername(String strUsername)
-	{
-		this.strUsername = strUsername;
-	}
-	public String getStrPassword()
-	{
-		return strPassword;
-	}
-	public void setStrPassword(String strPassword)
-	{
-		this.strPassword = strPassword;
-	}
-	protected void setPassword(String strValue)
+	public void setPassword(String strValue)
 	{
 		this.strPassword = strValue;
 	}
-	protected String getPassword()
+	public String getPassword()
 	{
 		return this.strPassword;
 	}
-	protected void setUsername(String strValue)
+	public void setUsername(String strValue)
 	{
 		this.strUsername = strValue;
 	}
-	protected String getUsername()
+	public String getUsername()
 	{
 		return this.strUsername;
 	}
